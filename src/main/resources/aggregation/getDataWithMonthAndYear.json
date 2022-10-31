@@ -1,0 +1,71 @@
+{
+  "setMonthAndYear": {
+    "$set": {
+      "month": {
+        "$month": "$date"
+      },
+      "year": {
+        "$year": "$date"
+      }
+    }
+  },
+  "lookup": {
+    "$lookup": {
+      "pipeline": [
+        {
+          "$match": {
+            "$and": [
+              {
+                "$expr": {
+                  "$eq": [
+                    "$_id",
+                    "$$userId"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "as": "student",
+      "from": "users",
+      "let": {
+        "userId": {
+          "$toObjectId": "$userId"
+        }
+      }
+    }
+  },
+  "unwindTheStudentData": {
+    "$unwind": {
+      "path": "$student"
+    }
+  },
+  "groupOnUserId": {
+    "$group": {
+      "_id": {
+        "userId": "$userId"
+      },
+      "count": {
+        "$sum": 1.0
+      },
+      "price": {
+        "$sum": "$price"
+      },
+      "bookId": {
+        "$last": "$bookId"
+      },
+      "bookName": {
+        "$last": "$bookName"
+      },
+      "fullName": {
+        "$first": "$student.fullName"
+      }
+    }
+  },
+  "setUserId": {
+    "$set": {
+      "userId": "$_id.userId"
+    }
+  }
+}

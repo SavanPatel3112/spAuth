@@ -1,0 +1,43 @@
+{
+  "lookup": {
+    "$lookup": {
+      "pipeline": [
+        {
+          "$match": {
+            "$and": [
+              {
+                "$expr": {
+                  "$eq": [
+                    "$_id",
+                    "$$userId"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "as": "student",
+      "from": "users",
+      "let": {
+        "userId": {
+          "$toObjectId": "$userId"
+        }
+      }
+    }
+  },
+  "unwindTheStudentsDetails": {
+    "$unwind": {
+      "path": "$student"
+    }
+  },
+  "setFullNameAndBalance": {
+    "$set": {
+      "fullName": "$student.fullName",
+      "balance": "$student.balance"
+    }
+  },
+  "unSetNonUserData": {
+    "$unset": "student"
+  }
+}

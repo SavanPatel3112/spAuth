@@ -1,0 +1,83 @@
+{
+  "set": {
+    "$set": {
+      "month": {
+        "$month": "$date"
+      },
+      "year": {
+        "$year": "$date"
+      }
+    }
+  },
+  "lookup": {
+    "$lookup": {
+      "pipeline": [
+        {
+          "$match": {
+            "$and": [
+              {
+                "$expr": {
+                  "$eq": [
+                    "$_id",
+                    "$$userId"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "as": "student",
+      "from": "users",
+      "let": {
+        "userId": {
+          "$toObjectId": "$userId"
+        }
+      }
+    }
+  },
+  "unwind": {
+    "$unwind": {
+      "path": "$student"
+    }
+  },
+  "group": {
+    "$group": {
+      "_id": {
+        "month": "$month",
+        "bookName": "$bookName",
+        "userId": "$userId"
+      },
+      "book": {
+        "$push": {
+          "price": "$price",
+          "userId": "$userId"
+        }
+      },
+      "count": {
+        "$sum": 1.0
+      },
+      "totalPrice": {
+        "$sum": "$price"
+      }
+    }
+  },
+  "groupOnMonth": {
+    "$group": {
+      "_id": {
+        "month": "$_id.month"
+      },
+      "totalPrice": {
+        "$sum": "$totalPrice"
+      },
+      "totalCount": {
+        "$sum": 1.0
+      }
+    }
+  },
+  "setMonth": {
+    "$set": {
+      "month": "$_id.month"
+    }
+  }
+}

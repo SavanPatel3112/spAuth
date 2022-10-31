@@ -1,0 +1,66 @@
+{
+  "lookup": {
+    "$lookup": {
+      "pipeline": [
+        {
+          "$match": {
+            "$and": [
+              {
+                "$expr": {
+                  "$eq": [
+                    "$_id",
+                    "$$userId"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "as": "student",
+      "from": "users",
+      "let": {
+        "userId": {
+          "$toObjectId": "$userId"
+        }
+      }
+    }
+  },
+  "unwind": {
+    "$unwind": {
+      "path": "$student"
+    }
+  },
+  "setTheStudentDate": {
+    "$set": {
+      "fulName": "$student.fullName"
+    }
+  },
+  "unsetTheStudent": {
+    "$unset": "student"
+  },
+  "group": {
+    "$group": {
+      "_id": {
+        "bookName": "$bookName"
+      },
+      "bookData": {
+        "$push": {
+          "userId": "$userId",
+          "fullName": "$fulName",
+          "date": "$date",
+          "price": "$price"
+        }
+      },
+      "count": {
+        "$sum": 1.0
+      }
+    }
+  },
+  "set":
+{
+  "$set" : {
+    "bookName" : "$_id.bookName"
+  }
+}
+}

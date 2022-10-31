@@ -1,0 +1,62 @@
+{
+  "extractMonAndYear": {
+    "$set": {
+      "year": {
+        "$year": "$date"
+      },
+      "month": {
+        "$month": "$date"
+      }
+    }
+  },
+  "groupByMonthAndBookName": {
+    "$group": {
+      "_id": {
+        "month": "$month",
+        "bookName": "$bookName"
+      },
+      "month": {
+        "$first": "$month"
+      },
+      "count": {
+        "$sum": 1.0
+      },
+      "userIds": {
+        "$push": {
+          "$toString": "$_id"
+        }
+      }
+    }
+  },
+  "groupByBookName": {
+    "$group": {
+      "_id": "$_id.bookName",
+      "bookData": {
+        "$push": {
+          "month": "$month",
+          "userIds": "$userIds",
+          "count": "$count"
+        }
+      }
+    }
+  },
+  "unwindBookData": {
+    "$unwind": {
+      "path": "$bookData"
+    }
+  },
+  "groupByMonth": {
+    "$group": {
+      "_id": "$bookData.month",
+      "bookData": {
+        "$push": {
+          "bookName": "$_id",
+          "count": "$bookData.count"
+        }
+      },
+      "totalCount": {
+        "$sum": "$bookData.count"
+      }
+    }
+  }
+}

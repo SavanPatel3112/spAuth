@@ -1,0 +1,90 @@
+{
+  "lookup": {
+    "$lookup": {
+      "pipeline": [
+        {
+          "$match": {
+            "$and": [
+              {
+                "$expr": {
+                  "$eq": [
+                    "$_id",
+                    "$$userId"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "as": "student",
+      "from": "users",
+      "let": {
+        "userId": {
+          "$toObjectId": "$userId"
+        }
+      }
+    }
+  },
+  "unwindStudentDetails": {
+    "$unwind": {
+      "path": "$student"
+    }
+  },
+  "setFullNameInStudentDetails": {
+    "$set": {
+      "fulName": "$student.fullName"
+    }
+  },
+  "unsetTheStudentDetails": {
+    "$unset": "student"
+  },
+  "groupOnFullNameAndBookName": {
+    "$group": {
+      "userBookDetails": {
+        "$push": {
+          "date": {
+            "$dateToString": {
+              "format": "%m/%d/%Y",
+              "date": "$date",
+              "timezone": "America/Chicago"
+            }
+          },
+          "price": "$price"
+        }
+      },
+      "count": {
+        "$sum": 1.0
+      },
+      "price": {
+        "$sum": "$price"
+      },
+      "_id": {
+        "fullName": "$fulName",
+        "bookName": "$bookName"
+      }
+    }
+  },
+  "groupOnFullName": {
+    "$group": {
+      "userBookData": {
+        "$push": {
+          "date": {
+            "$last": "$userBookDetails.date"
+          },
+          "price": {
+            "$sum": "$userBookDetails.price"
+          },
+          "count": {
+            "$sum": "$count"
+          },
+          "bookName": "$_id.bookName"
+        }
+      },
+      "_id": "$_id.fullName",
+      "fullName" : {
+        "$first" : "$_id.fullName"
+      }
+    }
+  }
+}
