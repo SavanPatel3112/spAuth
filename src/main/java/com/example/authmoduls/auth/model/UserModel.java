@@ -6,6 +6,7 @@ import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserModel {
 
     @Id
@@ -76,7 +78,6 @@ public class UserModel {
         this.firstName=StringUtils.normalizeSpace(this.firstName);
         this.middleName = StringUtils.normalizeSpace(this.middleName);
         this.lastName = StringUtils.normalizeSpace(this.lastName);
-
         List<String> fullNameList = new LinkedList<>();
         fullNameList.add(firstName);
         fullNameList.add(middleName);

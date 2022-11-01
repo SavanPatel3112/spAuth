@@ -21,14 +21,16 @@ import com.example.authmoduls.common.model.*;
 import com.example.authmoduls.common.repository.ImportedDataRepository;
 import com.example.authmoduls.common.repository.UserDataRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
-import com.example.authmoduls.common.utils.*;
+import com.example.authmoduls.common.utils.ImportExcelDataHelper;
+import com.example.authmoduls.common.utils.JwtTokenUtil;
+import com.example.authmoduls.common.utils.PasswordUtils;
+import com.example.authmoduls.common.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -53,30 +55,35 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserServiceImpl implements  UserService {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    ImportedDataRepository importedDataRepository;
-    @Autowired
-    UserDataRepository userDataRepository;
-    @Autowired
-    NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    PasswordUtils passwordUtils;
-    @Autowired
-    AdminConfigurationService adminService;
-    @Autowired
-    Utils utils;
-    @Autowired
-    NotificationParser notificationParser;
-    @Autowired
-    UserPublisher userPublisher;
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    RequestSession requestSession;
+    private final UserRepository userRepository;
+    private final ImportedDataRepository importedDataRepository;
+    private final UserDataRepository userDataRepository;
+    private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordUtils passwordUtils;
+    private final AdminConfigurationService adminService;
+    private final Utils utils;
+    private final NotificationParser notificationParser;
+    private final UserPublisher userPublisher;
+    private final ModelMapper modelMapper;
+    private final RequestSession requestSession;
+
+
+    public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, UserPublisher userPublisher, ModelMapper modelMapper, RequestSession requestSession) {
+        this.userRepository = userRepository;
+        this.importedDataRepository = importedDataRepository;
+        this.userDataRepository = userDataRepository;
+        this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.passwordUtils = passwordUtils;
+        this.adminService = adminService;
+        this.utils = utils;
+        this.notificationParser = notificationParser;
+        this.userPublisher = userPublisher;
+        this.modelMapper = modelMapper;
+        this.requestSession = requestSession;
+    }
+
     @Override
     public UserResponse addOrUpdateUser(UserAddRequest userAddRequest, String id, Role role) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
@@ -98,25 +105,25 @@ public class UserServiceImpl implements  UserService {
         }
         checkUserDetails(userAddRequest);//check empty or not
         //convert birthdate type date to localDate
-        Date date = userAddRequest.getBirthDate();
+        /*Date date = userAddRequest.getBirthDate();
         LocalDateTime dates = Instant.ofEpochMilli(date.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
         System.out.println(dates);
         LocalDate curDate = LocalDate.now();
-        System.out.println(curDate);
+        System.out.println(curDate);*/
         //set age from birthdate
         UserModel userModel = new UserModel();
         if (userAddRequest.getBirthDate() != null) {
-            int age = Period.between(LocalDate.from(dates), curDate).getYears();
-            userModel.setAge(age);
-            System.out.println(age);
+            /*int age = Period.between(LocalDate.from(dates), curDate).getYears();*/
+      /*      userModel.setAge(age);
+            System.out.println(age);*/
             userRepository.save(userModel);
         }
         nullAwareBeanUtilsBean.copyProperties(userModel, userAddRequest);
         userModel.setRole(role);//set role in database
         userModel.setFullName();//set getFullName
-        userModel.setCreatedBy(requestSession.getJwtUser().getId());
+        /*userModel.setCreatedBy(requestSession.getJwtUser().getId());*/
         System.out.println(userModel.getFullName());
         userRepository.save(userModel);
         UserResponse userResponse = new UserResponse();
@@ -125,7 +132,7 @@ public class UserServiceImpl implements  UserService {
     }
     @Override
     public List<UserResponse>  getAllUser() throws InvocationTargetException, IllegalAccessException {
-          List<UserModel> userModels = userRepository.findAllBySoftDeleteFalse();
+        List<UserModel> userModels = userRepository.findAllBySoftDeleteFalse();
         List<UserResponse> userResponses = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userModels)) {
             for (UserModel userModel : userModels) {
@@ -811,9 +818,9 @@ public class UserServiceImpl implements  UserService {
                 CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_EMPTY);
         }
-        if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
+/*        if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
-        }
+        }*/
 
         if (!userAddRequest.getPassword().matches(adminConfiguration.getPasswordRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_PASSWORD);
@@ -821,9 +828,9 @@ public class UserServiceImpl implements  UserService {
         if (!userAddRequest.getMobileNo().matches(adminConfiguration.getMoblieNoRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_MOBILENO);
         }
-        if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
+     /*   if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
             throw new InvaildRequestException(MessageConstant.INVAILD_ZIPCODE);
-        }
+        }*/
     }
     public void checkResultCond(Result result) throws InvocationTargetException, IllegalAccessException {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();

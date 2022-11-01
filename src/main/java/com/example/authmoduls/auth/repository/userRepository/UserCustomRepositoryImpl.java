@@ -137,7 +137,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         criteria = criteria.and("softDelete").is(false);
         operations.add(match(criteria));
         operations.add(unwind("results"));
-        operations.add(match(Criteria.where("results.semesterRegex").is(userDetail.getSemester())));
+        operations.add(match(Criteria.where("results.semester").is(userDetail.getSemester())));
         return operations;
     }
     private List<AggregationOperation> userResultBySemesters(UserResult userResult){
