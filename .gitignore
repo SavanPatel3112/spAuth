@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/java/demo/Employee.java
+src/main/java/demo/Medicine.java
+src/main/java/demo/MyClass.java
+src/main/java/demo/MyClasss.java
+src/main/java/demo/Solutions.java
+.gitignore

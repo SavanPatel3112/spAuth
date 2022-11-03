@@ -428,7 +428,6 @@ class UserServiceImplTest {
         verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
     }
 
-
     @Test
     void testUserDelete() throws InvocationTargetException, IllegalAccessException {
         String id =  "123";
@@ -449,9 +448,7 @@ class UserServiceImplTest {
         userService.userDelete(id, role);
 
         verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
-
     }
-
     @Test
     void testUploadFile(){
         try {
@@ -487,8 +484,6 @@ class UserServiceImplTest {
         userService.importUsersVerify(userImportVerifyRequest);
 
         Assertions.assertEquals(userDataModel,userService.importUsersVerify(userImportVerifyRequest));
-
     }
-
 }
 
