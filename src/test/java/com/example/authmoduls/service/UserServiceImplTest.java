@@ -1,6 +1,5 @@
 package com.example.authmoduls.service;
 
-import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.example.authmoduls.auth.decorator.*;
 import com.example.authmoduls.auth.enums.UserSortBy;
 import com.example.authmoduls.auth.model.UserModel;
@@ -9,9 +8,9 @@ import com.example.authmoduls.auth.repository.userRepository.UserRepository;
 import com.example.authmoduls.auth.service.userService.UserService;
 import com.example.authmoduls.auth.service.userService.UserServiceImpl;
 import com.example.authmoduls.common.decorator.*;
+import com.example.authmoduls.common.decorator.RequestSession;
 import com.example.authmoduls.common.enums.Role;
-import com.example.authmoduls.common.model.AdminConfiguration;
-import com.example.authmoduls.common.model.JWTUser;
+import com.example.authmoduls.common.model.*;
 import com.example.authmoduls.common.repository.ImportedDataRepository;
 import com.example.authmoduls.common.repository.UserDataRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
@@ -20,7 +19,7 @@ import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
 import com.example.authmoduls.helper.DataSetHelper;
 import lombok.extern.slf4j.Slf4j;
-import net.fortuna.ical4j.model.DateTime;
+import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -28,8 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -37,7 +42,7 @@ import static org.mockito.Mockito.*;
 
 @AutoConfigureMockMvc
 @Slf4j
-public class UserServiceImplTest {
+class UserServiceImplTest {
 
     @Autowired
     DataSetHelper dataSetHelper;
@@ -56,15 +61,295 @@ public class UserServiceImplTest {
     private final RequestSession requestSession = mock(RequestSession.class);
     private final UserService userService = new UserServiceImpl(userRepository,importedDataRepository,userDataRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,userPublisher,modelMapper,requestSession){};
     @Test
-    public void getUser(){
-        try {
+    void testGetUser() throws InvocationTargetException, IllegalAccessException {
+        String id = "121";
 
+        var userResponse = UserResponse.builder().userName("sp3112").build();
+
+        var userModel = UserModel.builder().userName("sp3112").build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        userService.getUser(id);
+
+        Assertions.assertEquals(userResponse,userService.getUser(id));
+    }
+    @Test
+    void testAddOrUpdateUser() throws InvocationTargetException, IllegalAccessException {
+        //given
+        String id ="123";
+        Set<String> requiredEmailItems = Collections.singleton("@");
+        String userName = "sp3112";
+        String firstName = "Savan";
+        String middleName = "Kiritbhai";
+        String lastName = "Patel";
+        String email = "savan9045@gmail.com";
+        String mobileNo = "9081738141";
+        String passWord = "Sp@31123112";
+        String nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String mobileRegex = "^[0-9]{10}$";
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
+
+
+        var userAddRequest =UserAddRequest.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email)
+                .userName(userName).password(passWord).mobileNo(mobileNo).build();
+
+        var userResponse = UserResponse.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email)
+                .userName(userName).password(passWord).mobileNo(mobileNo).build();
+
+        var userModel =UserModel.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email)
+                .userName(userName).passWord(passWord).mobileNo(mobileNo).build();
+
+        var adminConfiguration = AdminConfiguration.builder().username("sp3112").id(id).nameRegex(nameRegex).emailRegex(emailRegex)
+                .moblieNoRegex(mobileRegex).requiredEmailItems(requiredEmailItems).passwordRegex(passwordRegex).build();
+        //when
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+
+        userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN);
+
+        //then
+        Assertions.assertEquals(userResponse,userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN));
+    }
+
+    @Test
+    void testGetAllUser() throws InvocationTargetException, IllegalAccessException {
+        //given
+        var userResponse = List.of(UserResponse.builder().role(Role.ADMIN).build());
+
+        var userModel=List.of(UserModel.builder().role(Role.ADMIN).build());
+        //when
+        when(userRepository.findAllBySoftDeleteFalse()).thenReturn(userModel);
+        userService.getAllUser();
+        //then
+        Assertions.assertEquals(userResponse,userService.getAllUser());
+    }
+
+    @Test
+    void testDeleteUser(){
+        String id = "111";
+
+        var userModel=UserModel.builder().role(Role.ADMIN).build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        userService.deleteUser(id);
+
+        verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+    }
+    @Test
+    void testGetAllUserByPagination() {
+        try {
             UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByIdAndSoftDeleteIsFalse(userModel.getId()).get()).thenReturn(userModel);
-            Assertions.assertEquals(userService.getUser(userModel.getId()), new UserResponse());
+            UserFilter userFilter = new UserFilter();
+            userFilter.setRole(userFilter.getRole());
+            FilterSortRequest.SortRequest<UserSortBy> sort = new FilterSortRequest.SortRequest<>();
+            sort.setSortBy(UserSortBy.EMAIL);
+            sort.setOrderBy(Sort.Direction.ASC);
+            Pagination pagination = new Pagination();
+            pagination.setLimit(1);
+            pagination.setPage(1);
+            PageRequest pageRequest = PageRequest.of(pagination.getLimit(), pagination.getPage());
+            List<UserModel> userModels1 = new ArrayList<>();
+            userModels1.add(userModel);
+            when(userRepository.findAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest).getContent()).thenReturn(userModels1);
+            Assertions.assertEquals(userService.getAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest), new PageResponse<UserModel>());
+            verify(userRepository, times(1)).findAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest);
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }
+
+    }
+
+    @Test
+    void testGetToken() throws InvocationTargetException, IllegalAccessException {
+        String id = "111";
+        String userName = "sp3112";
+        String firstName = "savan";
+        String lastName = "patel";
+        String middleName = "kiritbhai";
+
+
+        var userModel = UserModel.builder().userName(userName).firstName(firstName).lastName(lastName).middleName(middleName).role(Role.ADMIN).build();
+        var userResponse = UserResponse.builder().userName(userName).firstName(firstName).lastName(lastName).middleName(middleName).role(Role.ADMIN).build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        userService.getToken(id);
+
+        Assertions.assertEquals(userResponse, userService.getToken(id));
+    }
+
+    @Test
+    void testGetEncryptPassword() throws InvocationTargetException, IllegalAccessException {
+        String id = "111";
+        String encryptPassWord = "$2a$12$mlrUaiB1FDvKVFlpm.6l3uEyNHiqBNeQpbmdI3NlHqhCvHuJKZq5O";
+
+        var userModel = UserModel.builder().passWord(PasswordUtils.encryptPassword(encryptPassWord)).build();
+        var userResponse = PasswordUtils.encryptPassword(encryptPassWord);
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        userService.getEncryptPassword(id);
+
+        Assertions.assertEquals(userResponse,userService.getEncryptPassword(id));
+
+    }
+
+    @Test
+    void testCheckUserAuthentication() throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
+        String email = "savan9045@gmail.com";
+        String passWord = "Sp@31123112";
+
+        var userModel = UserModel.builder().email(email).build();
+        var userResponse = UserResponse.builder().password(passWord).build();
+        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
+
+        userService.checkUserAuthentication(email,passWord);
+
+        Assertions.assertEquals(userResponse,userService.checkUserAuthentication(email,passWord));
+
+
+    }
+
+    @Test
+    void testGetIdFromToken() throws InvocationTargetException, IllegalAccessException {
+
+        String id = "62ea7609e4eb6b6d0bf0aebc";
+        JWTUser jwtUser = new JWTUser(id);
+        String token = jwtTokenUtil.generateToken(jwtUser);
+
+        when(userRepository.existsByIdAndSoftDeleteFalse(id)).thenReturn(true);
+
+        userService.getIdFromToken(token);
+
+        Assertions.assertEquals(token,userService.getIdFromToken(token));
+
+
+    }
+
+    @Test
+    void testGetValidityOfToken() throws InvocationTargetException, IllegalAccessException {
+        String id ="62ea7609e4eb6b6d0bf0aebc";
+        JWTUser jwtUser = new JWTUser(id);
+        String token = jwtTokenUtil.generateToken(jwtUser);
+
+        var userModel = UserModel.builder().token(token).build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+
+        userService.getValidityOfToken(token);
+
+        Assertions.assertEquals(token,userService.getValidityOfToken(token));
+
+
+    }
+    @Test
+    void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
+
+        String email = "savan9045@gmail.com";
+        String passWord = "Sp@31123112";
+        String otp = "123456";
+        Set<String> requiredEmailItems = Collections.singleton("@");
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
+
+        var userModel =  UserModel.builder().email(email).passWord(passWord).otp(otp).build();
+
+        var adminConfiguration = AdminConfiguration.builder().emailRegex(emailRegex)
+                .requiredEmailItems(requiredEmailItems).passwordRegex(passwordRegex).build();
+        /*passwordUtils.isPasswordAuthenticated(passWord,passWord, PasswordEncryptionType.BCRYPT);*/
+        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+
+        userService.userLogin(email, passWord);
+
+        verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);
+
+    }
+    @Test
+    void testGetOtp() throws InvocationTargetException, IllegalAccessException {
+
+        String otp = "123456";
+        String id = "62ea7609e4eb6b6d0bf0aebc";
+
+        var userModel = UserModel.builder().otp(otp).id(id).build();
+        var userResponse =  UserResponse.builder().otp(otp).id(id).build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        when(userRepository.existsByIdAndOtpAndSoftDeleteFalse(id,otp)).thenReturn(true);
+
+        userService.getOtp(otp, id);
+
+        Assertions.assertEquals(userResponse,userService.getOtp(otp, id));
+
+    }
+    @Test
+    void testForgotPassword(){
+
+        String email ="savan9045@gmail.com";
+        String otp = "123456";
+
+        var userModel =  UserModel.builder().email(email).otp(otp).build();
+
+        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
+
+        userService.forgotPassword(email);
+
+            verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);
+
+    }
+    @Test
+    void testChangePassword() throws NoSuchAlgorithmException {
+
+        String password = "Sp@31123112";
+        String confirmPassword = "Pk@123456";
+        String newPassword = "Pk@123456";
+        String id = "123";
+
+        var userModel = UserModel.builder().passWord(PasswordUtils.encryptPassword(password)).confirmPassWord(confirmPassword)
+                .newPassWord(newPassword).id(id).build();
+
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+
+        userService.changePassword(password, confirmPassword, newPassword, id);
+
+        verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+    }
+    @Test
+    void testLogOut(){
+       String id = "123";
+       boolean login = true;
+       Date logoutTime = new Date();
+
+       var userModel = UserModel.builder().id(id).login(login).logoutTime(logoutTime).build();
+
+       when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+
+       userService.logOut(id);
+
+       verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+
+    }
+    @Test
+    void testGetUserByRole(){
+        String id =  "123";
+        String userName = "sp3112";
+        String firstName = "Savan";
+        String middleName = "Kiritbhai";
+        String lastName = "Patel";
+        String email = "savan9045@gmail.com";
+        String mobileNo = "9081738141";
+        int semester = 1;
+        double spi = 7.01;
+        int year = 2021;
+
+        var userFilter = UserFilter.builder().role(Role.ADMIN).build();
+        var results = List.of(Result.builder().semester(semester).date(new Date()).spi(spi).year(year).build());
+        var userResponse =List.of(UserResponse.builder().role(Role.ADMIN).firstName(firstName).middleName(middleName).lastName(lastName).id(id).userName(userName)
+                .email(email).mobileNo(mobileNo).results(results).build());
+
+        when(userRepository.getUser(userFilter)).thenReturn(userResponse);
+
+        userService.getUserByRole(userFilter);
+
+        Assertions.assertEquals(userResponse,userService.getUserByRole(userFilter));
     }
     @Test
     void testGetUserResult() throws InvocationTargetException, IllegalAccessException {
@@ -86,219 +371,124 @@ public class UserServiceImplTest {
         //then
         Assertions.assertEquals(userDetailResponse,userService.getUserResult(userDetail));
     }
-
     @Test
-    void testAddOrUpdateUser() throws InvocationTargetException, IllegalAccessException {
+    void testAddResult() throws InvocationTargetException, IllegalAccessException {
 
-        //given
-        String id ="123";
-        Set<String> requiredEmailItems = Collections.singleton("@");
-        var userAddRequest =UserAddRequest.builder().userName("sp3112").firstName("Savan").middleName("kiritbhai").lastName("patel").email("savan9045@gmail.com")
-                .userName("sp3112").password("Sp@31123112").mobileNo("9081738141").build();
+        String id = "123";
+        int semester = 1;
+        double spi = 9.05;
+        int year = 2022;
+        Date date = new Date();
+        String semesterRegex = "^[0-8]{1}$";
+        String spiRegex = "^[0-10]{2}$";
+        String status = "active";
 
-        var results = List.of(Result.builder().semester(1).date(new Date()).spi(7.1).year(2022).build());
+        var result = Result.builder().semester(semester).spi(spi).year(year).date(date).status(status).build();
+        var userModel = UserModel.builder().role(Role.STUDENT).result(result).build();
+        var userResponse = UserResponse.builder().role(Role.STUDENT).result(result).build();
+        var adminConfiguration = AdminConfiguration.builder().semesterRegex(semesterRegex).spiRegex(spiRegex).build();
 
-        var userResponse = UserResponse.builder().firstName("Savan").middleName("kiritbhai").lastName("patel").results(results)
-                .userName("sp3112").email("savan9045@gmail.com").password("Sp@31123112").role(Role.ADMIN)
-                .mobileNo("9081738141").balance(665.2).build();
-
-        var userModel =UserModel.builder().firstName("Savan").middleName("Kiritbhai").lastName("Patel").build();
-
-        var adminConfiguration = AdminConfiguration.builder().username("sp3112").id(id).nameRegex("^[0-9#$@!%&*?.-_=]{1,15}$").emailRegex("^[A-Za-z0-9+_.-]+@(.+)$")
-                .moblieNoRegex("^[0-9]{10}$").regex("^(?=.{1,64}@)[a-z0-9_-]+(\\\\.[a-z0-9_-]+)*@\"\n" +
-                        "                + \"[^-][a-z0-9-]+(\\\\.[a-z0-9-]+)*(\\\\.[a-z]{2,})$").spiRegex("^[0-10]{2}$").semesterRegex("^[0-8]{1}$")
-                .requiredEmailItems(requiredEmailItems).passwordRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$").build();
-        //when
         when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
 
-        userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN);
+        userService.addResult(result,id);
 
-        //then
-        Assertions.assertEquals(userResponse,userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN));
+        Assertions.assertEquals(userResponse,userService.addResult(result,id));
     }
 
     @Test
-    void getAllUser() throws InvocationTargetException, IllegalAccessException {
-        //given
-        var userResponse = List.of(UserResponse.builder().role(Role.ADMIN).build());
+    void testUserUpdate() throws InvocationTargetException, IllegalAccessException {
+        //void userUpdate(String id, Role role, UserAddRequest userAddRequest) throws InvocationTargetException, IllegalAccessException;
+        String id =  "123";
+        String userName = "sp3112";
+        String firstName = "Savan";
+        String middleName = "Kiritbhai";
+        String lastName = "Patel";
+        String email = "savan9045@gmail.com";
+        String mobileNo = "9081738141";
+        Role role = Role.ADMIN;
+        String from = "savan.p@techroversolutions.com";
+        String message = "deleted successfully";
+        String to = "savan.p@techroversolutions.com";
+        String cc = "savan.p@techroversolutions.com";
+        String subject = "user";
+        var userModel = UserModel.builder().firstName(firstName).middleName(middleName).lastName(lastName).userName(userName)
+                                                    .email(email).mobileNo(mobileNo).build();
+        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).Message(message).build();
+        var userAddRequest =UserAddRequest.builder().firstName(firstName).middleName(middleName).lastName(lastName).userName(userName)
+                                                    .email(email).mobileNo(mobileNo).build();
+        var adminConfiguration = AdminConfiguration.builder().from(from).build();
 
-        var userModel=List.of(UserModel.builder().role(Role.ADMIN).build());
-        //when
-        when(userRepository.findAllBySoftDeleteFalse()).thenReturn(userModel);
-        userService.getAllUser();
-        //then
-        Assertions.assertEquals(userResponse,userService.getAllUser());
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+
+        utils.sendEmailNow(emailModel);
+        userService.userUpdate(id, role, userAddRequest);
+
+        verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+    }
+
+
+    @Test
+    void testUserDelete() throws InvocationTargetException, IllegalAccessException {
+        String id =  "123";
+        Role role = Role.ADMIN;
+        String from = "savan.p@techroversolutions.com";
+        String message = "deleted successfully";
+        String to = "savan.p@techroversolutions.com";
+        String cc = "savan.p@techroversolutions.com";
+        String subject = "user";
+        var userModel =  UserModel.builder().id(id).role(role).build();
+        var adminConfiguration = AdminConfiguration.builder().from(from).build();
+        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).Message(message).build();
+        when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+
+        utils.sendEmailNow(emailModel);
+
+        userService.userDelete(id, role);
+
+        verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+
     }
 
     @Test
-    public void deleteUser(){
+    void testUploadFile(){
         try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByIdAndSoftDeleteIsFalse(userModel.getId())).thenReturn(Optional.of(userModel));
-            userService.deleteUser(userModel.getId());
-            verify(userRepository, times(1)).save(userModel);
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getAllUserByPagination() throws InvocationTargetException, IllegalAccessException {
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            UserFilter userFilter = new UserFilter();
-            userFilter.setRole(userFilter.getRole());
-            FilterSortRequest.SortRequest<UserSortBy> sort = new FilterSortRequest.SortRequest<>();
-            sort.setSortBy(UserSortBy.EMAIL);
-            sort.setOrderBy(Sort.Direction.ASC);
-            Pagination pagination = new Pagination();
-            pagination.setLimit(1);
-            pagination.setPage(1);
-            PageRequest pageRequest = PageRequest.of(pagination.getLimit(), pagination.getPage());
-            List<UserModel> userModels1 = new ArrayList<>();
-            userModels1.add(userModel);
-            when(userRepository.findAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest).getContent()).thenReturn(userModels1);
-            Assertions.assertEquals(userService.getAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest), new PageResponse<UserModel>());
-            verify(userRepository, times(1)).findAllUserByFilterAndSortAndPage(userFilter, sort, pageRequest);
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getToken() throws InvocationTargetException, IllegalAccessException {
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            List<UserModel> userModels = new ArrayList<>();
-            userModels.add(userModel);
-            when(userRepository.findAllBySoftDeleteFalse()).thenReturn(userModels);
-            Assertions.assertEquals(userService.getToken(userModel.getId()), new UserResponse());
-            verify(userRepository,times(1)).save(userModel);
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getEncryptPassword(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            List<UserModel> userModels = new ArrayList<>();
-            userModels.add(userModel);
-            when(userRepository.findAllBySoftDeleteFalse()).thenReturn(userModels);
-            Assertions.assertEquals(userService.getEncryptPassword(userModel.getId()), PasswordUtils.encryptPassword(""));
-            verify(userRepository,times(1)).save(userModel);
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void checkUserAuthentication(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByEmailAndSoftDeleteIsFalse(userModel.getEmail()).get()).thenReturn(userModel);
-            Assertions.assertEquals(userService.checkUserAuthentication(userModel.getEmail(),userModel.getPassWord()),new UserResponse());
-            verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(userModel.getEmail());
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getIdFromToken(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            JWTUser jwtUser = new JWTUser(userModel.getId(), Collections.singletonList(userModel.getRole().toString()));
-            String token = jwtTokenUtil.generateToken(jwtUser);
-            when(userRepository.existsByIdAndSoftDeleteFalse(userModel.getId())).thenReturn(true);
-            Assertions.assertEquals(userService.getIdFromToken(token),userModel.getId());
-            verify(userRepository,times(1)).existsByIdAndSoftDeleteFalse(userModel.getId());
-        }catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getValidityOfToken(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            JWTUser jwtUser = new JWTUser(userModel.getId(), Collections.singletonList(userModel.getRole().toString()));
-            String token = jwtTokenUtil.generateToken(jwtUser);
-            when(userRepository.existsByIdAndSoftDeleteFalse(userModel.getId())).thenReturn(true);
-            Assertions.assertEquals(userService.getValidityOfToken(token),userModel.getId());
-            verify(userRepository,times(1)).existsByIdAndSoftDeleteFalse(userModel.getId());
+            File file = new File("E:\\java\\randomdata.xlsx");
+            FileInputStream inputStream = new FileInputStream(file);
+            MultipartFile multipartFile = new MockMultipartFile(file.getName(),file.getName(), MediaType.MULTIPART_FORM_DATA.toString(), IOUtils.toByteArray(inputStream));
+            userService.uploadFile(multipartFile);
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }
     }
     @Test
-    public void userLogin(){
+    void importUsers(){
         try {
             UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByEmailAndSoftDeleteIsFalse(userModel.getEmail())).thenReturn(Optional.of(userModel));
-            verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(userModel.getEmail());
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
+            File file = new File("E:\\java\\randomdata.xlsx");
+            FileInputStream inputStream = new FileInputStream(file);
+            MultipartFile multipartFile = new MockMultipartFile(file.getName(),file.getName(), MediaType.MULTIPART_FORM_DATA.toString(), IOUtils.toByteArray(inputStream));
+            userService.importUsers(multipartFile, userModel.getId());
+        }catch (Exception e){
+            Assertions.fail(e.getMessage());
         }
     }
     @Test
-    public void getOtp(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.existsByIdAndOtpAndSoftDeleteFalse(userModel.getId(),userModel.getOtp())).thenReturn( true);
-            verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(userModel.getEmail());
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
-        }
-    }
-    @Test
-    public void forgotPassword(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByEmailAndSoftDeleteIsFalse(userModel.getEmail()).get()).thenReturn( userModel);
+    void testImportUsersVerify(){
 
-            verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(userModel.getEmail());
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
-        }
-    }
-    @Test
-    public void setPassword(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByIdAndSoftDeleteIsFalse(userModel.getId())).thenReturn(Optional.of(userModel));
-            verify(userRepository).findByIdAndSoftDeleteIsFalse(userModel.getId());
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
-        }
-    }
-    @Test
-    public void logOut(){
-        try {
-            UserModel userModel = dataSetHelper.getUserModel();
-            when(userRepository.findByIdAndSoftDeleteIsFalse(userModel.getId())).thenReturn(Optional.of(userModel));
-            verify(userRepository).findByIdAndSoftDeleteIsFalse(userModel.getId());
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
-        }
-    }
+        String id = "13";
+        var userImportVerifyRequest = UserImportVerifyRequest.builder().id(id).build();
+        var userDataModel = List.of(UserDataModel.builder().id(id).build());
+        var userImportedData = UserImportedData.builder().id(id).build();
+        when(importedDataRepository.findById(id)).thenReturn(Optional.ofNullable(userImportedData));
 
-    @Test
-    public void getUserByRole(){
-        try {
-            UserFilter userFilter = new UserFilter();
-            userFilter.setRole(userFilter.getRole());
-            List<UserResponse> userResponses = new ArrayList<>();
-            when(userRepository.getUser(userFilter)).thenReturn(userResponses);
-            Assertions.assertEquals(userService.getUserByRole(userFilter),userResponses);
-            verify(userRepository,times(1)).getUser(userFilter);
-        } catch (Exception e){
-                Assertions.fail(e.getMessage());
-        }
-    }
+        userService.importUsersVerify(userImportVerifyRequest);
 
+        Assertions.assertEquals(userDataModel,userService.importUsersVerify(userImportVerifyRequest));
+
+    }
 
 }
 

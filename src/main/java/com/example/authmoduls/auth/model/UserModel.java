@@ -70,7 +70,7 @@ public class UserModel {
 
     @JsonIgnore
     boolean softDelete = false;
-
+    Result result;
     List<Result> results;
 
     public void setFullName() {

@@ -284,7 +284,7 @@ public class UserControllerTest {
         UserFilter userFilter = new UserFilter();
         userFilter.setRole(Role.ADMIN);
         String json = new Gson().toJson(userFilter);
-        MvcResult mvcResult = mockMvc.perform(post("/users/getUser?role="+userModel.getRole())
+        MvcResult mvcResult = mockMvc.perform(post("/users/testGetUser?role="+userModel.getRole())
                         .header(CustomHTTPHeaders.TOKEN.toString(),token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))

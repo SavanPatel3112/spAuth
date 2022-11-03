@@ -25,6 +25,7 @@ import com.example.authmoduls.common.utils.ImportExcelDataHelper;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import demo.Medicine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -204,7 +205,6 @@ public class UserServiceImpl implements  UserService {
         UserResponse userResponse = new UserResponse();
         userResponse.setPassword(userModel.getPassWord());
         String getPassword = userResponse.getPassword();
-        System.out.println(getPassword);
         boolean passwords = passwordUtils.isPasswordAuthenticated(password, getPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
             userRepository.save(userModel);
@@ -333,7 +333,6 @@ public class UserServiceImpl implements  UserService {
             throw new NotFoundException(MessageConstant.INVAILD_PASSWORD);
         }
     }
-
     @Override
     public void logOut(String id) {
         UserModel userModel = getUserModel(id);
@@ -352,14 +351,11 @@ public class UserServiceImpl implements  UserService {
     @Override
     public UserResponse addResult(Result result, String id) throws InvocationTargetException, IllegalAccessException {
         UserModel userModel = getUserModel(id);
-        System.out.println("Role:"+userModel.getRole());
         if (!userModel.getRole().equals(Role.STUDENT)) {//role is student or not?
             throw new NotFoundException(MessageConstant.ROLE_NOT_MATCHED);
         }
-
         checkResultCond(result);   //common condition  check
         result.setDate(new Date());
-
         List<Result> results = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userModel.getResults())) {
             results = userModel.getResults();
@@ -369,11 +365,11 @@ public class UserServiceImpl implements  UserService {
             results.add(result);
             cgpi = result.getSpi();
         } else {
-            for (Result result1 : results) {
+        /*    for (Result result1 : results) {
                 if (result1.getSemester() == result.getSemester()) {
                     throw new AlreadyExistException(MessageConstant.SEMESTER_EXISTS);
                 }
-            }
+            }*/
             System.out.println("Result:"+result);
             results.add(result);
             System.out.println("results:"+results.size());
@@ -390,10 +386,9 @@ public class UserServiceImpl implements  UserService {
         System.out.println("ResultSize:"+results.size());
         userModel.setCgpi(cgpi);
         userModel.setResults(results);
-
         userRepository.save(userModel);
         System.out.println("userModel"+userModel.getResults());
-        sendResultEmail(userModel, result);//send email
+       /* sendResultEmail(userModel, result);//send email*/
         UserResponse userResponse = new UserResponse();
         nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);
         return userResponse;
@@ -680,7 +675,7 @@ public class UserServiceImpl implements  UserService {
         Date importDate = new Date();
         users = getUserFromImportedData(data,verifyRequest,importDate);
 //      if (userDataRepository.findAllByImportedIdAndSoftDeleteIsFalse(verifyRequest.getId()).isEmpty()){
-        setAndGetDuplicateEmailUsers(users);
+//        setAndGetDuplicateEmailUsers(users);
         users = userDataRepository.saveAll(users);
         if(!CollectionUtils.isEmpty(users)){
             userDataRepository.saveAll(users);
@@ -893,12 +888,12 @@ public class UserServiceImpl implements  UserService {
             if (userAddRequest.getPassword() != null) {
                 userResponse1.setPassWord(userAddRequest.getPassword());
             }
-            if (userAddRequest.getBirthDate() != null) {
+            /*if (userAddRequest.getBirthDate() != null) {
                 userResponse1.setBirthDate(userAddRequest.getBirthDate());
-            }
-            if (userAddRequest.getAddress() != null) {
+            }*/
+           /* if (userAddRequest.getAddress() != null) {
                 userResponse1.setAddress(userAddRequest.getAddress());
-            }
+            }*/
             if (userAddRequest.getMobileNo() != null) {
                 userResponse1.setMobileNo(userAddRequest.getMobileNo());
             }

@@ -25,6 +25,7 @@ public class UserResponse {
     String firstName;
     String middleName;
     String lastName;
+    String otp;
     int age;
     String email;
     String userName;
@@ -41,6 +42,7 @@ public class UserResponse {
     BookPurchaseLog bookPurchase;
     Book book;
     List<Result> results;
+    Result result;
     Set<String> userId;
     @JsonIgnore
     boolean softDelete =false;

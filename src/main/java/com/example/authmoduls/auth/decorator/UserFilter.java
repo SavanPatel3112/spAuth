@@ -4,12 +4,14 @@ import com.example.authmoduls.cc.enums.Plan;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class UserFilter {
     String search;
     Role role;
