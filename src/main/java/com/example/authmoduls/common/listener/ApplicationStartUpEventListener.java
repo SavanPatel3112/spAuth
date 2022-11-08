@@ -31,8 +31,8 @@ public class ApplicationStartUpEventListener {
     RestAPIRepository restAPIRepository;
     @Autowired
     AdminRepository adminRepository;
-   // @Autowired
-    //SchedulerService schedulerService;
+ /*   @Autowired
+    SchedulerService schedulerService;*/
     @Autowired
    AdminConfigurationService adminConfigurationService;
 
@@ -86,12 +86,12 @@ public class ApplicationStartUpEventListener {
         AdminConfiguration adminConfiguration= adminConfigurationService.getConfigurationDetails();
         emailModel.setTo(emails.iterator().next());
         emailModel.setCc(adminConfiguration.getTechAdmins());
-        //emailModel.setBcc(emailNotificationConfig.getBcc());
+//        emailModel.setBcc(emailNotificationConfig.getBcc());
         emailModel.setSubject("Auth module started");
         emailModel.setMessage("AuthModule<br/><br/>CST time : "+cstTime+"<br/>GMT time : "+gmtTime+"<br/>IST time : "+istTime);
         utils.sendEmailNow(emailModel);
         log.info("Module started mail sent to tech-admins");
-        //scheduleCronJobs(adminRepository.findAll().get(0));*/
+        /*scheduleCronJobs(adminRepository.findAll().get(0));*/
     }
      public  void saveIfNotExits(List<RestAPI> apis){
         apis.forEach(api->{
@@ -101,13 +101,12 @@ public class ApplicationStartUpEventListener {
             }
         });
     }
-    /*
-    private void scheduleCronJobs(AdminConfiguration configuration){
+/*    private void scheduleCronJobs(AdminConfiguration configuration){
         try {
             schedulerService.scheduleCronJob(ModuleCheckScheduleJob.class,configuration.getModuleCheckCronString(), "check_module",null,null);
-            List<ComplianceHistory> complianceHistories = historyRepository.findByRunningTrueAndSoftDeleteIsFalse();
+            List<ComplianceHistory> complianceHistories = adminRepository.findByRunningTrueAndSoftDeleteIsFalse();
             for (ComplianceHistory history : complianceHistories) {
-                portfolioService.saveHistory(history);
+                adminConfigurationService.saveHistory(history);
             }
             //TODO NB Need to stop resident cnc run after fetch data
             schedulerService.scheduleCronJob(ResidentRefreshScheduleJob.class,"0 0 6 1/1 * ? *", "resident_update",null,null);
@@ -119,7 +118,7 @@ public class ApplicationStartUpEventListener {
 //            schedulerService.scheduleCronJob(ResidentRenterChargeScheduleJob.class,"0 0 0/1 1/1 * ? *", "resident_renter_charge_calculate",null,null);
             //schedulerService.scheduleOnDate(CommunityInactiveScheduleJob.class,date, "community_inactive_schedule_job");
             log.info("Scheduler job added");
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             log.error("Error occurred while creating scheduler job : {}",e.getMessage());
         }
     }*/

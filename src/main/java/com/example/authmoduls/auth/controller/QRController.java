@@ -1,5 +1,7 @@
 package com.example.authmoduls.auth.controller;
 
+import com.example.authmoduls.common.enums.Role;
+import com.example.authmoduls.common.utils.Access;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -21,4 +23,7 @@ public class QRController{
         BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 250, 250);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
     }
+
+
+
 }

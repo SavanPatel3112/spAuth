@@ -59,6 +59,7 @@ class UserServiceImplTest {
     private final UserPublisher userPublisher = mock(UserPublisher.class);
     private final ModelMapper modelMapper = mock(ModelMapper.class);
     private final RequestSession requestSession = mock(RequestSession.class);
+    private final OtpGenerator otpGenerator = mock(OtpGenerator.class);
     private final UserService userService = new UserServiceImpl(userRepository,importedDataRepository,userDataRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,userPublisher,modelMapper,requestSession){};
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {

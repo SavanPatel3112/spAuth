@@ -1,5 +1,6 @@
 package com.example.authmoduls.common.service;
 
+import com.example.authmoduls.auth.model.UserModel;
 import com.example.authmoduls.common.decorator.AdminResponse;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.model.AdminConfiguration;
@@ -43,4 +44,5 @@ public class AdminConfigurationServiceImpl implements AdminConfigurationService 
         }
         return adminConfiguration;
     }
+
 }

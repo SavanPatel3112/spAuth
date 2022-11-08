@@ -21,14 +21,13 @@ public class MyClasss {
             scanner.nextLine();
         }
         String branch = scanner.next();
-        boolean companyTransports = scanner.nextBoolean();
         int integers1 =findCountOfEmployeesUsingCompTransport(employeeList,branch);
         if (integers1==0)
             log.info("No such Employees");
         else
             log.info("input:{}",integers1);
 
-        findEmployeeWithSecondHighestRatings(employeeList, companyTransports);
+        findEmployeeWithSecondHighestRatings(employeeList);
     }
 
     public static int findCountOfEmployeesUsingCompTransport(List<Employee> employees,String branch){
@@ -42,49 +41,18 @@ public class MyClasss {
         return count;
     }
 
-    public static void findEmployeeWithSecondHighestRatings(List<Employee> employees, boolean companyTransport){
-
+    public static void findEmployeeWithSecondHighestRatings(List<Employee> employees){
         List<Employee> employeeList= new ArrayList<>();
-
         for (Employee employee : employees) {
             if (!employee.isCompanyTransport()){
                 employeeList.add(employee);
             }
         }
-        Collections.sort(employeeList, new Comparator<Employee>() {
-            @Override
-            public int compare(Employee o1, Employee o2) {
-                return (int) (o2.getEmployeeRating()-o1.getEmployeeRating());
-            }
-        });
+        employeeList.sort((o1, o2) -> (int) (o2.getEmployeeRating() - o1.getEmployeeRating()));
         if (employeeList.size()>1){
             log.info("employee:{}",employeeList.get(1));
         }else {
             log.info("employee:{}",employeeList.get(employeeList.size()-1));
         }
-
-
-
-/*
-        Integer[] integers = new Integer[0];
-        for (int i=0;i<integers.length;i++){
-            if (!companyTransport){
-                integers= Arrays.copyOf(integers,integers.length+1);
-                integers[integers.length-1]= employees[i].getEmployeeId();
-            }
-            Arrays.sort(integers);
-        }
-        List<Employee> employeeList= new ArrayList<>();
-        Collections.sort(employeeList, new Comparator<Employee>() {
-            @Override
-            public int compare(Employee o1, Employee o2) {
-                return (int) (o2.getEmployeeRating()-o1.getEmployeeRating());
-            }
-        });
-        if (employeeList.size()>1){
-            System.out.println(employeeList.get(1));
-        }
-        return integers;
-*/
     }
 }

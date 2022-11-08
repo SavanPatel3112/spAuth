@@ -6,6 +6,8 @@ public class Medicine {
     String disease ;
     int price ;
 
+    String medicalItem;
+
     public String getMedicineName() {
         return medicineName;
     }
@@ -33,6 +35,7 @@ public class Medicine {
     public int getPrice() {
         return price;
     }
+
 
     public void setPrice(int price) {
         this.price = price;

@@ -40,7 +40,7 @@ public class AdminConfiguration{
     Date Updated;
     int importRecordLimit = 100;
     Set<String> extensions = getExtensionsData();
-    Set<String> techAdmins = gettechadminEmails();
+    Set<String> techAdmins = getTechAdminEmails();
     NotificationConfiguration notificationConfiguration;
     Map<String,String> userImportMappingFields = new LinkedHashMap<>();
     private Set<String> getRequiredItems() {
@@ -54,7 +54,7 @@ public class AdminConfiguration{
         extensions.add("yahoo.com");
         return extensions;
     }
-    private Set<String> gettechadminEmails() {
+    private Set<String> getTechAdminEmails() {
         Set<String> emails = new HashSet<>();
         emails.add("dency.g@techroversolutions.com");
         //emails.add("sarthak.j@techroversolutions.com");

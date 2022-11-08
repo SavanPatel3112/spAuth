@@ -50,6 +50,7 @@ public class MessageConstant {
     public static final String BOOK_NAME_NOT_FOUND ="book name not found" ;
     public static final String NOT_VALID_BALANCE ="student has no Enough balance" ;
     public static final String NOT_VALID_REFUND_DISCOUNT ="it is not valid refund discount" ;
+    public static final String INVALID_ZIPCODE ="please enter the valid zipCode";
 
 
 }

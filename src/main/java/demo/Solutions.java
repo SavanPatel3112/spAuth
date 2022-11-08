@@ -28,6 +28,8 @@ public class Solutions {
                 medicines.set(medicines.size() - 1, medicine.getPrice());
             }
         }
+        fsf
+        sfdf
     }
 
 }

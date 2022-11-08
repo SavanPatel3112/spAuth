@@ -14,8 +14,7 @@ public class RestApiServiceImpl implements RestAPIService {
 
     @Override
     public List<RestAPI> getAll() {
-        List<RestAPI> restAPIS = restApiRepository.findAllBy();
-        return restAPIS;
+        return restApiRepository.findAllBy();
     }
 
     @Override
