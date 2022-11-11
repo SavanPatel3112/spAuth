@@ -2,6 +2,7 @@ package com.example.authmoduls.service;
 
 import com.example.authmoduls.auth.decorator.*;
 import com.example.authmoduls.auth.enums.UserSortBy;
+import com.example.authmoduls.auth.enums.UserStatus;
 import com.example.authmoduls.auth.model.UserModel;
 import com.example.authmoduls.auth.rabbitmq.UserPublisher;
 import com.example.authmoduls.auth.repository.userRepository.UserRepository;
@@ -14,6 +15,7 @@ import com.example.authmoduls.common.model.*;
 import com.example.authmoduls.common.repository.ImportedDataRepository;
 import com.example.authmoduls.common.repository.UserDataRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
+import com.example.authmoduls.common.service.SchedulerService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
@@ -23,6 +25,7 @@ import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.PageRequest;
@@ -59,8 +62,8 @@ class UserServiceImplTest {
     private final UserPublisher userPublisher = mock(UserPublisher.class);
     private final ModelMapper modelMapper = mock(ModelMapper.class);
     private final RequestSession requestSession = mock(RequestSession.class);
-    private final OtpGenerator otpGenerator = mock(OtpGenerator.class);
-    private final UserService userService = new UserServiceImpl(userRepository,importedDataRepository,userDataRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,userPublisher,modelMapper,requestSession){};
+    private final SchedulerService schedulerService = mock(SchedulerService.class);
+    private final UserService userService = new UserServiceImpl(userRepository,importedDataRepository,userDataRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,userPublisher,modelMapper,requestSession,schedulerService){};
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {
         String id = "121";
@@ -83,7 +86,7 @@ class UserServiceImplTest {
         String firstName = "Savan";
         String middleName = "Kiritbhai";
         String lastName = "Patel";
-        String email = "savan9045@gmail.com";
+        String email = "savan9048@gmail.com";
         String mobileNo = "9081738141";
         String passWord = "Sp@31123112";
         String nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
@@ -169,7 +172,6 @@ class UserServiceImplTest {
         String lastName = "patel";
         String middleName = "kiritbhai";
 
-
         var userModel = UserModel.builder().userName(userName).firstName(firstName).lastName(lastName).middleName(middleName).role(Role.ADMIN).build();
         var userResponse = UserResponse.builder().userName(userName).firstName(firstName).lastName(lastName).middleName(middleName).role(Role.ADMIN).build();
 
@@ -195,13 +197,13 @@ class UserServiceImplTest {
 
     @Test
     void testCheckUserAuthentication() throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
-        String email = "savan9045@gmail.com";
-        String passWord = "Sp@31123112";
+        String email = "savan89@gmail.com";
+        String passWord = "$2a$12$KeRiPdjD1A.AhFO2vzNdPe3/se1XNovi9fv6GIWHC69HgFb3adnM6";
 
         var userModel = UserModel.builder().email(email).build();
-        var userResponse = UserResponse.builder().password(passWord).build();
-        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
+        var userResponse = UserResponse.builder().password(PasswordUtils.encryptPassword(passWord)).build();
 
+        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
         userService.checkUserAuthentication(email,passWord);
 
         Assertions.assertEquals(userResponse,userService.checkUserAuthentication(email,passWord));
@@ -314,7 +316,7 @@ class UserServiceImplTest {
         verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
     }
     @Test
-    void testLogOut(){
+    void testLogOut() throws SchedulerException, InvocationTargetException, IllegalAccessException {
        String id = "123";
        boolean login = true;
        Date logoutTime = new Date();
@@ -415,7 +417,7 @@ class UserServiceImplTest {
         String subject = "user";
         var userModel = UserModel.builder().firstName(firstName).middleName(middleName).lastName(lastName).userName(userName)
                                                     .email(email).mobileNo(mobileNo).build();
-        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).Message(message).build();
+        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).message(message).build();
         var userAddRequest =UserAddRequest.builder().firstName(firstName).middleName(middleName).lastName(lastName).userName(userName)
                                                     .email(email).mobileNo(mobileNo).build();
         var adminConfiguration = AdminConfiguration.builder().from(from).build();
@@ -440,7 +442,7 @@ class UserServiceImplTest {
         String subject = "user";
         var userModel =  UserModel.builder().id(id).role(role).build();
         var adminConfiguration = AdminConfiguration.builder().from(from).build();
-        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).Message(message).build();
+        var emailModel =EmailModel.builder().cc(Collections.singleton(cc)).subject(subject).to(to).message(message).build();
         when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
 
@@ -462,7 +464,7 @@ class UserServiceImplTest {
         }
     }
     @Test
-    void importUsers(){
+    void testImportUsers(){
         try {
             UserModel userModel = dataSetHelper.getUserModel();
             File file = new File("E:\\java\\randomdata.xlsx");
@@ -475,7 +477,6 @@ class UserServiceImplTest {
     }
     @Test
     void testImportUsersVerify(){
-
         String id = "13";
         var userImportVerifyRequest = UserImportVerifyRequest.builder().id(id).build();
         var userDataModel = List.of(UserDataModel.builder().id(id).build());
@@ -485,6 +486,75 @@ class UserServiceImplTest {
         userService.importUsersVerify(userImportVerifyRequest);
 
         Assertions.assertEquals(userDataModel,userService.importUsersVerify(userImportVerifyRequest));
+    }
+    @Test
+    void testGetUserPassword() throws InvocationTargetException, IllegalAccessException {
+        String otp = "123456";
+        String password = "Sp@31122000";
+        String confirmPassword = "Sp@31122000";
+        String userName = "Sp@3112";
+        String from = "savan.p@techroversolutions.com";
+        String message = "deleted successfully";
+        String to = "savan.p@techroversolutions.com";
+        String cc = "savan.p@techroversolutions.com";
+        String subject = "user";
+        var userModel =UserModel.builder().userName(userName).otp(otp).passWord(PasswordUtils.encryptPassword(password)).confirmPassWord(PasswordUtils.encryptPassword(confirmPassword)).build();
+        var adminConfiguration = AdminConfiguration.builder().from(from).build();
+        var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).subject(subject).message(message).build();
+
+        when(userRepository.findByUserNameAndSoftDeleteIsFalse(userName)).thenReturn(Optional.ofNullable(userModel));
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+
+        utils.sendOtp(userModel, confirmPassword);
+        utils.sendEmailNow(emailModel);
+
+        userService.getUserPassword(userName, password, confirmPassword);
+
+        verify(userRepository,times(1)).findByUserNameAndSoftDeleteIsFalse(userName);
+
+    }
+    @Test
+    void testSendMailToInvitedUser() throws InvocationTargetException, IllegalAccessException {
+        String from = "savan.p@techroversolutions.com";
+        String message = "deleted successfully";
+        String to = "savan.p@techroversolutions.com";
+        String cc = "savan.p@techroversolutions.com";
+        String subject = "user";
+        String userName = "Sp@3112";
+
+        var userModel = List.of(UserModel.builder().userName(userName).userStatus(UserStatus.INVITED).build());
+        var userModel1 = UserModel.builder().userName(userName).build();
+        var adminConfiguration = AdminConfiguration.builder().from(from).build();
+        var emailModel = EmailModel.builder().subject(subject).cc(Collections.singleton(cc)).to(to).message(message).build();
+
+        when(userRepository.findByUserStatusAndSoftDeleteIsFalse(UserStatus.INVITED)).thenReturn(userModel);
+        when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
+        when(modelMapper.map(userModel, UserModel.class)).thenReturn(userModel1);
+
+        utils.sendEmailNow(emailModel);
+
+        userService.sendMailToInvitedUser(UserStatus.INVITED);
+
+        verify(userRepository,times(1)).findByUserStatusAndSoftDeleteIsFalse(UserStatus.INVITED);
+
+    }
+    @Test
+    void testUserChartApi() throws InvocationTargetException, IllegalAccessException {
+
+        String userId = "62ea7609e4eb6b6d0bf0aebc";
+        int year = 2021;
+        String title = "All Data";
+        int totalCount = 10;
+        var userDateDetails = List.of(UserDateDetails.builder().userIds(Collections.singleton(userId)).year(year).build());
+        var monthAndYear = MonthAndYear.builder().title(Collections.singleton(title)).totalCount(totalCount).userDateDetails(userDateDetails).build();
+
+        when(userRepository.userChartApi(year)).thenReturn(userDateDetails);
+
+        userService.userChartApi(year);
+
+        Assertions.assertEquals(userDateDetails,userService.userChartApi(year));
+
+
     }
 }
 

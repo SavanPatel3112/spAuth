@@ -21,10 +21,8 @@ import com.example.authmoduls.common.model.*;
 import com.example.authmoduls.common.repository.ImportedDataRepository;
 import com.example.authmoduls.common.repository.UserDataRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
-import com.example.authmoduls.common.utils.ImportExcelDataHelper;
-import com.example.authmoduls.common.utils.JwtTokenUtil;
-import com.example.authmoduls.common.utils.PasswordUtils;
-import com.example.authmoduls.common.utils.Utils;
+import com.example.authmoduls.common.service.SchedulerService;
+import com.example.authmoduls.common.utils.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -37,7 +35,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,8 +74,10 @@ public class UserServiceImpl implements UserService {
     private final UserPublisher userPublisher;
     private final ModelMapper modelMapper;
     private final RequestSession requestSession;
+    private final SchedulerService schedulerService;
 
-    public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, UserPublisher userPublisher, ModelMapper modelMapper, RequestSession requestSession) {
+
+    public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, UserPublisher userPublisher, ModelMapper modelMapper, RequestSession requestSession, SchedulerService schedulerService) {
         this.userRepository = userRepository;
         this.importedDataRepository = importedDataRepository;
         this.userDataRepository = userDataRepository;
@@ -91,6 +90,7 @@ public class UserServiceImpl implements UserService {
         this.userPublisher = userPublisher;
         this.modelMapper = modelMapper;
         this.requestSession = requestSession;
+        this.schedulerService=schedulerService;
     }
 
     @Override
@@ -114,25 +114,25 @@ public class UserServiceImpl implements UserService {
         }
         checkUserDetails(userAddRequest);//check empty or not
         //convert birthdate type date to localDate
-        Date date = userAddRequest.getBirthDate();
+/*        Date date = userAddRequest.getBirthDate();
         LocalDateTime dates = Instant.ofEpochMilli(date.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
         System.out.println(dates);
         LocalDate curDate = LocalDate.now();
-        System.out.println(curDate);
+        System.out.println(curDate);*/
 //        set age from birthdate
         UserModel userModel = new UserModel();
-        if (userAddRequest.getBirthDate() != null) {
+      /*  if (userAddRequest.getBirthDate() != null) {
             int age = Period.between(LocalDate.from(dates), curDate).getYears();
             userModel.setAge(age);
             System.out.println(age);
             userRepository.save(userModel);
-        }
+        }*/
         nullAwareBeanUtilsBean.copyProperties(userModel, userAddRequest);
         userModel.setRole(role);//set role in database
         userModel.setFullName();//set getFullName
-        userModel.setCreatedBy(requestSession.getJwtUser().getId());
+        /*userModel.setCreatedBy(requestSession.getJwtUser().getId());*/
         log.info(userModel.getFullName());
         userRepository.save(userModel);
         UserResponse userResponse = new UserResponse();
@@ -309,7 +309,6 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(MessageConstant.INVAILD_OTP);
         }
     }
-
     //pass email
     //user enter email match to database
     //if it is true then otp send
@@ -325,7 +324,6 @@ public class UserServiceImpl implements UserService {
         userModel.setOtp(otp);
         userRepository.save(userModel);
     }
-
     @Override
     public void setPassword(String password, String confirmPassword, String id) {
         if (password.equals(confirmPassword)) {
@@ -337,9 +335,6 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(MessageConstant.PASSWORD_NOT_MATCHED);
         }
     }
-
-
-
     @Override
     public void changePassword(String password, String confirmPassword, String newPassword, String id) throws NoSuchAlgorithmException {
         UserModel userModel = getUserModel(id);
@@ -357,8 +352,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(MessageConstant.INVAILD_PASSWORD);
         }
     }
-
-    @Scheduled()
+    /*@Scheduled(fixedDelay = 3000L)*/
     @Override
     public void logOut(String id) {
         UserModel userModel = getUserModel(id);
@@ -366,18 +360,25 @@ public class UserServiceImpl implements UserService {
         Date date = new Date();
         userModel.setLogoutTime(date);
         userRepository.save(userModel);
+    /*    List<UserModel> userModel = userRepository.findAllByLoginTrue();
+        List<UserResponse> userResponses = new ArrayList<>();
+            for (UserModel model : userModel) {
+                model.setLogin(false);
+                Date date= new Date();
+                model.setLogoutTime(date);
+                userRepository.save(model);
+            }*/
+        /*return userResponses;*/
     }
-
     @Override
     public List<UserResponse> getUserByRole(UserFilter userFilter) {
-
         return userRepository.getUser(userFilter);
     }
 
     @Override
     public UserResponse addResult(Result result, String id) throws InvocationTargetException, IllegalAccessException {
         UserModel userModel = getUserModel(id);
-        if (!userModel.getRole().equals(Role.STUDENT)) {//role is student or not?
+        if (!userModel.getRole().equals(Role.STUDENT)) {//is there role is student or not?
             throw new NotFoundException(MessageConstant.ROLE_NOT_MATCHED);
         }
         checkResultCond(result);   //common condition  check
@@ -391,11 +392,11 @@ public class UserServiceImpl implements UserService {
             results.add(result);
             cgpi = result.getSpi();
         } else {
-        /*    for (Result result1 : results) {
+            for (Result result1 : results) {
                 if (result1.getSemester() == result.getSemester()) {
                     throw new AlreadyExistException(MessageConstant.SEMESTER_EXISTS);
                 }
-            }*/
+            }
             log.info("Result:{}", result);
             results.add(result);
             log.info("results:{}", results.size());
@@ -413,8 +414,8 @@ public class UserServiceImpl implements UserService {
         userModel.setCgpi(cgpi);
         userModel.setResults(results);
         userRepository.save(userModel);
-        log.info("userModel", userModel.getResults());
-        /* sendResultEmail(userModel, result);//send email*/
+        log.info("userModel:{}", userModel.getResults());
+         sendResultEmail(userModel, result);//send email
         UserResponse userResponse = new UserResponse();
         nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);
         return userResponse;
@@ -519,7 +520,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Workbook getUserByExcel(UserFilter userFilter, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException {
-   /*     List<UserResponse> userResponses = getAllUserByFilterAndSortAndPage(userFilter, sort, pagination);
+      /*  List<UserResponse> userResponses = getAllUserByFilterAndSortAndPage(userFilter, sort, pagination);
         List<UserResponseExcel> userResponseExcel = new ArrayList<>();
         for (UserResponse userResponse : userResponses) {
             UserResponseExcel userResponseExcel1 = new UserResponseExcel();
@@ -529,7 +530,7 @@ public class UserServiceImpl implements UserService {
             log.info("name" + userResponse.getFirstName());
             log.info("userIds" + userResponseExcel1.getId());
         }*/
-        return /*ExcelUtil.createWorkbookFromData(userResponseExcel)*/null;
+        return /*ExcelUtil.createWorkbookFromData(userResponseExcel);*/null;
     }
 
     @Override
@@ -846,18 +847,18 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isEmpty(userAddRequest.getEmail()) && CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_EMPTY);
         }
-        if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
+        /*if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
             throw new InvalidRequestException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
-        }
+        }*/
         if (!userAddRequest.getPassword().matches(adminConfiguration.getPasswordRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_PASSWORD);
         }
         if (!userAddRequest.getMobileNo().matches(adminConfiguration.getMoblieNoRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_MOBILENO);
         }
-        if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
+      /*  if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
             throw new InvalidRequestException(MessageConstant.INVALID_ZIPCODE);
-        }
+        }*/
     }
     public void checkResultCond(Result result) throws InvocationTargetException, IllegalAccessException {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();

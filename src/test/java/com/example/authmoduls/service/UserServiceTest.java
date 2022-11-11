@@ -348,10 +348,10 @@ public class UserServiceTest {
         }
     }
     @Test
-    void logOut(){
+    void logOut(String id){
         try {
             UserModel userModel = dataSetHelper.getUserModel();
-            userService.logOut(userModel.getId());
+            userService.logOut(id);
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }
@@ -360,7 +360,7 @@ public class UserServiceTest {
     void logOuts(){
         try {
             UserModel userModel = dataSetHelper.getUserModel();
-            userService.logOut(userModel.getUserName());
+            userService.logOut(userModel.getId());
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }

@@ -1,12 +1,14 @@
 package com.example.authmoduls.common.listener;
 
 import com.example.authmoduls.auth.controller.*;
+import com.example.authmoduls.auth.repository.userRepository.UserRepository;
 import com.example.authmoduls.common.decorator.RestAPI;
 import com.example.authmoduls.common.model.AdminConfiguration;
 import com.example.authmoduls.common.model.EmailModel;
 import com.example.authmoduls.common.repository.AdminRepository;
 import com.example.authmoduls.common.repository.RestAPIRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
+import com.example.authmoduls.common.service.SchedulerService;
 import com.example.authmoduls.common.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
+
 @Component
 @Slf4j
 public class ApplicationStartUpEventListener {
@@ -31,11 +31,12 @@ public class ApplicationStartUpEventListener {
     RestAPIRepository restAPIRepository;
     @Autowired
     AdminRepository adminRepository;
- /*   @Autowired
-    SchedulerService schedulerService;*/
     @Autowired
-   AdminConfigurationService adminConfigurationService;
-
+    SchedulerService schedulerService;
+    @Autowired
+    AdminConfigurationService adminConfigurationService;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     Utils utils;
 
@@ -101,26 +102,27 @@ public class ApplicationStartUpEventListener {
             }
         });
     }
-/*    private void scheduleCronJobs(AdminConfiguration configuration){
+    private void scheduleCronJobs(AdminConfiguration configuration){
         try {
-            schedulerService.scheduleCronJob(ModuleCheckScheduleJob.class,configuration.getModuleCheckCronString(), "check_module",null,null);
-            List<ComplianceHistory> complianceHistories = adminRepository.findByRunningTrueAndSoftDeleteIsFalse();
+            schedulerService.scheduleCronJob(FindLoginTrue.class,"0 0 11 * * ?", "check_login",null , null);
+         /*   List<ComplianceHistory> complianceHistories = adminRepository.findByRunningTrueAndSoftDeleteIsFalse();
             for (ComplianceHistory history : complianceHistories) {
                 adminConfigurationService.saveHistory(history);
-            }
+            }*/
             //TODO NB Need to stop resident cnc run after fetch data
-            schedulerService.scheduleCronJob(ResidentRefreshScheduleJob.class,"0 0 6 1/1 * ? *", "resident_update",null,null);
+            /*schedulerService.scheduleCronJob(ResidentRefreshScheduleJob.class,"0 14 * * * *", "resident_update",null,null);*/
             //TODO NB Need to stop resident cnc run after fetch data
-            schedulerService.scheduleCronJob(ResidentPolicyStateUpdateScheduleJob.class,"0 0 6 1/1 * ? *", "resident_policy_state_update",null,null);
+      /*      schedulerService.scheduleCronJob(Residen tPolicyStateUpdateScheduleJob.class,"0 0 6 1/1 * ? *", "resident_policy_state_update",null,null);
             //Monthly scheduler like 24th
-            schedulerService.scheduleCronJob(MonthlyComplianceScheduleJob.class,"0 0 6 1/1 * ? *", "monthly_compliance_calculation",null,null);
+            schedulerService.scheduleCronJob(MonthlyComplianceScheduleJob.class,"0 0 6 1/1 * ? *", "monthly_compliance_calculation",null,null);*/
 //            residentService.calculateRenterChargeDaily();
 //            schedulerService.scheduleCronJob(ResidentRenterChargeScheduleJob.class,"0 0 0/1 1/1 * ? *", "resident_renter_charge_calculate",null,null);
             //schedulerService.scheduleOnDate(CommunityInactiveScheduleJob.class,date, "community_inactive_schedule_job");
             log.info("Scheduler job added");
         } catch (Exception e) {
+
             log.error("Error occurred while creating scheduler job : {}",e.getMessage());
         }
-    }*/
+    }
 }
 

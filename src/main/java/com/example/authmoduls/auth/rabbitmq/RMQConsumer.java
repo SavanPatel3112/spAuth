@@ -30,7 +30,7 @@ public class RMQConsumer {
     )
     public void processUser(Message message){
         try{
-            log.info("Message");
+            log.info("message");
             String id= ConsumerHelper.parsePayload(message, (Type) Object.class);
             userService.sendMessage(id);
             userConsumerService.getUser(id);
