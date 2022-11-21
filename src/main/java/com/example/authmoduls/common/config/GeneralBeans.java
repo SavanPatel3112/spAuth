@@ -23,14 +23,14 @@ public class GeneralBeans {
     String concurrentConsumers;
 
     @Bean
-    ModelMapper getModelMapper(){
+    ModelMapper getModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
 
     @Bean
-    public GeneralHelper getGeneralHelper(){
+    public GeneralHelper getGeneralHelper() {
         return new GeneralHelper();
     }
 
@@ -40,12 +40,12 @@ public class GeneralBeans {
     }
 
     @Bean
-    public RequestSession getRequestSession(){
+    public RequestSession getRequestSession() {
         return new RequestSession();
     }
 
     @Bean
-    public NullAwareBeanUtilsBean beanUtilsBean(){
+    public NullAwareBeanUtilsBean beanUtilsBean() {
         return new NullAwareBeanUtilsBean();
     }
 
@@ -58,4 +58,4 @@ public class GeneralBeans {
         return factory;
     }
 
-    }
+}

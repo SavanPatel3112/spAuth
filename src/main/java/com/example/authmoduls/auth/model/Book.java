@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.List;
 
-@Document(collection= "book")
+@Document(collection = "book")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

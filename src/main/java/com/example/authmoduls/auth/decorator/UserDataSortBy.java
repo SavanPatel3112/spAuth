@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
-
 @Getter
 @NoArgsConstructor
 public enum UserDataSortBy {

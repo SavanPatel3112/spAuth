@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends MongoRepository<MemberModel,String>, MemberCustomRepository {
+public interface MemberRepository extends MongoRepository<MemberModel, String>, MemberCustomRepository {
     boolean existsByEmailAndSoftDeleteFalse(String email);
 
     Optional<MemberModel> findByIdAndSoftDeleteIsFalse(String id);

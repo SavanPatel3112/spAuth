@@ -1,7 +1,6 @@
 package com.example.authmoduls.auth.enums;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,12 +19,14 @@ public enum UserSortBy {
 
     @JsonIgnore
     private String value;
+
     UserSortBy(String value) {
         this.value = value;
     }
 
-    Map<String,String> toMap() {
-        Map<String,String> map=new HashMap<>();
-        map.put("value",this.toString());
+    Map<String, String> toMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("value", this.toString());
         return map;
-}}
+    }
+}

@@ -7,11 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BookPurchaseLogRepository extends MongoRepository<BookPurchaseLog,String>{
+public interface BookPurchaseLogRepository extends MongoRepository<BookPurchaseLog, String> {
 
     Optional<BookPurchaseLog> findFirstByBookIdAndUserIdAndSoftDeleteIsFalse(String bookId, String userId);
-
-
 
 
 }

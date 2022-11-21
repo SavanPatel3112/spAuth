@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 @AllArgsConstructor
 @Component
-public class ResultResponse <T>{
+public class ResultResponse<T> {
     T data;
     Response status;
     Resultupdate result;

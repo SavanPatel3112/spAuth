@@ -1,5 +1,4 @@
 package com.example.authmoduls.auth.decorator;
-
 import com.example.authmoduls.cc.enums.Plan;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -17,8 +15,6 @@ public class UserFilter {
     Role role;
     Plan plan;
     String Id;
-
-
     @JsonIgnore
     boolean softDelete = false;
 
@@ -34,5 +30,4 @@ public class UserFilter {
     public Plan getPlan(){
         return plan;
     }
-
 }

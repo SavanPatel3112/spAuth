@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-@Document(collection= "member")
+@Document(collection = "member")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,8 +33,9 @@ public class MemberModel {
     Date date;
     @JsonIgnore
     boolean softDelete = false;
+
     public void setFullName() {
-        this.firstName= StringUtils.normalizeSpace(this.firstName);
+        this.firstName = StringUtils.normalizeSpace(this.firstName);
         this.middleName = StringUtils.normalizeSpace(this.middleName);
         this.lastName = StringUtils.normalizeSpace(this.lastName);
         List<String> fullNameList = new LinkedList<>();
@@ -73,7 +74,6 @@ public class MemberModel {
             lastName = name.toString().trim();
         }
     }
-
 
 
 }

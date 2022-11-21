@@ -241,7 +241,7 @@ public class UserController {
     //match password and confirm password is equal or not
     //if match then call login api
     //not match then show error
- /*   @SneakyThrows
+    @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
     @RequestMapping(name = "setPassword", value = "/setPassword", method = RequestMethod.GET)
     public DataResponse<Object> setPassword(@RequestParam String password, @RequestParam String confirmPassword, @RequestParam String id) {
@@ -249,7 +249,7 @@ public class UserController {
         userService.getUserPassword(password, confirmPassword, id);
         dataResponse.setStatus(Response.getPasswordResponse());
         return dataResponse;
-    }*/
+    }
     //12 aug
     //pass password
     //check to database password
@@ -333,7 +333,7 @@ public class UserController {
     @RequestMapping(name = "getUserResultByMinMaxMark", value = "resultByMinMaxMark", method = RequestMethod.POST)
     public ListResponse<UserMinMaxMarkSemResponse> getUserResultByMinMaxMark(@RequestBody UserIdsRequest userIdsRequest) {
         ListResponse<UserMinMaxMarkSemResponse> listResponse = new ListResponse<>();
-        listResponse.setData(userService.getUserResultByMinMaxSem(userIdsRequest));
+            listResponse.setData(userService.getUserResultByMinMaxSem(userIdsRequest));
         listResponse.setStatus(Response.getOkResponse());
         return listResponse;
     }

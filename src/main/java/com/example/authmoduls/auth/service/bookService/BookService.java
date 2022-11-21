@@ -14,13 +14,21 @@ import java.util.List;
 
 public interface BookService {
     BookResponse addOrUpdateBook(BookAddRequest bookAddRequest, String id, Role role) throws InvocationTargetException, IllegalAccessException;
+
     void bookPurchaseLog(String id, String userId) throws InvocationTargetException, IllegalAccessException;
+
     BookPurchaseDetail bookChartApi(int year) throws JSONException;
-    void bookSaleLog(String bookId, String userId );
+
+    void bookSaleLog(String bookId, String userId);
+
     Workbook getBookData() throws JSONException, InvocationTargetException, IllegalAccessException, IOException;
+
     Workbook getBookDataWithMonthAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException, JSONException;
+
     Workbook getUserBookData() throws JSONException, InvocationTargetException, IllegalAccessException, IOException;
+
     Page<BooksList> getBookListByPagination(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException, JSONException;
+
     List<BookTotalCountWithMonth> bookDataWithMonthAndYearAndTotalPrice(int month, int year) throws JSONException;
 }
 

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseExcel {
-
     String id;
     String firstName;
     String middleName;
@@ -18,8 +17,6 @@ public class UserResponseExcel {
     String userName;
     String mobileNo;
     Address address;
-
-
     @ExcelField(excelHeader="Id",position = 1)
     public  String getId(){
         return  id;
@@ -48,5 +45,4 @@ public class UserResponseExcel {
     public String getMobileNo(){
         return mobileNo;
     }
-
 }

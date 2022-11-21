@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 public enum PasswordEncryptionType {
 
-    MD5("MD5"),
-    BCRYPT("BCrypt");
+    MD5("MD5"), BCRYPT("BCrypt");
     String name;
+
     PasswordEncryptionType(String name) {
         this.name = name;
     }

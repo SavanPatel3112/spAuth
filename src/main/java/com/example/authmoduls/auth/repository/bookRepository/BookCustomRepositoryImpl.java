@@ -1,4 +1,5 @@
 package com.example.authmoduls.auth.repository.bookRepository;
+
 import com.example.authmoduls.auth.decorator.bookDecorator.*;
 import com.example.authmoduls.common.decorator.CountQueryResult;
 import com.example.authmoduls.common.decorator.CustomAggregationOperation;
@@ -18,13 +19,16 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.support.PageableExecutionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+
 public class BookCustomRepositoryImpl implements BookCustomRepository {
     @Autowired
     MongoTemplate mongoTemplate;
+
     private List<AggregationOperation> getBookDetails(int year) throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         String fileName = FileReader.loadFile("aggregation/bookPurchaseChart.json");
@@ -37,6 +41,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         operations.add(new CustomAggregationOperation(Document.parse(CustomAggregationOperation.getJson(jsonObject, "groupByMonth", Object.class))));
         return operations;
     }
+
     private List<AggregationOperation> getBookData() throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         Criteria criteria = new Criteria();
@@ -52,6 +57,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         operations.add(new CustomAggregationOperation(Document.parse(CustomAggregationOperation.getJson(jsonObject, "set", Object.class))));
         return operations;
     }
+
     private List<AggregationOperation> getUserBookData() throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         Criteria criteria = new Criteria();
@@ -67,7 +73,8 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         operations.add(new CustomAggregationOperation(Document.parse(CustomAggregationOperation.getJson(jsonObject, "groupOnFullName", Object.class))));
         return operations;
     }
-    private List<AggregationOperation> getBookDetailsWithMontAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination,boolean addPage) throws JSONException {
+
+    private List<AggregationOperation> getBookDetailsWithMontAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination, boolean addPage) throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         String fileName = FileReader.loadFile("aggregation/getDataWithMonthAndYear.json");
         JSONObject jsonObject = new JSONObject(fileName);
@@ -90,41 +97,47 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         }
         return operations;
     }
+
     public List<BookPurchase> bookChartApi(int year) throws JSONException {
         List<AggregationOperation> operations = getBookDetails(year);
         Aggregation aggregation = newAggregation(operations);
         return mongoTemplate.aggregate(aggregation, "bookPurchaseLog", BookPurchase.class).getMappedResults();
     }
+
     public List<BookDetailsData> bookData() throws JSONException {
         List<AggregationOperation> operations = getBookData();
-        Aggregation aggregation =  newAggregation(operations);
+        Aggregation aggregation = newAggregation(operations);
         return mongoTemplate.aggregate(aggregation, "bookPurchaseLog", BookDetailsData.class).getMappedResults();
     }
+
     public List<UserBookDetailsData> userBookData() throws JSONException {
         List<AggregationOperation> operations = getUserBookData();
-        Aggregation aggregation =  newAggregation(operations);
+        Aggregation aggregation = newAggregation(operations);
         return mongoTemplate.aggregate(aggregation, "bookPurchaseLog", UserBookDetailsData.class).getMappedResults();
     }
+
     public Page<BooksList> bookDetailsWithMonthAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws JSONException {
-        List<AggregationOperation> operations = getBookDetailsWithMontAndYear(bookFilter,sort,pagination,true);
+        List<AggregationOperation> operations = getBookDetailsWithMontAndYear(bookFilter, sort, pagination, true);
         Aggregation aggregation = newAggregation(operations);
         List<BooksList> booksLists = mongoTemplate.aggregate(aggregation, "bookPurchaseLog", BooksList.class).getMappedResults();
-        List<AggregationOperation> operationForCount =getBookDetailsWithMontAndYear(bookFilter,sort,pagination,false);
+        List<AggregationOperation> operationForCount = getBookDetailsWithMontAndYear(bookFilter, sort, pagination, false);
         operationForCount.add(group().count().as("count"));
         operationForCount.add(project("count"));
         Aggregation aggregationCount = newAggregation(BooksList.class, operationForCount);
-        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount , BooksList.class, CountQueryResult.class);
+        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, BooksList.class, CountQueryResult.class);
         long count = countQueryResults.getMappedResults().size() == 0 ? 0 : countQueryResults.getMappedResults().get(0).getCount();
         return PageableExecutionUtils.getPage(
                 booksLists,
                 pagination,
                 () -> count);
     }
+
     public List<BookTotalCountWithMonth> bookDataWithMonthAndYearAndTotalPrice(int month, int year) throws JSONException {
-        List<AggregationOperation> operations = getBookDataWithMonthAndYearAndTotalPrice(month,year);
+        List<AggregationOperation> operations = getBookDataWithMonthAndYearAndTotalPrice(month, year);
         Aggregation aggregation = newAggregation(operations);
         return mongoTemplate.aggregate(aggregation, "bookPurchaseLog", BookTotalCountWithMonth.class).getMappedResults();
     }
+
     private List<AggregationOperation> getBookDataWithMonthAndYearAndTotalPrice(int month, int year) throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         String fileName = FileReader.loadFile("aggregation/bookDataWithMonthAndYearAndTotalPrice.json");

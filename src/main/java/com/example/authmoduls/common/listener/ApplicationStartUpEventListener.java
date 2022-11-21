@@ -20,12 +20,15 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
 
 @Component
 @Slf4j
 public class ApplicationStartUpEventListener {
-    boolean skip =  false;
+    boolean skip = false;
 
     @Autowired
     RestAPIRepository restAPIRepository;
@@ -47,10 +50,10 @@ public class ApplicationStartUpEventListener {
         log.debug("Landed in here");
         AdminConfiguration configuration = new AdminConfiguration();
         List<AdminConfiguration> configurations = adminRepository.findAll();
-        if(!CollectionUtils.isEmpty(configurations)){
+        if (!CollectionUtils.isEmpty(configurations)) {
             log.debug("Module Technical configurations exists");
             configuration = configurations.get(0);
-        }else {
+        } else {
             configuration = new AdminConfiguration();
             configuration.setCreatedBy("SYSTEM");
             configuration.setCreated(new Date());
@@ -60,7 +63,7 @@ public class ApplicationStartUpEventListener {
             log.debug("Automatically create the module technical configurations");
         }
         // On Application Start up , create the list of authorized services for authorized data
-        if(!skip){
+        if (!skip) {
             saveIfNotExits(Utils.getAllMethodNames(UserController.class));
             saveIfNotExits(Utils.getAllMethodNames(AdminConfigurationController.class));
             saveIfNotExits(Utils.getAllMethodNames(BookController.class));
@@ -84,27 +87,29 @@ public class ApplicationStartUpEventListener {
             emails.setTo(emails.iterator().next());
         }*/
         EmailModel emailModel = new EmailModel();
-        AdminConfiguration adminConfiguration= adminConfigurationService.getConfigurationDetails();
+        AdminConfiguration adminConfiguration = adminConfigurationService.getConfigurationDetails();
         emailModel.setTo(emails.iterator().next());
         emailModel.setCc(adminConfiguration.getTechAdmins());
 //        emailModel.setBcc(emailNotificationConfig.getBcc());
         emailModel.setSubject("Auth module started");
-        emailModel.setMessage("AuthModule<br/><br/>CST time : "+cstTime+"<br/>GMT time : "+gmtTime+"<br/>IST time : "+istTime);
+        emailModel.setMessage("AuthModule<br/><br/>CST time : " + cstTime + "<br/>GMT time : " + gmtTime + "<br/>IST time : " + istTime);
         utils.sendEmailNow(emailModel);
         log.info("Module started mail sent to tech-admins");
         /*scheduleCronJobs(adminRepository.findAll().get(0));*/
     }
-     public  void saveIfNotExits(List<RestAPI> apis){
-        apis.forEach(api->{
-            if(!restAPIRepository.existsByName(api.getName())){
-                log.info("Added API : {}",api.getName());
+
+    public void saveIfNotExits(List<RestAPI> apis) {
+        apis.forEach(api -> {
+            if (!restAPIRepository.existsByName(api.getName())) {
+                log.info("Added API : {}", api.getName());
                 restAPIRepository.insert(api);
             }
         });
     }
-    private void scheduleCronJobs(AdminConfiguration configuration){
+
+    private void scheduleCronJobs(AdminConfiguration configuration) {
         try {
-            schedulerService.scheduleCronJob(FindLoginTrue.class,"0 0 11 * * ?", "check_login",null , null);
+            schedulerService.scheduleCronJob(FindLoginTrue.class, "0 0 11 * * ?", "check_login", null, null);
          /*   List<ComplianceHistory> complianceHistories = adminRepository.findByRunningTrueAndSoftDeleteIsFalse();
             for (ComplianceHistory history : complianceHistories) {
                 adminConfigurationService.saveHistory(history);
@@ -121,7 +126,7 @@ public class ApplicationStartUpEventListener {
             log.info("Scheduler job added");
         } catch (Exception e) {
 
-            log.error("Error occurred while creating scheduler job : {}",e.getMessage());
+            log.error("Error occurred while creating scheduler job : {}", e.getMessage());
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.authmoduls.auth.enums;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +9,7 @@ public enum UserStatus {
     ACTIVE("Active"),
     INVITED("Invited");
     private String value;
+
     UserStatus(String value) {
         this.value = value;
     }

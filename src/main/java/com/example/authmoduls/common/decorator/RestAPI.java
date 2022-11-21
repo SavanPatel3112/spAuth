@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
+
 @Document(collection = "rest_apis")
 @Data
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class RestAPI {
     String name;
     String description;
     List<String> roles;
+
 }

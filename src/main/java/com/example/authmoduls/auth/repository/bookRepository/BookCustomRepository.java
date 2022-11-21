@@ -11,9 +11,13 @@ import java.util.List;
 public interface BookCustomRepository {
 
     List<BookPurchase> bookChartApi(int year) throws JSONException;
+
     List<BookDetailsData> bookData() throws JSONException;
+
     List<UserBookDetailsData> userBookData() throws JSONException;
+
     Page<BooksList> bookDetailsWithMonthAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws JSONException;
-    List<BookTotalCountWithMonth>  bookDataWithMonthAndYearAndTotalPrice(int month,int year) throws JSONException;
+
+    List<BookTotalCountWithMonth> bookDataWithMonthAndYearAndTotalPrice(int month, int year) throws JSONException;
 
 }

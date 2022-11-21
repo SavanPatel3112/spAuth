@@ -6,11 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
 public class UserImportVerifyRequest {
     String id;
-    Map<String,String> mapping;
+    Map<String, String> mapping;
 }

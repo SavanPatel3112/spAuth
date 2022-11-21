@@ -15,8 +15,8 @@ public class EmployeeFilter {
     @JsonIgnore
     boolean softDelete = false;
 
-    public  String getSearch(){
-        if(search !=null){
+    public String getSearch() {
+        if (search != null) {
             return search.trim();
         }
         return search;

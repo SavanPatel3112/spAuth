@@ -16,7 +16,6 @@ public interface MemberService {
 
     List<MemberResponse> getAllMember() throws InvocationTargetException, IllegalAccessException;
 
-
     MemberResponse getMember(String id) throws InvocationTargetException, IllegalAccessException;
 
     List<MemberResponse> getMemberByPagination(UserFilter filter, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pageRequest) throws InvocationTargetException, IllegalAccessException;

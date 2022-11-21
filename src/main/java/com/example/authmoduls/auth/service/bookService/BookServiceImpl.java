@@ -19,6 +19,7 @@ import com.example.authmoduls.common.utils.ExcelUtil;
 import com.example.authmoduls.common.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
@@ -36,8 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class BookServiceImpl implements  BookService {
-
+public class BookServiceImpl implements BookService {
     @Autowired
     BookRepository bookRepository;
     @Autowired
@@ -57,10 +57,6 @@ public class BookServiceImpl implements  BookService {
 
     private Book getBook(String id) {
         return bookRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.BOOK_ID_NOT_FOUND));
-    }
-
-    private Book getBooks(String bookName) {
-        return bookRepository.findByBookNameAndSoftDeleteIsFalse(bookName).orElseThrow(() -> new NotFoundException(MessageConstant.BOOK_NAME_NOT_FOUND));
     }
 
     @Override
@@ -84,14 +80,14 @@ public class BookServiceImpl implements  BookService {
 
 
     @Override
-    public void bookPurchaseLog(String id, String userId){
+    public void bookPurchaseLog(String id, String userId) {
         Book book = getBook(id);
         UserModel userModel = userService.getUserModel(userId);
-        if (userModel.getBalance()<book.getPrice()){
+        if (userModel.getBalance() < book.getPrice()) {
             throw new NotFoundException(MessageConstant.NOT_VALID_BALANCE);
         }
         BookPurchaseLog bookPurchaseLog = new BookPurchaseLog();
-        double amount = userModel.getBalance()-book.getPrice();
+        double amount = userModel.getBalance() - book.getPrice();
         //object bookPurchaseLog
         //ste -- bookName, bookId,getPrice,userId,setDate
         //create bookPurchaseLogRepository
@@ -112,23 +108,23 @@ public class BookServiceImpl implements  BookService {
     @Override
     public BookPurchaseDetail bookChartApi(int year) throws JSONException {
         BookPurchaseDetail bookPurchaseDetail = new BookPurchaseDetail();
-        List<BookData> bookDataList ;
+        List<BookData> bookDataList;
         List<BookPurchase> bookPurchases = new ArrayList<>(bookRepository.bookChartApi(year));
-        log.info("bookPurcharse:{}",bookPurchases);
-        HashMap<String,Integer> month= new LinkedHashMap<>();
+        log.info("bookPurchase:{}", bookPurchases);
+        HashMap<String, Integer> month = new LinkedHashMap<>();
         Set<String> title = new LinkedHashSet<>();
-        month.put("JAN",1);
-        month.put("FEB",2);
-        month.put("MAR",3);
-        month.put("APR",4);
-        month.put("MAY",5);
-        month.put("JUNE",6);
-        month.put("JUL",7);
-        month.put("AUG",8);
-        month.put("SEP",9);
-        month.put("OCT",10);
-        month.put("NOV",11);
-        month.put("DEC",12);
+        month.put("JAN", 1);
+        month.put("FEB", 2);
+        month.put("MAR", 3);
+        month.put("APR", 4);
+        month.put("MAY", 5);
+        month.put("JUNE", 6);
+        month.put("JUL", 7);
+        month.put("AUG", 8);
+        month.put("SEP", 9);
+        month.put("OCT", 10);
+        month.put("NOV", 11);
+        month.put("DEC", 12);
         int totalCount = 0;
         HashMap<String, String> bookNameHashMap = new LinkedHashMap<>();
         bookNameHashMap.put("1", "SpringBoot");
@@ -137,28 +133,28 @@ public class BookServiceImpl implements  BookService {
         bookNameHashMap.put("4", "The Complete Harry Potter");
         bookNameHashMap.put("5", "Antonina Or The Fall Of Rome");
 
-        if(!CollectionUtils.isEmpty(bookPurchases)){
-            log.info("bookPurchase: {}",bookPurchases.size());
+        if (!CollectionUtils.isEmpty(bookPurchases)) {
+            log.info("bookPurchase: {}", bookPurchases.size());
             for (BookPurchase bookPurchase : bookPurchases) {
-               bookDataList =bookPurchase.getBookData();
-                List<String> bookName= bookDataList.stream().map(BookData::getBookName).collect(Collectors.toList());
-                log.info("Book Details:{}",bookName);
-                checkBookNameExist(bookName,bookNameHashMap, bookDataList, bookPurchase);
+                bookDataList = bookPurchase.getBookData();
+                List<String> bookName = bookDataList.stream().map(BookData::getBookName).collect(Collectors.toList());
+                log.info("Book Details:{}", bookName);
+                checkBookNameExist(bookName, bookNameHashMap, bookDataList, bookPurchase);
             }
         }
 
-        for (Map.Entry<String , Integer> entry : month.entrySet()){
-            String titleName = entry.getKey()+"-"+year;
+        for (Map.Entry<String, Integer> entry : month.entrySet()) {
+            String titleName = entry.getKey() + "-" + year;
             title.add(titleName);
             bookPurchaseDetail.setTitle(title);
-            boolean exist =  bookPurchases.stream().anyMatch(e->e.get_id()==entry.getValue());
-            if (!exist){
+            boolean exist = bookPurchases.stream().anyMatch(e -> e.get_id() == entry.getValue());
+            if (!exist) {
                 List<String> name = new ArrayList<>();
-                List<BookData> bookDetails =  new ArrayList<>();
-                BookPurchase bookPurchase1 =  new BookPurchase();
+                List<BookData> bookDetails = new ArrayList<>();
+                BookPurchase bookPurchase1 = new BookPurchase();
                 bookPurchase1.set_id(entry.getValue());
                 bookPurchase1.setTotalCount(0);
-                checkBookNameExist(name,bookNameHashMap, bookDetails, bookPurchase1);
+                checkBookNameExist(name, bookNameHashMap, bookDetails, bookPurchase1);
                 bookPurchase1.setBookData(bookDetails);
                 bookPurchases.add(bookPurchase1);
             }
@@ -170,22 +166,22 @@ public class BookServiceImpl implements  BookService {
             totalCount = totalCount + bookPurchase.getTotalCount();
             bookPurchaseDetail.setTotalCount(totalCount);
         }
-        log.info("totalCount:{}",totalCount);
-        /*bookPurchaseDetail.setTotalCount(totalCount);*/
+        log.info("totalCount:{}", totalCount);
+        bookPurchaseDetail.setTotalCount(totalCount);
         return bookPurchaseDetail;
     }
 
     @Override
     public void bookSaleLog(String bookId, String userId) {
-        Optional<BookPurchaseLog> bookPurchaseLog =bookPurchaseLogRepository.findFirstByBookIdAndUserIdAndSoftDeleteIsFalse(bookId, userId);
-        log.info("book"+bookPurchaseLog);
-        if (bookPurchaseLog.isPresent()){
+        Optional<BookPurchaseLog> bookPurchaseLog = bookPurchaseLogRepository.findFirstByBookIdAndUserIdAndSoftDeleteIsFalse(bookId, userId);
+        log.info("book" + bookPurchaseLog);
+        if (bookPurchaseLog.isPresent()) {
             BookPurchaseLog bookPurchaseLog1 = bookPurchaseLog.get();
             UserModel userModel = userService.getUserModel(userId);
-            double total = bookPurchaseLog1.getPrice()*bookPurchaseLog1.getRefundDiscount()/100;
+            double total = bookPurchaseLog1.getPrice() * bookPurchaseLog1.getRefundDiscount() / 100;
             Book book = getBook(bookId);
-            total = book.getPrice()-total;
-            double amount = userModel.getBalance()+total;
+            total = book.getPrice() - total;
+            double amount = userModel.getBalance() + total;
             userModel.setBalance(amount);
             userRepository.save(userModel);
             bookPurchaseLog1.setResale(true);
@@ -194,11 +190,11 @@ public class BookServiceImpl implements  BookService {
     }
 
     @Override
-    public Workbook getBookData() throws JSONException, InvocationTargetException, IllegalAccessException, IOException {
-        HashMap<String,List<BookResponseExcel>> hashMap = new LinkedHashMap<>();
+    public Workbook getBookData() throws JSONException, InvocationTargetException, IllegalAccessException {
+        HashMap<String, List<BookResponseExcel>> hashMap = new LinkedHashMap<>();
         List<BookDetailsData> bookDetailsDataList = bookRepository.bookData();
-        log.info("bookDetailDataList:{}",bookDetailsDataList);
-        if (CollectionUtils.isNotEmpty(bookDetailsDataList)){
+        log.info("bookDetailDataList:{}", bookDetailsDataList);
+        if (CollectionUtils.isNotEmpty(bookDetailsDataList)) {
             for (BookDetailsData bookDetailsData : bookDetailsDataList) {
                 List<BookResponseExcel> bookResponseExcels = new ArrayList<>();
                 for (BookDetails bookDatum : bookDetailsData.getBookData()) {
@@ -206,71 +202,71 @@ public class BookServiceImpl implements  BookService {
                     nullAwareBeanUtilsBean.copyProperties(bookResponseExcel, bookDatum);
                     bookResponseExcels.add(bookResponseExcel);
                 }
-                hashMap.put(bookDetailsData.getBookName(),bookResponseExcels);
+                hashMap.put(bookDetailsData.getBookName(), bookResponseExcels);
             }
         }
-        log.info("hashMap:{}",hashMap);
+        log.info("hashMap:{}", hashMap);
         return ExcelUtil.createWorkbookFromBookDetailsData(hashMap);
     }
 
     @Override
     public Workbook getBookDataWithMonthAndYear(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException, JSONException {
-        Page<BooksList> booksLists=bookRepository.bookDetailsWithMonthAndYear(bookFilter,sort,pagination);
+        Page<BooksList> booksLists = bookRepository.bookDetailsWithMonthAndYear(bookFilter, sort, pagination);
         List<BooksList> booksLists1 = new ArrayList<>(booksLists.getContent());
         List<BookDataResponseExcel> bookDataResponseExcels = new ArrayList<>();
-        String title = "Exported data"+bookFilter.getMonth();
+        String title = "Exported data" + bookFilter.getMonth();
         for (BooksList booksList : booksLists1) {
             BookDataResponseExcel bookDataResponseExcel = new BookDataResponseExcel();
-            nullAwareBeanUtilsBean.copyProperties(bookDataResponseExcel,booksList);
+            nullAwareBeanUtilsBean.copyProperties(bookDataResponseExcel, booksList);
             bookDataResponseExcels.add(bookDataResponseExcel);
         }
-        return ExcelUtil.createWorkbookFromData(bookDataResponseExcels,title);
+        return ExcelUtil.createWorkbookFromData(bookDataResponseExcels, title);
     }
 
     @Override
     public Workbook getUserBookData() throws JSONException, InvocationTargetException, IllegalAccessException, IOException {
-        HashMap<String,List<UserBookResponseExcel>> hashMap =  new LinkedHashMap<>();
-        List<UserBookDetailsData> userBookDetailsData =  bookRepository.userBookData();
-        if (CollectionUtils.isNotEmpty(userBookDetailsData)){
+        HashMap<String, List<UserBookResponseExcel>> hashMap = new LinkedHashMap<>();
+        List<UserBookDetailsData> userBookDetailsData = bookRepository.userBookData();
+        if (CollectionUtils.isNotEmpty(userBookDetailsData)) {
             for (UserBookDetailsData userBookDetailsData1 : userBookDetailsData) {
-                List<UserBookResponseExcel> userBookResponseExcels =  new ArrayList<>();
-                for (UserBooksDetails userBooksDetails : userBookDetailsData1.getUserBookData()){
-                    UserBookResponseExcel userBookResponseExcel =  new UserBookResponseExcel();
-                    nullAwareBeanUtilsBean.copyProperties(userBookResponseExcel,userBooksDetails);
+                List<UserBookResponseExcel> userBookResponseExcels = new ArrayList<>();
+                for (UserBooksDetails userBooksDetails : userBookDetailsData1.getUserBookData()) {
+                    UserBookResponseExcel userBookResponseExcel = new UserBookResponseExcel();
+                    nullAwareBeanUtilsBean.copyProperties(userBookResponseExcel, userBooksDetails);
                     userBookResponseExcels.add(userBookResponseExcel);
                 }
-                hashMap.put(userBookDetailsData1.getFullName(),userBookResponseExcels);
+                hashMap.put(userBookDetailsData1.getFullName(), userBookResponseExcels);
             }
         }
-        Workbook workbook =  ExcelUtil.createWorkbookFromUserBookDetailsData(hashMap);
+        Workbook workbook = ExcelUtil.createWorkbookFromUserBookDetailsData(hashMap);
         ByteArrayResource byteArrayResource = ExcelUtil.getBiteResourceFromWorkbook(workbook);
 
-        File file =  new File("C:\\excelFiles\\demo.xlsx");
-        /*FileUtils.writeByteArrayToFile(file, byteArrayResource.getByteArray());*/
+        File file = new File(" C:\\excelFiles\\demo.xlsx ");
+        FileUtils.writeByteArrayToFile(file, byteArrayResource.getByteArray());
         file.createNewFile();
-            EmailModel emailModel = new EmailModel();
-            emailModel.setTo(adminConfiguration.getTechAdmins().iterator().next());
-            emailModel.setCc(adminConfiguration.getTechAdmins());
-            emailModel.setFile(file);
-            emailModel.setSubject("USer Detail");
-            utils.sendEmailNow(emailModel);
+        EmailModel emailModel = new EmailModel();
+        emailModel.setTo(adminConfiguration.getTechAdmins().iterator().next());
+        emailModel.setCc(adminConfiguration.getTechAdmins());
+        emailModel.setFile(file);
+        emailModel.setSubject("USer Detail");
+        utils.sendEmailNow(emailModel);
         file.deleteOnExit();
         return workbook;
     }
 
     @Override
-    public Page<BooksList> getBookListByPagination(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException, JSONException {
-        return bookRepository.bookDetailsWithMonthAndYear(bookFilter,sort,pagination);
+    public Page<BooksList> getBookListByPagination(BookFilter bookFilter, FilterSortRequest.SortRequest<BookSortBy> sort, PageRequest pagination) throws JSONException {
+        return bookRepository.bookDetailsWithMonthAndYear(bookFilter, sort, pagination);
     }
 
     @Override
     public List<BookTotalCountWithMonth> bookDataWithMonthAndYearAndTotalPrice(int month, int year) throws JSONException {
-        return bookRepository.bookDataWithMonthAndYearAndTotalPrice(month,year);
+        return bookRepository.bookDataWithMonthAndYearAndTotalPrice(month, year);
     }
 
-    void checkBookNameExist(List<String> bookDetail, HashMap<String,String> bookName, List<BookData> bookDataLists, BookPurchase bookPurchase){
-        for (Map.Entry<String, String> entry : bookName.entrySet()){
-            if (!bookDetail.contains(entry.getValue())){
+    void checkBookNameExist(List<String> bookDetail, HashMap<String, String> bookName, List<BookData> bookDataLists, BookPurchase bookPurchase) {
+        for (Map.Entry<String, String> entry : bookName.entrySet()) {
+            if (!bookDetail.contains(entry.getValue())) {
                 BookData bookData = new BookData();
                 bookData.setBookName(entry.getValue());
                 bookData.setCount(0);

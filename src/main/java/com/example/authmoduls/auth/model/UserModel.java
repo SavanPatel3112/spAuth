@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
-@Document(collection= "users")
+@Document(collection = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -51,10 +51,10 @@ public class UserModel {
     Date ImportDate;
     String importedId;
     double balance;
-    boolean duplicateEmail=false;
+    boolean duplicateEmail = false;
     boolean emptyEmail = false;
     boolean importFromExcel = false;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     Date birthDate;
     @JsonIgnore
     Date date;
@@ -75,7 +75,7 @@ public class UserModel {
 
     public void setFullName() {
 
-        this.firstName=StringUtils.normalizeSpace(this.firstName);
+        this.firstName = StringUtils.normalizeSpace(this.firstName);
         this.middleName = StringUtils.normalizeSpace(this.middleName);
         this.lastName = StringUtils.normalizeSpace(this.lastName);
         List<String> fullNameList = new LinkedList<>();
@@ -94,26 +94,26 @@ public class UserModel {
         }
         String[] names = name1.toString().split(" ");
         this.fullName = name1.toString();
-            if (names.length == 1) {
-                firstName = names[0];
-            } else if (names.length == 2) {
-                firstName = names[0];
-                lastName = names[1];
-            } else if (names.length == 3) {
-                firstName = names[0];
-                middleName = names[1];
-                lastName = names[2];
-            } else if (names.length > 3) {
-                firstName = names[0];
-                middleName = names[1];
-                StringBuilder name = new StringBuilder();
-                for (String value : names) {
-                    if (!value.equals(firstName) && !value.equals(middleName)) {
-                        name.append(" ").append(value);
-                    }
+        if (names.length == 1) {
+            firstName = names[0];
+        } else if (names.length == 2) {
+            firstName = names[0];
+            lastName = names[1];
+        } else if (names.length == 3) {
+            firstName = names[0];
+            middleName = names[1];
+            lastName = names[2];
+        } else if (names.length > 3) {
+            firstName = names[0];
+            middleName = names[1];
+            StringBuilder name = new StringBuilder();
+            for (String value : names) {
+                if (!value.equals(firstName) && !value.equals(middleName)) {
+                    name.append(" ").append(value);
                 }
-                lastName = name.toString().trim();
             }
+            lastName = name.toString().trim();
         }
+    }
 }
 

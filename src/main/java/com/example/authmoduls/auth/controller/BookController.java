@@ -93,8 +93,6 @@ public class BookController {
     @SneakyThrows
     @RequestMapping(name = "getBookDataWithMonthAndYear", value = "/data/month", method = RequestMethod.POST)
     public ResponseEntity<Resource> getBookDataWithMonthAndYear(@RequestBody FilterSortRequest<BookFilter,BookSortBy> filterSortRequest) {
-       /* filterSortRequest.getFilter();
-        filterSortRequest.g();*/
         BookFilter bookFilter =  filterSortRequest.getFilter();
         FilterSortRequest.SortRequest<BookSortBy> sort= filterSortRequest.getSort();
         Pagination pagination=filterSortRequest.getPage();

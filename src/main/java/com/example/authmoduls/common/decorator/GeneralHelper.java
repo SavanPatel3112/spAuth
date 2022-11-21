@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class GeneralHelper {
 
     int defaultPageValue = 5;
+
     public PageRequest getPagination(Integer page, Integer limit) {
         if (page == null) {
             page = 0;

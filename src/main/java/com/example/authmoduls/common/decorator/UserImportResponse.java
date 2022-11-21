@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import java.util.Map;
 public class UserImportResponse {
 
     List<String> excelHeaders;
-    Map<String,String>  mappingHeaders;
+    Map<String, String> mappingHeaders;
     String id;
 }
 

@@ -7,16 +7,17 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FilterSortRequest<FILTER,SORT>{
+public class FilterSortRequest<FILTER, SORT> {
     FILTER filter;
     SortRequest<SORT> sort;
     Pagination page;
+
     @Data
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public  static class SortRequest<SORT> {
+    public static class SortRequest<SORT> {
         SORT sortBy;
         Sort.Direction orderBy;
     }

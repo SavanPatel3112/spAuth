@@ -21,21 +21,14 @@ public class RMQConsumer {
     UserConsumerService userConsumerService;
 
 
-    @RabbitListener(
-            containerFactory = "prefetchTenRabbitListenerContainerFactory",
-            bindings = @QueueBinding(
-                    value = @Queue(value = "${rmq.userSend.queueName}",durable = "true"),
-                    exchange = @Exchange(value = "${rmq.userSend.exchangeName}",type = "topic"),
-                    key = "${rmq.userSend.routingKey}")
-    )
-    public void processUser(Message message){
-        try{
+    @RabbitListener(containerFactory = "prefetchTenRabbitListenerContainerFactory", bindings = @QueueBinding(value = @Queue(value = "${rmq.userSend.queueName}", durable = "true"), exchange = @Exchange(value = "${rmq.userSend.exchangeName}", type = "topic"), key = "${rmq.userSend.routingKey}"))
+    public void processUser(Message message) {
+        try {
             log.info("message");
-            String id= ConsumerHelper.parsePayload(message, (Type) Object.class);
+            String id = ConsumerHelper.parsePayload(message, (Type) Object.class);
             userService.sendMessage(id);
             userConsumerService.getUser(id);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.info("Error happen in consuming data");
         }
     }

@@ -10,20 +10,21 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperationCon
 
 public class CustomAggregationOperation implements AggregationOperation {
 
-    private Document document;
+    private final Document document;
+
     public CustomAggregationOperation(Document document) {
         this.document = document;
-    }
-
-    @Override
-    public Document toDocument(AggregationOperationContext context) {
-        return context.getMappedObject(document);
     }
 
     public static String getJson(JSONObject aggregationMap, String key, Object object) throws JSONException {
         String json = aggregationMap.getJSONObject(key).toString();
         //System.out.println("[getJson] : "+json);
-        return new TemplateParser<>().compileTemplate(json,object);
+        return new TemplateParser<>().compileTemplate(json, object);
+    }
+
+    @Override
+    public Document toDocument(AggregationOperationContext context) {
+        return context.getMappedObject(document);
     }
 
 }

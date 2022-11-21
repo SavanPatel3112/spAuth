@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,16 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 public class MemberResponse {
 
-        String firstName;
-        String middleName;
-        String lastName;
-        String fullName;
-        String email;
-        String phoneNumber;
-        Address address;
-        Plan plan;
-        List<MemberPlans> memberPlans;
-        @JsonIgnore
-        Date date;
+    String firstName;
+    String middleName;
+    String lastName;
+    String fullName;
+    String email;
+    String phoneNumber;
+    Address address;
+    Plan plan;
+    List<MemberPlans> memberPlans;
+    @JsonIgnore
+    Date date;
 
 }

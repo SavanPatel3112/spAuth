@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+
 /**
  * RMQ service implementation
  */
@@ -52,11 +53,9 @@ public class RMQServiceImpl implements RMQService {
         factory.setHost(host);
         factory.setUsername(username);
         factory.setPassword(password);
-        try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+        try (Connection connection = factory.newConnection(); Channel channel = connection.createChannel()) {
             channel.exchangeDeclare(exchange, "topic", true);
-            BasicProperties props = new BasicProperties("text/json", "utf-8", null, null, null, null, null, null, null,
-                    null, null, null, null, null);
+            BasicProperties props = new BasicProperties("text/json", "utf-8", null, null, null, null, null, null, null, null, null, null, null, null);
             channel.basicPublish(exchange, routingKey, props, message.getBytes());
             log.info("RMQ: Sent '" + message + "'");
         } catch (Exception e) {

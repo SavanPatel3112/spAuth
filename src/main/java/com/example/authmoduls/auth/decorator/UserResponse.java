@@ -10,12 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.test.web.servlet.result.ContentResultMatchers;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,5 +43,4 @@ public class UserResponse {
     Set<String> userId;
     @JsonIgnore
     boolean softDelete =false;
-
 }

@@ -11,12 +11,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import java.util.stream.Collectors;
+
 @ControllerAdvice
-public class ControllerErrorConfig extends ResponseEntityExceptionHandler {
+public class   ControllerErrorConfig extends ResponseEntityExceptionHandler {
 
     @Autowired
     Response response;
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         DataResponse<Object> dataResponse = new DataResponse<>();

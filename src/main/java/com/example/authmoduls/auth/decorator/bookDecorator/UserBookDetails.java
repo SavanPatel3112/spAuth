@@ -1,7 +1,9 @@
 package com.example.authmoduls.auth.decorator.bookDecorator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import groovy.transform.BaseScript;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -12,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserBookDetails {
     @Id
     String id;

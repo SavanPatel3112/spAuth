@@ -18,8 +18,8 @@ public class EmailModel {
     String to;
     String subject;
     String message;
-String templateName;
-   Set<String> bcc;
-   Set<String> cc;
-   File file;
+    String templateName;
+    Set<String> bcc;
+    Set<String> cc;
+    File file;
 }

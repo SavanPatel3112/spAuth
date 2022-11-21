@@ -70,30 +70,12 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     private Criteria getCriteria(UserFilter userFilter, List<AggregationOperation> operations) {
         Criteria criteria = new Criteria();
-        operations.add(new CustomAggregationOperation(
-                new Document("$addFields",
-                        new Document("search",
-                                new Document("$concat", Arrays.asList(
-                                        new Document("$ifNull", Arrays.asList(
-                                        "|@|", new Document("$ifNull", Arrays.asList("$email", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$lastName", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$middleName", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$firstName", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$address.address1", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$address.city", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$address.state", "")),
-                                        "|@|", new Document("$ifNull", Arrays.asList("$address.zipCode", "")))
-                                )
-                        )
-                ))))
-        );
+        operations.add(new CustomAggregationOperation(new Document("$addFields", new Document("search", new Document("$concat", List.of(new Document("$ifNull", Arrays.asList("|@|", new Document("$ifNull", Arrays.asList("$email", "")), "|@|", new Document("$ifNull", Arrays.asList("$lastName", "")), "|@|", new Document("$ifNull", Arrays.asList("$middleName", "")), "|@|", new Document("$ifNull", Arrays.asList("$firstName", "")), "|@|", new Document("$ifNull", Arrays.asList("$address.address1", "")), "|@|", new Document("$ifNull", Arrays.asList("$address.city", "")), "|@|", new Document("$ifNull", Arrays.asList("$address.state", "")), "|@|", new Document("$ifNull", Arrays.asList("$address.zipCode", ""))))))))));
 
         if (!StringUtils.isEmpty(userFilter.getSearch())) {
             userFilter.setSearch(userFilter.getSearch().replaceAll("\\|@\\|", ""));
             userFilter.setSearch(userFilter.getSearch().replaceAll("\\|@@\\|", ""));
-            criteria = criteria.orOperator(
-                    Criteria.where("search").regex(".*" + userFilter.getSearch() + ".*", "i")
-            );
+            criteria = criteria.orOperator(Criteria.where("search").regex(".*" + userFilter.getSearch() + ".*", "i"));
         }
         if (!StringUtils.isEmpty(userFilter.getId())) {
             criteria = criteria.and("_id").in(userFilter.getId());

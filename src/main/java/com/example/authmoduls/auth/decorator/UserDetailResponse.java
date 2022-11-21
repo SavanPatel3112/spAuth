@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +16,6 @@ public class UserDetailResponse {
     String lastName;
     String email;
     String mobileNo;
-
     double cgpa;
     List<Result> results;
     //Result results;

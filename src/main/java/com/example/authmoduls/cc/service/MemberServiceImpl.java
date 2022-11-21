@@ -31,7 +31,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class MemberServiceImpl implements MemberService {
-
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -47,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
             MemberModel memberModel = getMemberModel(id);
             nullAwareBeanUtilsBean.copyProperties(memberModel, memberAddRequest);
             memberRepository.save(memberModel);
-            MemberResponse memberResponse = modelMapper.map(memberModel,MemberResponse.class);
+            MemberResponse memberResponse = modelMapper.map(memberModel, MemberResponse.class);
             return memberResponse;
         } else {
             if (plan == null)//check user plan(role)
@@ -59,9 +58,10 @@ public class MemberServiceImpl implements MemberService {
         memberModel.setDate(new Date());
         nullAwareBeanUtilsBean.copyProperties(memberModel, memberAddRequest);
         memberRepository.save(memberModel);
-        MemberResponse memberResponse = modelMapper.map(memberModel,MemberResponse.class);
+        MemberResponse memberResponse = modelMapper.map(memberModel, MemberResponse.class);
         return memberResponse;
     }
+
     public void checkUserDetails(MemberAddRequest memberAddRequest) throws InvocationTargetException, IllegalAccessException {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         if ((StringUtils.isEmpty(memberAddRequest.getFirstName()) || (memberAddRequest.getFirstName().matches(adminConfiguration.getNameRegex())))) {
@@ -79,8 +79,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByEmailAndSoftDeleteFalse(memberAddRequest.getEmail())) {
             throw new AlreadyExistException(MessageConstant.EMAIL_NAME_EXISTS);
         }
-        if (StringUtils.isEmpty(memberAddRequest.getEmail()) &&
-                CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
+        if (StringUtils.isEmpty(memberAddRequest.getEmail()) && CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_EMPTY);
         }
         if (!memberAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
@@ -131,6 +130,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private MemberModel getMemberModel(String id) {
-       return memberRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.USER_ID_NOT_FOUND));
+        return memberRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.USER_ID_NOT_FOUND));
     }
 }
