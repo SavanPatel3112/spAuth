@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.common.config;
 
 import com.example.authmoduls.common.Interceptor.Interceptor;
@@ -44,3 +45,4 @@ public class InterceptorConfigurer implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }
+*/

@@ -25,7 +25,7 @@ public class AdminConfiguration {
     Set<String> requiredEmailItems = getRequiredItems();
     String host;
     String port;
-    boolean smptAuth;
+    boolean smtpAuth;
     boolean starttls;
     String nameRegex;
     String emailRegex;
@@ -33,11 +33,11 @@ public class AdminConfiguration {
     String semesterRegex;
     String spiRegex;
     String passwordRegex;
-    String moblieNoRegex;
-    String CreatedBy;
-    String UpdatedBy;
-    Date Created;
-    Date Updated;
+    String mobileNoRegex;
+    String createdBy;
+    String updatedBy;
+    Date created;
+    Date updated;
     int importRecordLimit = 100;
     Set<String> extensions = getExtensionsData();
     Set<String> techAdmins = getTechAdminEmails();
@@ -45,12 +45,12 @@ public class AdminConfiguration {
     Map<String, String> userImportMappingFields = new LinkedHashMap<>();
 
     public AdminConfiguration() {
-        this.from = "savan.p@techroversolutions.com";
+        this.from = "savan.p@techroversolution.com ";
         this.username = "savan.p@techroversolutions.com";
         this.password = "Techrover@2023";
         this.host = "smtp.office365.com";
         this.port = "587";
-        this.smptAuth = true;
+        this.smtpAuth = true;
         this.starttls = true;
         this.extensions = getExtensionsData();
         this.emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
@@ -58,7 +58,7 @@ public class AdminConfiguration {
         this.semesterRegex = "^[0-8]{1}$";
         this.spiRegex = "^[0-10]{2}$";
         this.passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
-        this.moblieNoRegex = "^[0-9]{10}$";
+        this.mobileNoRegex = "^[0-9]{10}$";
         this.nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
         this.notificationConfiguration = new NotificationConfiguration();
 
@@ -89,7 +89,6 @@ public class AdminConfiguration {
     private Set<String> getTechAdminEmails() {
         Set<String> emails = new HashSet<>();
         emails.add("dency.g@techroversolutions.com");
-        //emails.add("sarthak.j@techroversolutions.com");
         emails.add("savan.p@techroversolutions.com");
         return emails;
     }

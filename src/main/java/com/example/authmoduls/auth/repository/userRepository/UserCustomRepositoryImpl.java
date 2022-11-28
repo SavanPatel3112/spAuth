@@ -39,7 +39,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     @Override
     public Page<UserModel> findAllUserByFilterAndSortAndPage(UserFilter userFilter, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pagination) {
         List<AggregationOperation> operations = filterAggregation(userFilter, sort, pagination, true);
-        //Created Aggregation operation
+        //created Aggregation operation
         Aggregation aggregation = newAggregation(operations);
         List<UserModel> users = mongoTemplate.aggregate(aggregation, "users", UserModel.class).getMappedResults();
         // Find Count
@@ -238,7 +238,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     @Override
     public Page<UserResultByStatus> findUserResultStatusByFilterAndSortAndPage(UserIdsRequest userIdsRequest, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException {
         List<AggregationOperation> operations = userResultsByStatus(userIdsRequest, sort, pagination, true);
-        //Created Aggregation operation
+        //created Aggregation operation
         Aggregation aggregation = newAggregation(operations);
 
         List<UserResultByStatus> users = mongoTemplate.aggregate(aggregation, "users", UserResultByStatus.class).getMappedResults();

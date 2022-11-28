@@ -63,7 +63,6 @@ public class BookController {
         bookResponse.setStatus(Response.getOkResponse());
         return bookResponse;
     }
-
     @SneakyThrows
     @RequestMapping(name = "getUserBookData", value = "/user/book/data", method = RequestMethod.GET)
     public ResponseEntity<Resource> getUserBookData() {
@@ -72,8 +71,8 @@ public class BookController {
         ByteArrayResource resource = ExcelUtil.getBiteResourceFromWorkbook(workbook);
         return ResponseEntity.ok()
                 .contentLength(resource.contentLength())
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "exported_user_book_data.xlsx" + "\"")
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + "exported_user_book_data.xlsx" + "\"")
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel "))
                 .body(resource);
     }
 
@@ -106,9 +105,6 @@ public class BookController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(resource);
     }
-
-
-
     @SneakyThrows
     @RequestMapping(name = "getBookData", value = "/data", method = RequestMethod.GET)
     public ResponseEntity<Resource> getBookData() {
@@ -121,7 +117,6 @@ public class BookController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(resource);
     }
-
     @SneakyThrows
     @RequestMapping(name = "bookDataWithMonthAndYearAndTotalPrice", value = "/totalPrice", method = RequestMethod.GET)
     public ListResponse<BookTotalCountWithMonth> bookDataWithMonthAndYearAndTotalPrice(@RequestParam int month ,int year) {

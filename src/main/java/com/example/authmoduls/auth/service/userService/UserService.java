@@ -108,4 +108,5 @@ public interface UserService {
     Page<UserBookDetails> getUserBookDetailsByPagination(UserIdsRequest userIdsRequest, FilterSortRequest.SortRequest<UserDataSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException, JSONException;
 
     List<UserModel> getUserListByPagination() throws InvocationTargetException, IllegalAccessException;
+
 }

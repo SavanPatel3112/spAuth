@@ -4,6 +4,7 @@ import com.example.authmoduls.auth.decorator.bookDecorator.BookPurchaseLog;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Book {
     @Id
     String id;

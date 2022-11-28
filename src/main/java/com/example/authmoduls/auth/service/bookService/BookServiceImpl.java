@@ -23,7 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,22 +37,24 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BookServiceImpl implements BookService {
-    @Autowired
-    BookRepository bookRepository;
-    @Autowired
-    NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    UserService userService;
-    @Autowired
-    BookPurchaseLogRepository bookPurchaseLogRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    AdminConfiguration adminConfiguration;
-    @Autowired
-    Utils utils;
+    private final BookRepository bookRepository;
+    private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
+    private final ModelMapper modelMapper;
+    private final UserService userService;
+    private final BookPurchaseLogRepository bookPurchaseLogRepository;
+    private final UserRepository userRepository;
+    private final AdminConfiguration adminConfiguration;
+    private final Utils utils;
+    public BookServiceImpl(BookRepository bookRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, ModelMapper modelMapper, UserService userService, BookPurchaseLogRepository bookPurchaseLogRepository, UserRepository userRepository, AdminConfiguration adminConfiguration, Utils utils) {
+        this.bookRepository = bookRepository;
+        this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
+        this.modelMapper = modelMapper;
+        this.userService = userService;
+        this.bookPurchaseLogRepository = bookPurchaseLogRepository;
+        this.userRepository = userRepository;
+        this.adminConfiguration = adminConfiguration;
+        this.utils = utils;
+    }
 
     private Book getBook(String id) {
         return bookRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.BOOK_ID_NOT_FOUND));
@@ -105,6 +106,9 @@ public class BookServiceImpl implements BookService {
         bookPurchaseLogRepository.save(bookPurchaseLog);
     }
 
+
+
+
     @Override
     public BookPurchaseDetail bookChartApi(int year) throws JSONException {
         BookPurchaseDetail bookPurchaseDetail = new BookPurchaseDetail();
@@ -132,7 +136,6 @@ public class BookServiceImpl implements BookService {
         bookNameHashMap.put("3", "The Exiled");
         bookNameHashMap.put("4", "The Complete Harry Potter");
         bookNameHashMap.put("5", "Antonina Or The Fall Of Rome");
-
         if (!CollectionUtils.isEmpty(bookPurchases)) {
             log.info("bookPurchase: {}", bookPurchases.size());
             for (BookPurchase bookPurchase : bookPurchases) {
@@ -142,7 +145,6 @@ public class BookServiceImpl implements BookService {
                 checkBookNameExist(bookName, bookNameHashMap, bookDataList, bookPurchase);
             }
         }
-
         for (Map.Entry<String, Integer> entry : month.entrySet()) {
             String titleName = entry.getKey() + "-" + year;
             title.add(titleName);
@@ -277,7 +279,3 @@ public class BookServiceImpl implements BookService {
         bookPurchase.setBookData(bookDataLists);
     }
 }
-
-
-
-

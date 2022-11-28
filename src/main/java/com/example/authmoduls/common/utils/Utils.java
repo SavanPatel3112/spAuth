@@ -68,6 +68,7 @@ public class Utils {
     public static String decodeBase64(String password) {
         byte[] actualByte = Base64.decodeBase64(password);
         String actualString = new String(actualByte);
+
         System.out.println(actualString);
         return actualString;
     }
@@ -103,7 +104,7 @@ public class Utils {
             String username = "developer@techroversolutions.com";// change accordingly //
             String password = "Ancubate@2019";// change accordingly //*/
             Properties props = new Properties();
-            props.put("mail.smtp.auth", adminConfiguration.isSmptAuth());//true
+            props.put("mail.smtp.auth", adminConfiguration.isSmtpAuth());//true
             props.put("mail.smtp.starttls.enable", adminConfiguration.isStarttls());//true
             //props.put("mail.smtp.ssl.enable", "true");
             props.put("mail.smtp.host", adminConfiguration.getHost());//smtp.office365.com
@@ -250,7 +251,7 @@ public class Utils {
             stringBuilder.append("br/");
             stringBuilder.append(changedProperties);
             stringBuilder.append("br/");
-            stringBuilder.append("Updated By:");
+            stringBuilder.append("updated By:");
             stringBuilder.append(requestSession.getJwtUser().getRole());
         }
         log.info(stringBuilder.toString());
@@ -267,7 +268,7 @@ public class Utils {
             stringBuilder.append("Otp is  :");
             stringBuilder.append("" +userModel.getOtp());
             stringBuilder.append("<br/>");
-            stringBuilder.append("Created by :");
+            stringBuilder.append("created by :");
             stringBuilder.append(requestSession.getJwtUser().getId());
         log.info(stringBuilder.toString());
         return stringBuilder.toString();

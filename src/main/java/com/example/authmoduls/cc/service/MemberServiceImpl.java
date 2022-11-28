@@ -85,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
         if (!memberAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
         }
-        if (!memberAddRequest.getPhoneNumber().matches(adminConfiguration.getMoblieNoRegex())) {
+        if (!memberAddRequest.getPhoneNumber().matches(adminConfiguration.getMobileNoRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_MOBILENO);
         }
         if (StringUtils.length(memberAddRequest.getAddress().getZipCode()) > 7) {

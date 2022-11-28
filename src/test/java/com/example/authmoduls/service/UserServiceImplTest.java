@@ -55,9 +55,11 @@ class UserServiceImplTest {
     private static final String lastName = "Patel";
     private static final String fullName = "Savan Kiritbhai Patel";
     private static final String email = "savan9045@gmail.com";
+    private static final String emails = "savan89@gmail.com";
     private static final String mobileNo = "9081738141";
     private static final Role role = Role.ADMIN;
     private static final String password = "Techrover@2023";
+    private static final String passWord = "Sp@31122000";
     private static final String newPassword = "Sp@31122000";
     private static final String confirmPassword = "Sp@31122000";
     private static final String otp = "123456";
@@ -95,8 +97,7 @@ class UserServiceImplTest {
     private final ModelMapper modelMapper = mock(ModelMapper.class);
     private final RequestSession requestSession = mock(RequestSession.class);
     private final SchedulerService schedulerService = mock(SchedulerService.class);
-    private final UserService userService = new UserServiceImpl(userRepository, importedDataRepository, userDataRepository, nullAwareBeanUtilsBean, jwtTokenUtil, passwordUtils, adminService, utils, notificationParser, userPublisher, modelMapper, requestSession) {
-    };
+    private final UserService userService = new UserServiceImpl(userRepository, importedDataRepository, userDataRepository, nullAwareBeanUtilsBean, jwtTokenUtil, passwordUtils, adminService, utils, notificationParser, userPublisher, modelMapper, requestSession);
 
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {
@@ -113,13 +114,15 @@ class UserServiceImplTest {
         var userAddRequest = UserAddRequest.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email).userName(userName).password(password).mobileNo(mobileNo).build();
         var userResponse = UserResponse.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email).userName(userName).password(password).mobileNo(mobileNo).build();
         var userModel = UserModel.builder().userName(userName).firstName(firstName).middleName(middleName).lastName(lastName).email(email).userName(userName).passWord(password).mobileNo(mobileNo).build();
-        var adminConfiguration = AdminConfiguration.builder().username(userName).id(id).nameRegex(nameRegex).emailRegex(emailRegex).moblieNoRegex(mobileRegex).requiredEmailItems(Collections.singleton(requiredEmailItems)).passwordRegex(passwordRegex).build();
+        var adminConfiguration = AdminConfiguration.builder().username(userName).id(id).nameRegex(nameRegex).emailRegex(emailRegex).mobileNoRegex(mobileRegex).requiredEmailItems(Collections.singleton(requiredEmailItems)).passwordRegex(passwordRegex).build();
         when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
         //when
-        userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN);
+        nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);
+        userService.addOrUpdateUser(userAddRequest, id, Role.ADMIN);
+        when(modelMapper.map(userModel,UserResponse.class)).thenReturn(userResponse);
         //then
-        Assertions.assertEquals(userResponse, userService.addOrUpdateUser(userAddRequest, null, Role.ADMIN));
+        Assertions.assertEquals(userResponse, userService.addOrUpdateUser(userAddRequest, id, Role.ADMIN));
     }
 
     @Test
@@ -215,17 +218,17 @@ class UserServiceImplTest {
         Assertions.assertEquals(token, userService.getValidityOfToken(token));
     }
     @Test
-    void userLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
-        var userModel = UserModel.builder().email(email).passWord(PasswordUtils.encryptPassword(password)).login(true).date(date).otp(otp).role(role).state(status).build();
+    void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
+        var userModel = UserModel.builder().email(emails).passWord(PasswordUtils.encryptPassword(passWord)).login(true).date(date).otp(otp).role(role).state(status).build();
         var adminConfiguration = AdminConfiguration.builder().port(port).host(host).from(from).passwordRegex(passwordRegex)
                                                                             .emailRegex(emailRegex).requiredEmailItems(Collections.singleton(requiredEmailItems)).build();
         var emailModel = EmailModel.builder().cc(Collections.singleton(cc)).message(otp).subject(subject).to(to).build();
-        when(userRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(userModel));
+        when(userRepository.findByEmailAndSoftDeleteIsFalse(emails)).thenReturn(Optional.ofNullable(userModel));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
-        when(passwordUtils.isPasswordAuthenticated(PasswordUtils.encryptPassword(password), PasswordUtils.encryptPassword(password), PasswordEncryptionType.BCRYPT)).thenReturn(true);
+        when(passwordUtils.isPasswordAuthenticated(PasswordUtils.encryptPassword(passWord), PasswordUtils.encryptPassword(passWord), PasswordEncryptionType.BCRYPT)).thenReturn(true);
         utils.sendEmailNow(emailModel);
-        userService.userLogin(email, PasswordUtils.encryptPassword(password));
-        verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);
+        userService.userLogin(emails, PasswordUtils.encryptPassword(passWord));
+        verify(userRepository,times(1)).findByEmailAndSoftDeleteIsFalse(emails);
     }
 
     @Test

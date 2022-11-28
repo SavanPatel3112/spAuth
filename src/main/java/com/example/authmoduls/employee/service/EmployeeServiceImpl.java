@@ -136,7 +136,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if ((StringUtils.isEmpty(employeeRequest.getEmployeeName()) || (employeeRequest.getEmployeeName().matches(adminConfiguration.getNameRegex())))) {
             throw new InvaildRequestException(MessageConstant.INVAILD_EMPLOYEE_NAME);
         }
-        if (!employeeRequest.getMobileNo().matches(adminConfiguration.getMoblieNoRegex())) {
+        if (!employeeRequest.getMobileNo().matches(adminConfiguration.getMobileNoRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_MOBILENO);
         }
         if (employeeRepository.existsByEmailAndSoftDeleteFalse(employeeRequest.getEmail())) {

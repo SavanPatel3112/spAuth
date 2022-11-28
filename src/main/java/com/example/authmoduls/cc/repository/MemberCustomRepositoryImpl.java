@@ -35,7 +35,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         List<AggregationOperation> operations = userFilterAggregation(filter, sort, pagination, true);
 
 
-        //Created Aggregation operation
+        //created Aggregation operation
         Aggregation aggregation = newAggregation(operations);
 
         List<MemberResponse> memberResponses = mongoTemplate.aggregate(aggregation, "users", MemberResponse.class).getMappedResults();

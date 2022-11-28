@@ -107,23 +107,23 @@ public class UserServiceImpl implements UserService {
         }
         checkUserDetails(userAddRequest);//check empty or not
         //convert birthdate type date to localDate
-        Date date = userAddRequest.getBirthDate();
+      /*  Date date = userAddRequest.getBirthDate();
         LocalDateTime dates = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
         log.info("date:{}", dates);
         LocalDate curDate = LocalDate.now();
-        log.info("currentDate:{}", curDate);
+        log.info("currentDate:{}", curDate);*/
 //        set age from birthdate
         UserModel userModel = new UserModel();
-        if (userAddRequest.getBirthDate() != null) {
+        /*if (userAddRequest.getBirthDate() != null) {
             int age = Period.between(LocalDate.from(dates), curDate).getYears();
             userModel.setAge(age);
             log.info("age:{}", age);
             userRepository.save(userModel);
-        }
+        }*/
         nullAwareBeanUtilsBean.copyProperties(userModel, userAddRequest);
         userModel.setRole(role);//set role in database
         userModel.setFullName();//set getFullName
-        userModel.setCreatedBy(requestSession.getJwtUser().getId());
+        /*userModel.setCreatedBy(requestSession.getJwtUser().getId());*/
         log.info(userModel.getFullName());
         userRepository.save(userModel);
         UserResponse userResponse = new UserResponse();
@@ -164,6 +164,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public Page<UserModel> getAllUserByFilterAndSortAndPage(UserFilter userFilter, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pagination) {
         return userRepository.findAllUserByFilterAndSortAndPage(userFilter, sort, pagination);
     }
@@ -261,6 +262,8 @@ public class UserServiceImpl implements UserService {
             userModel.setLogin(true);
             userModel.setUserStatus(UserStatus.ACTIVE);
             Date date = new Date();
+            userModel.setLoginTime(date);
+            userModel.setOtpSendTime(date);
             userModel.setLogoutTime(date);
             userRepository.save(userModel);
         } else {
@@ -583,8 +586,6 @@ public class UserServiceImpl implements UserService {
         }
         return userResponses;
     }
-
-
     @Override
     public void resultDetailByEmail(String id) throws InvocationTargetException, IllegalAccessException {
         UserModel userModel = getUserModel(id);
@@ -829,18 +830,18 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isEmpty(userAddRequest.getEmail()) && CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
             throw new InvaildRequestException(MessageConstant.EMAIL_EMPTY);
         }
-        if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
+        /*if (!userAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
             throw new InvalidRequestException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
-        }
+        }*/
         if (!userAddRequest.getPassword().matches(adminConfiguration.getPasswordRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_PASSWORD);
         }
-        if (!userAddRequest.getMobileNo().matches(adminConfiguration.getMoblieNoRegex())) {
+        if (!userAddRequest.getMobileNo().matches(adminConfiguration.getMobileNoRegex())) {
             throw new InvaildRequestException(MessageConstant.INVAILD_MOBILENO);
         }
-        if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
+     /*   if (StringUtils.length(userAddRequest.getAddress().getZipCode()) > 7) {
             throw new InvalidRequestException(MessageConstant.INVALID_ZIPCODE);
-        }
+        }*/
     }
 
     public void checkResultCond(Result result) throws InvocationTargetException, IllegalAccessException {
@@ -1003,7 +1004,7 @@ public class UserServiceImpl implements UserService {
                         duplicateEmails.add(user.getEmail().toLowerCase());
                     }
                 }
-                log.info("------------------End-----------------");
+                log.info("------  ------------End-----------------");
             }
             for (UserDataModel user : users) {
                 log.info("------------Start1---------------");

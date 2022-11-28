@@ -64,6 +64,8 @@ public class UserModel {
     Date loginTime;
     @JsonIgnore
     Date logoutTime;
+    @JsonIgnore
+    Date otpSendTime;
 
     @JsonIgnore
     boolean login = false;
