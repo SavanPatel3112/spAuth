@@ -48,7 +48,7 @@ public class UserController {
     @SneakyThrows
     @RequestMapping(name = "addOrUpdateUser", value = "/addOrUpdate", method = RequestMethod.POST)
     @Access(levels = {Role.ADMIN, Role.STUDENT, Role.DEPARTMENT})
-    public DataResponse<UserResponse> addOrUpdateUser(@RequestBody UserAddRequest userAddRequest, @RequestParam(required = false) String id, @RequestParam(required = false) Role role) {
+    public DataResponse<UserResponse> addOrUpdateUser (@RequestBody UserAddRequest userAddRequest, @RequestParam(required = false) String id, @RequestParam(required = false) Role role) {
         DataResponse<UserResponse> dataResponse = new DataResponse<>();
         dataResponse.setData(userService.addOrUpdateUser(userAddRequest, id, role));
         dataResponse.setStatus(Response.getOkResponse());
@@ -71,7 +71,7 @@ public class UserController {
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
     @RequestMapping(name = "getUser", value = "/get/id", method = RequestMethod.GET)
-    public DataResponse<UserResponse> getUser(@RequestParam String id) {
+    public DataResponse<UserResponse> getUser (@RequestParam String id) {
         DataResponse<UserResponse> dataResponse = new DataResponse<>();
         dataResponse.setData(userService.getUser(id));
         dataResponse.setStatus(Response.getOkResponse());
@@ -83,7 +83,7 @@ public class UserController {
     @SneakyThrows
     @Access(levels = {Role.ADMIN})
     @RequestMapping(name = "deleteUser", value = "/delete/id", method = RequestMethod.GET)
-    public DataResponse<Object> deleteUser(@RequestParam String id) {
+    public DataResponse<Object> deleteUser (@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
         userService.deleteUser(id);
         dataResponse.setStatus(Response.getOkResponse());

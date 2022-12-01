@@ -1,7 +1,7 @@
 package com.example.authmoduls.common.listener;
 
+import com.example.authmoduls.auth.controller.RecipeController;
 import com.example.authmoduls.auth.controller.*;
-import com.example.authmoduls.auth.repository.userRepository.UserRepository;
 import com.example.authmoduls.common.decorator.RestAPI;
 import com.example.authmoduls.common.model.AdminConfiguration;
 import com.example.authmoduls.common.model.EmailModel;
@@ -39,8 +39,6 @@ public class ApplicationStartUpEventListener {
     @Autowired
     AdminConfigurationService adminConfigurationService;
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     Utils utils;
 
 
@@ -70,6 +68,7 @@ public class ApplicationStartUpEventListener {
             saveIfNotExits(Utils.getAllMethodNames(QRController.class));
             saveIfNotExits(Utils.getAllMethodNames(MemberController.class));
             saveIfNotExits(Utils.getAllMethodNames(EmployeeController.class));
+            saveIfNotExits(Utils.getAllMethodNames(RecipeController.class));
         }
 
         Date currentDate = new Date();

@@ -27,7 +27,7 @@ public class UserResponse {
     String email;
     String userName;
     String password;
-    Address address;
+    List<Address> address;
     Role role;
     String fullName;
     String mobileNo;

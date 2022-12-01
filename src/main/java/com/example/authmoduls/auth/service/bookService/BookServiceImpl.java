@@ -106,9 +106,6 @@ public class BookServiceImpl implements BookService {
         bookPurchaseLogRepository.save(bookPurchaseLog);
     }
 
-
-
-
     @Override
     public BookPurchaseDetail bookChartApi(int year) throws JSONException {
         BookPurchaseDetail bookPurchaseDetail = new BookPurchaseDetail();
@@ -242,7 +239,6 @@ public class BookServiceImpl implements BookService {
         }
         Workbook workbook = ExcelUtil.createWorkbookFromUserBookDetailsData(hashMap);
         ByteArrayResource byteArrayResource = ExcelUtil.getBiteResourceFromWorkbook(workbook);
-
         File file = new File(" C:\\excelFiles\\demo.xlsx ");
         FileUtils.writeByteArrayToFile(file, byteArrayResource.getByteArray());
         file.createNewFile();

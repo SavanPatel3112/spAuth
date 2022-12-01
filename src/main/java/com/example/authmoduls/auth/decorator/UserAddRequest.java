@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class UserAddRequest {
     String email;
     String userName;
     String password;
-    Address address;
+    List<Address> address;
     String confirmPassword;
     String newPassword;
     String mobileNo;

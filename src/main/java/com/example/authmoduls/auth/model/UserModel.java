@@ -36,7 +36,7 @@ public class UserModel {
     String passWord;
     String confirmPassWord;
     String newPassWord;
-    Address address;
+    List<Address> address;
     Role role;
     String fullName;
     String otp;
@@ -66,10 +66,8 @@ public class UserModel {
     Date logoutTime;
     @JsonIgnore
     Date otpSendTime;
-
     @JsonIgnore
     boolean login = false;
-
     @JsonIgnore
     boolean softDelete = false;
     Result result;

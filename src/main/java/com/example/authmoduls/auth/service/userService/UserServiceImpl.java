@@ -37,7 +37,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import java.util.concurrent.TimeUnit;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +54,6 @@ import java.text.DecimalFormat;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Service
 @Slf4j
@@ -89,18 +91,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse addOrUpdateUser(UserAddRequest userAddRequest, String id, Role role) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
-            UserModel userResponse1 = getUserModel(id);
-            userResponse1.setAddress(userAddRequest.getAddress());
-            userResponse1.setUserName(userAddRequest.getUserName());
-            userResponse1.setPassWord(userAddRequest.getPassword());
-            userResponse1.setFirstName(userAddRequest.getFirstName());
-            userResponse1.setMiddleName(userAddRequest.getMiddleName());
-            userResponse1.setLastName(userAddRequest.getLastName());
-            userResponse1.setEmail(userAddRequest.getEmail());
-            userRepository.save(userResponse1);
-            UserResponse userResponse = new UserResponse();
-            nullAwareBeanUtilsBean.copyProperties(userResponse, userResponse1);
-            return userResponse;
+            UserModel userModel = getUserModel(id);
+            nullAwareBeanUtilsBean.copyProperties(userModel, userAddRequest);
+            userRepository.save(userModel);
+            return modelMapper.map(userModel,UserResponse.class);
         } else {
             if (role == null)//check user role
                 throw new InvaildRequestException(MessageConstant.ROLE_NOT_FOUND);
@@ -271,7 +265,22 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //cache based on username and OPT MAX 8
+    private static final Integer EXPIRE_MIN = 1;
+
+    private LoadingCache<String, Integer> otpCache;
+
+    public void otpService() {
+        otpCache = CacheBuilder.newBuilder().
+                expireAfterWrite(EXPIRE_MIN, TimeUnit.MINUTES).build(new CacheLoader<String, Integer>() {
+                    public Integer load(String key) {
+                        return 0;
+                    }
+                });
+    }
+
     public String generateOtp() {
+        otpService();
         Random random = new Random();
         int number = random.nextInt(999999);
         // this will convert any number sequence into 6 character.
@@ -281,6 +290,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void otpVerifications(String id, String otp) {
         log.info("otp:{}", otp);
+        otpCache = CacheBuilder.newBuilder().
+                expireAfterWrite(EXPIRE_MIN,TimeUnit.MINUTES).build(new CacheLoader<String, Integer>() {
+                    @Override
+                    public Integer load(String key) throws Exception {
+                        return 0;
+                    }
+                });
         boolean exists = userRepository.existsByIdAndOtpAndSoftDeleteFalse(id, otp);
         if (!exists) {
             throw new NotFoundException(MessageConstant.INVAILD_OTP);
@@ -291,6 +307,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getOtp(String otp, String id) throws InvocationTargetException, IllegalAccessException {
         boolean exists = userRepository.existsByIdAndOtpAndSoftDeleteFalse(id, otp);
         if (exists) {
+            otpService();
             UserModel userResponse1 = getUserModel(id);
             UserResponse userResponse = new UserResponse();
             nullAwareBeanUtilsBean.copyProperties(userResponse, userResponse1);
@@ -362,7 +379,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse   addResult(Result result, String id) throws InvocationTargetException, IllegalAccessException {
+    public UserResponse addResult(Result result, String id) throws InvocationTargetException, IllegalAccessException {
         UserModel userModel = getUserModel(id);
         if (!userModel.getRole().equals(Role.STUDENT)) {//is there role is student or not?
             throw new NotFoundException(MessageConstant.ROLE_NOT_MATCHED);
@@ -631,16 +648,12 @@ public class UserServiceImpl implements UserService {
         if (role == Role.ADMIN) {
             userModel.setSoftDelete(true);
             userRepository.save(userModel);
-            try {
                 EmailModel emailModel = new EmailModel();
                 emailModel.setTo(userModel.getEmail());
                 emailModel.setCc(adminConfiguration.getTechAdmins());
                 emailModel.setMessage("Delete Successfully...");
                 emailModel.setSubject("USer Detail");
                 utils.sendEmailNow(emailModel);
-            } catch (Exception e) {
-                log.error(" Error happened while sending result to user :{} ", e.getMessage());
-            }
         } else {
             throw new NotFoundException(MessageConstant.INVAILD_ROLE);
         }
@@ -652,7 +665,6 @@ public class UserServiceImpl implements UserService {
             throw new EmptyException(MessageConstant.FILE_IS_EMPTY);
         }
         saveUploadedFiles(List.of(multipartFile));
-        log.info("Successfully uploaded - " + multipartFile.getOriginalFilename());
         return "Successfully uploaded - " + multipartFile.getOriginalFilename();
     }
 
@@ -714,16 +726,12 @@ public class UserServiceImpl implements UserService {
             } else {
                 UserModel userModel1 = modelMapper.map(dataModel, UserModel.class);
                 userModel1.setUserStatus(UserStatus.INVITED);
-                try {
                     EmailModel emailModel = new EmailModel();
                     emailModel.setTo(dataModel.getEmail());
                     emailModel.setCc(adminConfiguration.getTechAdmins());
                     emailModel.setMessage("your details stored in the system");
                     emailModel.setSubject("User Details");
                     utils.sendEmailNow(emailModel);
-                } catch (Exception e) {
-                    log.error("Error happened while sending result to user :{} ", e.getMessage());
-                }
                 userRepository.save(userModel1);
                 UserResponse userResponse = modelMapper.map(userModel1, UserResponse.class);
                 userResponses.add(userResponse);
@@ -745,7 +753,6 @@ public class UserServiceImpl implements UserService {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         if (password.equals(confirmPassword)) {
             String passwords = PasswordUtils.encryptPassword(confirmPassword);
-            log.info("password:{}", passwords);
             userModel.setPassWord(passwords);
             userRepository.save(userModel);
             EmailModel emailModel = new EmailModel();
@@ -766,16 +773,12 @@ public class UserServiceImpl implements UserService {
             List<UserModel> userModel = userRepository.findByUserStatusAndSoftDeleteIsFalse(userStatus);
             for (UserModel model : userModel) {
                 UserModel userModel1 = modelMapper.map(model, UserModel.class);
-                try {
                     EmailModel emailModel = new EmailModel();
                     emailModel.setMessage("your details stored in the system");
                     emailModel.setTo(userModel1.getEmail());
                     emailModel.setCc(adminConfiguration.getTechAdmins());
                     emailModel.setSubject("User detail");
                     utils.sendEmailNow(emailModel);
-                } catch (Exception e) {
-                    log.error("Error happened while sending result to user :{} ", e.getMessage());
-                }
             }
         }
     }
@@ -854,7 +857,6 @@ public class UserServiceImpl implements UserService {
             throw new InvaildRequestException(MessageConstant.INVAILD_SPI);
         }
         int year = Year.now().getValue();
-        log.info("year:{}", year);
         if (result.getYear() > year) {
             throw new InvaildRequestException(MessageConstant.INVAILD_YEAR);
         }
@@ -871,16 +873,12 @@ public class UserServiceImpl implements UserService {
             responseByEmail.setSpi(result1.getSpi());
             response.add(responseByEmail);
         }
-        try {
             EmailModel emailModel = new EmailModel();
             emailModel.setTo(userModel.getEmail());
             emailModel.setCc(adminConfiguration.getTechAdmins());
             emailModel.setMessage(utils.generateReportMessage(userModel.getResults(), userModel.getCgpi()));
             emailModel.setSubject("Result Details");
             utils.sendEmailNow(emailModel);
-        } catch (Exception e) {
-            log.error("Error happened while sending result to user :{}", e.getMessage());
-        }
     }
 
     public void updateUserDetail(String id, UserAddRequest userAddRequest) {
@@ -916,17 +914,12 @@ public class UserServiceImpl implements UserService {
 
     public void emailSend(HashMap<String, String> changedProperties) throws InvocationTargetException, IllegalAccessException {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
-        try {
             EmailModel emailModel = new EmailModel();
             emailModel.setTo("dency05@gmail.com");
             emailModel.setCc(adminConfiguration.getTechAdmins());
             emailModel.setMessage(utils.genearteUpdatedUserDetail(changedProperties));
             emailModel.setSubject("User Details");
             utils.sendEmailNow(emailModel);
-            log.info("email send start");
-        } catch (Exception e) {
-            log.error("Error happened while sending result to user :{}", e.getMessage());
-        }
     }
 
     public void difference(UserModel userModel, UserAddRequest userAddRequest, HashMap<String, String> changedProperties) throws IllegalAccessException, InvocationTargetException {
@@ -939,14 +932,11 @@ public class UserServiceImpl implements UserService {
             Object value1 = field.get(userModel);
             Object value2 = field.get(userModel1);
             if (value1 != null && value2 != null) {
-                log.info(field.getName() + "=" + value1);
-                log.info(field.getName() + "=" + value2);
                 if (!Objects.equals(value1, value2)) {
                     changedProperties.put(field.getName(), value2.toString());
                 }
             }
         }
-        log.info(changedProperties.toString());
     }
 
     public void saveUploadedFiles(List<MultipartFile> files) throws IOException {
@@ -991,37 +981,25 @@ public class UserServiceImpl implements UserService {
         Set<String> duplicateEmails = new HashSet<>();
         if (!CollectionUtils.isEmpty(users)) {  //database empty
             for (UserDataModel user : users) { //
-                log.info("---------------Start--------------------");
-                log.info("Actual Email: {}", user.getEmail());
                 user.setDuplicateEmail(checkDuplicateEmail(user.getEmail()));
-                log.info("Duplicate Email Status: {}", user.isDuplicateEmail());
                 if (!user.isEmptyEmail()) {
                     if (!uniqueEmails.contains(user.getEmail().toLowerCase())) {
-                        log.info("Unique Email: {}", user.getEmail());
                         uniqueEmails.add(user.getEmail().toLowerCase());
                     } else {
-                        log.info("Duplicate Email: {}", user.getEmail());
                         duplicateEmails.add(user.getEmail().toLowerCase());
                     }
                 }
-                log.info("------  ------------End-----------------");
             }
             for (UserDataModel user : users) {
-                log.info("------------Start1---------------");
                 if (!user.isEmptyEmail() && !user.isDuplicateEmail()) {
-                    log.info("User Email Is Not Duplicate: {}", user.getEmail());
                     user.setDuplicateEmail(duplicateEmails.contains(user.getEmail().toLowerCase()));
-                    log.info("Check Email Status: {}", user.getEmail());
                 }
                 if (user.isDuplicateEmail()) {
-                    log.info("Added Duplicate Email In List: {}", user.getEmail());
                     userList.add(user);
                 }
-                log.info("------------End1---------------");
             }
         }
     }
-
     private boolean checkDuplicateEmail(String email) {
         return userDataRepository.existsByEmailAndSoftDeleteFalse(email);
     }

@@ -1,12 +1,13 @@
 server:
   port: 8002
+
 spring:
   main:
     allow-circular-references: true
+
   data:
     mongodb:
       uri: mongodb://localhost:27017/auth
-
 
   mvc:
     pathmatch:
@@ -25,12 +26,12 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
+
 trs:
   defaults:
     timezone: CST
     prefetchCount: 1
     concurrentConsumers: 1
-
 
 rmq:
   userSend:

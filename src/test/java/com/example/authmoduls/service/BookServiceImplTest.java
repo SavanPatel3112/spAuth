@@ -75,9 +75,7 @@ class BookServiceImplTest {
         when(userRepository.findByIdAndSoftDeleteIsFalse(userId)).thenReturn(Optional.ofNullable(userModel));
         when(bookRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(book));
         bookService.bookPurchaseLog(id,userId);
-
         //then
-
         verify(bookRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
      /*   verify(userRepository,times(1)).findByIdAndSoftDeleteIsFalse(userId);
         verify(bookPurchaseLogRepository,times(1)).save(bookPurchaseLogs);*/
@@ -109,15 +107,11 @@ class BookServiceImplTest {
         var bookData = List.of(BookData.builder().bookName(bookName).count(count).build());
         var bookPurchase = List.of(BookPurchase.builder().bookData(bookData).totalCount(totalCount).build());
         var bookPurchaseDetail = BookPurchaseDetail.builder().bookDataResponse(bookPurchase).title(title).totalCount(totalCount).build();
-
         //when
         when(bookRepository.bookChartApi(year)).thenReturn(bookPurchase);
-
         bookService.bookChartApi(year);
-
         //then
         Assertions.assertEquals(bookPurchaseDetail,bookService.bookChartApi(year));
-
     }
 
     @Test
@@ -130,16 +124,15 @@ class BookServiceImplTest {
         when(bookPurchaseLogRepository.findFirstByBookIdAndUserIdAndSoftDeleteIsFalse(id, userId)).thenReturn(Optional.ofNullable(bookPurchaseLog));
         when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
         when(bookRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(book));
-
         bookService.bookSaleLog(id, userId);
-        //then
-
+        //the
         assert userModel != null;
         verify(userRepository,times(1)).save(userModel);
         verify(bookRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
         assert bookPurchaseLog != null;
         verify(bookPurchaseLogRepository,times(1)).save(bookPurchaseLog);
-
     }
+
+
 
 }
