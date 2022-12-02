@@ -69,6 +69,7 @@ public class ApplicationStartUpEventListener {
             saveIfNotExits(Utils.getAllMethodNames(MemberController.class));
             saveIfNotExits(Utils.getAllMethodNames(EmployeeController.class));
             saveIfNotExits(Utils.getAllMethodNames(RecipeController.class));
+            saveIfNotExits(Utils.getAllMethodNames(MainController.class));
         }
 
         Date currentDate = new Date();

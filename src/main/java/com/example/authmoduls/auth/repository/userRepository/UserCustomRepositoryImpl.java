@@ -45,8 +45,6 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         // Find Count
         List<AggregationOperation> operationForCount = filterAggregation(userFilter, sort, pagination, false);
         operationForCount.add(group().count().as("count"));
-
-
         operationForCount.add(project("count"));
         Aggregation aggregationCount = newAggregation(UserAddRequest.class, operationForCount);
         AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, UserModel.class, CountQueryResult.class);

@@ -6,6 +6,7 @@ import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.common.decorator.DataResponse;
 import com.example.authmoduls.common.decorator.ListResponse;
 import com.example.authmoduls.common.decorator.Response;
+import com.example.authmoduls.common.utils.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +31,7 @@ public class RecipeController {
         listResponse.setStatus(Response.getOkResponse());
         return listResponse;
     }
+
     @RequestMapping(name = "getRecipe" , value = "/get/id" , method = RequestMethod.GET)
     public DataResponse<RecipeResponse> getRecipe (@RequestParam String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<RecipeResponse> dataResponse = new DataResponse<>();

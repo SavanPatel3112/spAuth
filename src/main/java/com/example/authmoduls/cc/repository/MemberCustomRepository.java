@@ -12,4 +12,5 @@ import java.util.List;
 public interface MemberCustomRepository {
 
     List<MemberResponse> findAllUserByFilterAndSortAndPage(UserFilter filter, FilterSortRequest.SortRequest<UserSortBy> sort, PageRequest pagination) throws InvocationTargetException, IllegalAccessException;
+
 }
