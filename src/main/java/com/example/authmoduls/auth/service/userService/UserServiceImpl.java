@@ -307,7 +307,6 @@ public class UserServiceImpl implements UserService {
     public UserResponse getOtp(String otp, String id) throws InvocationTargetException, IllegalAccessException {
         boolean exists = userRepository.existsByIdAndOtpAndSoftDeleteFalse(id, otp);
         if (exists) {
-            otpService();
             UserModel userResponse1 = getUserModel(id);
             UserResponse userResponse = new UserResponse();
             nullAwareBeanUtilsBean.copyProperties(userResponse, userResponse1);

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 
 @RestController
 @RequestMapping("/recipe")
+@CrossOrigin("*")
 public class RecipeController {
     @Autowired
     RecipeService recipeService;
