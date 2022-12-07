@@ -76,6 +76,9 @@ public class LoginController {
         return pageResponse;
     }
 
+
+
+
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
     @RequestMapping(name = "getToken", value = "/generateToken", method = RequestMethod.GET)
