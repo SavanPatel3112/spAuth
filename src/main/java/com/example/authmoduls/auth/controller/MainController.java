@@ -1,5 +1,7 @@
 package com.example.authmoduls.auth.controller;
 
+import com.example.authmoduls.common.enums.Role;
+import com.example.authmoduls.common.utils.Access;
 import com.example.authmoduls.fileUploder.FileManager;
 import com.example.authmoduls.fileUploder.FileUploaderService;
 import lombok.AllArgsConstructor;
@@ -42,6 +44,7 @@ public class MainController {
         return ResponseEntity.ok("parentId: "+parentId);
     }*/
 
+    @Access(levels = {Role.ADMIN})
     @RequestMapping( name = "uploadFile",value = "/upload", method = RequestMethod.POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE} )

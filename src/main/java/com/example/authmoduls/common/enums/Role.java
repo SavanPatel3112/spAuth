@@ -1,5 +1,6 @@
 package com.example.authmoduls.common.enums;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -15,7 +15,8 @@ public class MessageConstant {
     public static final String EMAIL_NOT_FOUND = "Email not found";
     public static final String INVAILD_OTP = "Invaild Otp";
     public static final String INVAILD_TOKEN = "Invaild Token";
-    public static final String INVAILD_PASSWORD = "please provide vaild password";
+    public static final String INVAILD_PASSWORD = "please provide valid password";
+    public static final String PASSWORD_INVALID = "password not match ";
     public static final String FIRSTNAME_NOT_EMPTY = "Please provide valid FirstName";
     public static final String LASTNAME_NOT_EMPTY = "Please provide LastName";
     public static final String MIDDLENAME_NOT_EMPTY = "Please provide MiddleName";

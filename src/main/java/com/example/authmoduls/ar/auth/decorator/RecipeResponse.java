@@ -1,6 +1,7 @@
 package com.example.authmoduls.ar.auth.decorator;
 
 import com.example.authmoduls.ar.auth.model.RecipeIngredient;
+import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class RecipeResponse {
     String itemUrl;
     String itemDescription;
     List<RecipeIngredient> recipeIngredient;
+    Role role;
 
     @JsonIgnore
     boolean softDelete = false;

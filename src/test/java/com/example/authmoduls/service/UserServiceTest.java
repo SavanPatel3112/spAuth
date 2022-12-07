@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
@@ -108,7 +109,7 @@ public class UserServiceTest {
             userAddRequest.setMiddleName("Kiritbhai");
             userAddRequest.setLastName("Patel");
             userAddRequest.setPassword("Pk@1402");
-            userAddRequest.setAddress(new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
+            userAddRequest.setAddress((List<Address>) new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
             userService.addOrUpdateUser(userAddRequest, userModel.getId(), userModel.getRole());
         }catch (Exception e){
             Assertions.fail(e.getMessage());
@@ -125,7 +126,7 @@ public class UserServiceTest {
             userAddRequest.setMiddleName("Kiritbhai");
             userAddRequest.setLastName("Patel");
             userAddRequest.setPassword("Pk@1402");
-            userAddRequest.setAddress(new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
+            userAddRequest.setAddress((List<Address>) new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
             Assertions.assertEquals(userService.addOrUpdateUser(userAddRequest, userModel.getUserName(), userModel.getRole()),new UserResponse());
         }catch (Exception e){
             Assertions.fail(e.getMessage());
@@ -487,7 +488,7 @@ public class UserServiceTest {
             userAddRequest.setMiddleName("Kiritbhai");
             userAddRequest.setLastName("Patel");
             userAddRequest.setPassword("Pk@1402");
-            userAddRequest.setAddress(new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
+            userAddRequest.setAddress((List<Address>) new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
             userService.userUpdate(userModel.getId(),userModel.getRole(),userAddRequest);
         }catch (Exception e){
             Assertions.fail(e.getMessage());

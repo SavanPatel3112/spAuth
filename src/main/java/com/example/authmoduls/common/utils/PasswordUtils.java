@@ -1,6 +1,7 @@
 package com.example.authmoduls.common.utils;
 
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
+import lombok.Builder;
 import org.mindrot.jbcrypt.BCrypt;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -13,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 @Component
+@Builder
 public class PasswordUtils {
 
 

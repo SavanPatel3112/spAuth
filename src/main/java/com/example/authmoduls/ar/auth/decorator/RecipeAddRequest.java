@@ -1,6 +1,7 @@
 package com.example.authmoduls.ar.auth.decorator;
 
 import com.example.authmoduls.ar.auth.model.RecipeIngredient;
+import com.example.authmoduls.common.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,4 @@ public class RecipeAddRequest {
     String itemUrl;
     String itemDescription;
     List<RecipeIngredient> recipeIngredient;
-
 }

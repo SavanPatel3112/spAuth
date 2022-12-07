@@ -244,9 +244,9 @@ public class UserController {
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
     @RequestMapping(name = "setPassword", value = "/setPassword", method = RequestMethod.GET)
-    public DataResponse<Object> setPassword(@RequestParam String password, @RequestParam String confirmPassword, @RequestParam String id) {
+    public DataResponse<Object> setPassword(@RequestParam String password, @RequestParam String confirmPassword, @RequestParam String userName) {
         DataResponse<Object> dataResponse = new DataResponse<>();
-        userService.getUserPassword(password, confirmPassword, id);
+        userService.getUserPassword(password, confirmPassword, userName);
         dataResponse.setStatus(Response.getPasswordResponse());
         return dataResponse;
     }

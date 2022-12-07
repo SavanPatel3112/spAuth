@@ -6,15 +6,19 @@ import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
 import com.example.authmoduls.ar.auth.repository.RecipeRepository;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
+import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -30,7 +34,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id) throws InvocationTargetException, IllegalAccessException {
+    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id, Role role) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
             RecipeModel recipeModel = getRecipeModel(id);
             nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
@@ -39,6 +43,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
         RecipeModel recipeModel = new RecipeModel();
         nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
+        recipeModel.setRole(role);
         recipeRepository.save(recipeModel);
         RecipeResponse recipeResponse = new RecipeResponse();
         nullAwareBeanUtilsBean.copyProperties(recipeResponse, recipeModel);
@@ -72,6 +77,54 @@ public class RecipeServiceImpl implements RecipeService {
         RecipeModel recipeModel = getRecipeModel(id);
         recipeModel.setSoftDelete(true);
         recipeRepository.save(recipeModel);
+    }
+
+    @Override
+    public void recipeUpdate(String id, Role role, RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
+        RecipeModel recipeModel = getRecipeModel(id);
+        HashMap<String, String> changedProperties = new HashMap<>();
+        boolean recipeUpdate = false;
+        if (recipeUpdate){
+            updateRecipeDetail(id,recipeAddRequest);
+            difference(recipeModel,recipeAddRequest,changedProperties);
+        }
+
+    }
+
+    public void updateRecipeDetail(String id, RecipeAddRequest recipeAddRequest) {
+        RecipeModel recipeModel =getRecipeModel(id);
+        if (recipeAddRequest != null){
+            if (recipeAddRequest.getItemDescription()!=null){
+                recipeModel.setItemDescription(recipeAddRequest.getItemDescription());
+            }
+            if (recipeAddRequest.getRecipeIngredient()!=null){
+                recipeModel.setRecipeIngredient(recipeAddRequest.getRecipeIngredient());
+            }
+            if (recipeAddRequest.getItemName()!=null){
+                recipeModel.setItemName(recipeAddRequest.getItemName());
+            }
+            if (recipeAddRequest.getItemUrl()!=null){
+                recipeModel.setItemUrl(recipeAddRequest.getItemUrl());
+            }
+            recipeRepository.save(recipeModel);
+        }
+
+    }
+    public void difference(RecipeModel recipeModel, RecipeAddRequest recipeAddRequest, HashMap<String, String> changedProperties) throws IllegalAccessException, InvocationTargetException {
+        RecipeModel recipeModel1 = new RecipeModel();
+        nullAwareBeanUtilsBean.copyProperties(recipeModel1, recipeAddRequest);
+        recipeModel1.setId(recipeModel.getId());
+        for (Field field : recipeModel.getClass().getDeclaredFields()) {
+            // You might want to set modifier to public first (if it is not public yet)
+            field.setAccessible(true);
+            Object value1 = field.get(recipeModel);
+            Object value2 = field.get(recipeModel1);
+            if (value1 != null && value2 != null) {
+                if (!Objects.equals(value1, value2)) {
+                    changedProperties.put(field.getName(), value2.toString());
+                }
+            }
+        }
     }
 
     private RecipeModel getRecipeModel(String id) {

@@ -48,7 +48,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         operationForCount.add(project("count"));
         Aggregation aggregationCount = newAggregation(UserAddRequest.class, operationForCount);
         AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, UserModel.class, CountQueryResult.class);
-        long count = countQueryResults.getMappedResults().size() == 0 ? 0 : countQueryResults.getMappedResults().get(0).getCount();
+        long count = countQueryResults.getMappedResults().isEmpty() ? 0 : countQueryResults.getMappedResults().get(0).getCount();
         return PageableExecutionUtils.getPage(users, pagination, () -> count);
     }
 
@@ -137,8 +137,12 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         criteria = criteria.and("_id").in(userIdsRequest.getUserId());
         criteria = criteria.and("softDelete").is(false);
         operations.add(match(criteria));
-        operations.add(new CustomAggregationOperation(new Document("$set", new Document().append("max", new Document("$max", "$results.spi")).append("min", new Document("$min", "$results.spi")))));
-        operations.add(new CustomAggregationOperation(new Document("$project", new Document().append("maxArray", new Document("$filter", new Document().append("input", "$results").append("as", "result").append("cond", new Document("$eq", Arrays.asList("$$result.spi", "$max"))))).append("minArray", new Document("$filter", new Document().append("input", "$results").append("as", "result").append("cond", new Document("$eq", Arrays.asList("$$result.spi", "$min"))))).append("getFullName", 1).append("max", 1).append("min", 1))));
+        operations.add(new CustomAggregationOperation(new Document("$set",new Document().append("max", new Document("$max", "$results.spi")).append("min", new Document("$min", "$results.spi")))));
+        operations.add(new CustomAggregationOperation(new Document("$project", new Document().append("maxArray", new Document("$filter", new Document()
+                .append("input", "$results").append("as", "result")
+                .append("cond", new Document("$eq", Arrays.asList("$$result.spi", "$max"))))).append("minArray", new Document("$filter", new Document()
+                .append("input", "$results").append("as", "result").append("cond", new Document("$eq", Arrays.asList("$$result.spi", "$min")))))
+                .append("getFullName", 1).append("max", 1).append("min", 1))));
         operations.add(new CustomAggregationOperation(new Document("$unwind", new Document().append("path", "$maxArray").append("preserveNullAndEmptyArrays", false))));
         operations.add(new CustomAggregationOperation(new Document("$unwind", new Document().append("path", "$minArray").append("preserveNullAndEmptyArrays", false))));
         operations.add(new CustomAggregationOperation(new Document("$group", new Document("_id", "$_id").append("maxArray", new Document("$first", "$maxArray")).append("minArray", new Document("$first", "$minArray")).append("max", new Document("$first", "$max")).append("min", new Document("$first", "$min")).append("getFullName", new Document("$first", "$getFullName")))));
@@ -165,8 +169,20 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         criteria = criteria.and("softDelete").is(false);
         operations.add(match(criteria));
         operations.add(unwind("results"));
-        operations.add(new CustomAggregationOperation(new Document("$project", new Document("status", new Document("$switch", new Document("branches", Arrays.asList(new Document("case", new Document("$eq", Arrays.asList("$results.spi", 10.0))).append("then", "firstClass"), new Document("case", new Document("$lt", Arrays.asList("$results.spi", 4.0))).append("then", "fail"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 10.0)), new Document("$gte", Arrays.asList("$results.spi", 9.0))))).append("then", "secondClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 9.0)), new Document("$gte", Arrays.asList("$results.spi", 8.0))))).append("then", "thirdClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 8.0)), new Document("$gte", Arrays.asList("$results.spi", 7.0))))).append("then", "fourthClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 7.0)), new Document("$gte", Arrays.asList("$results.spi", 4.0))))).append("then", "fifthClass"))).append("default", "none"))).append("getFullName", 1.0).append("results", 1.0))));
-        operations.add(new CustomAggregationOperation(new Document("$group", new Document("_id", "$_id").append("getFullName", new Document("$first", "$getFullName")).append("result", new Document("$push", new Document("semester", "$results.semester").append("spi", "$results.spi").append("date", "$results.date").append("year", "$results.year").append("status", "$status"))))));
+        operations.add(new CustomAggregationOperation(new Document("$project", new Document("status", new Document("$switch",
+                new Document("branches", Arrays.asList(new Document("case", new Document("$eq", Arrays.asList("$results.spi", 10.0)))
+                        .append("then", "firstClass"), new Document("case", new Document("$lt", Arrays.asList("$results.spi", 4.0)))
+                        .append("then", "fail"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 10.0)), new Document("$gte", Arrays.asList("$results.spi", 9.0)))))
+                        .append("then", "secondClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 9.0)), new Document("$gte", Arrays.asList("$results.spi", 8.0)))))
+                        .append("then", "thirdClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 8.0)), new Document("$gte", Arrays.asList("$results.spi", 7.0))))).append("then", "fourthClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 7.0)), new Document("$gte", Arrays.asList("$results.spi", 4.0)))))
+                        .append("then", "fifthClass"))).append("default", "none"))).append("getFullName", 1.0).append("results", 1.0))));
+        operations.add(new CustomAggregationOperation(new Document("$group", new Document("_id", "$_id")
+                .append("getFullName", new Document("$first", "$getFullName"))
+                .append("result", new Document("$push", new Document("semester", "$results.semester")
+                        .append("spi", "$results.spi")
+                        .append("date", "$results.date")
+                        .append("year", "$results.year")
+                        .append("status", "$status"))))));
         if (addPage) {
             //sorting
             if (sort != null && sort.getSortBy() != null && sort.getOrderBy() != null) {

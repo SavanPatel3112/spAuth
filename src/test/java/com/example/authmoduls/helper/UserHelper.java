@@ -28,7 +28,7 @@ public class UserHelper {
         userModel.setEmail("savan9045@gmail.com");
         userModel.setNewPassWord("sp1234");
         userModel.setConfirmPassWord("sp1234");
-        userModel.setAddress(new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380052"));
+        userModel.setAddress((List<Address>) new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380052"));
         userModel.setRole(Role.ADMIN);
         userModel.setOtp("123456");
         userModel.setUserStatus(UserStatus.ACTIVE);

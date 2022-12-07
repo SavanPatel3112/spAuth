@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -106,7 +107,7 @@ public class UserControllerTest {
         userAddRequest.setMiddleName("Kiritbhai");
         userAddRequest.setLastName("Patel");
         userAddRequest.setPassword("Pk@1402");
-        userAddRequest.setAddress(new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
+        userAddRequest.setAddress((List<Address>) new Address("f-7 neelDip flat","guruKulRoad","memNagar","ahmedabad","gujarat","380062"));
         String json = new Gson().toJson(userAddRequest);
         MvcResult mvcResult = mockMvc.perform(post("/users/addOrUpdate?id="+userModel.getId())
                         .header(CustomHTTPHeaders.TOKEN.toString(),token)
