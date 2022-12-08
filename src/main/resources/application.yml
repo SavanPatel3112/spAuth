@@ -5,6 +5,17 @@ spring:
   main:
     allow-circular-references: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 955643515339-79mr8ck8p9t4itp5ebc11qv4jhuqmtf3.apps.googleusercontent.com
+            clientSecret: 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
+            scope:
+              - email
+              - profile
+
   data:
     mongodb:
       uri: mongodb://localhost:27017/auth

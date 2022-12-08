@@ -399,9 +399,7 @@ public class UserServiceImpl implements UserService {
                     throw new AlreadyExistException(MessageConstant.SEMESTER_EXISTS);
                 }
             }
-            log.info("Result:{}", result);
             results.add(result);
-            log.info("results:{}", results.size());
             double total = 0;
             double avg;
             for (Result semester : results) {
@@ -413,11 +411,9 @@ public class UserServiceImpl implements UserService {
                 cgpi = Double.parseDouble(df.format(avg));
             }
         }
-        log.info("ResultSize:{}", results.size());
         userModel.setCgpi(cgpi);
         userModel.setResults(results);
         userRepository.save(userModel);
-        log.info("userModel:{}", userModel.getResults());
         sendResultEmail(userModel, result);//send email
         UserResponse userResponse = new UserResponse();
         nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);

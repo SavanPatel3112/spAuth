@@ -15,7 +15,6 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
 import java.lang.reflect.InvocationTargetException;
 
 @RestController
@@ -36,7 +35,7 @@ public class LoginController {
         return dataResponse;
     }
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(levels = {Role.ADMIN})
     @RequestMapping(name = "getUser" , value = "getUser/id" , method = RequestMethod.GET)
     public DataResponse<LoginResponse> getUser(String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<LoginResponse> dataResponse= new DataResponse<>();
@@ -45,7 +44,7 @@ public class LoginController {
         return dataResponse;
     }
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(levels = {Role.ADMIN})
     @RequestMapping(name = "deleteUser" , value = "deleteUser/id" , method = RequestMethod.DELETE)
     public DataResponse<LoginResponse> deleteUser(String id){
         DataResponse<LoginResponse> dataResponse = new DataResponse<>();
@@ -54,7 +53,7 @@ public class LoginController {
         return dataResponse;
     }
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(levels = {Role.ADMIN})
     @RequestMapping(name = "getAllUser" , value = "getAllUser" , method = RequestMethod.GET)
     public ListResponse<LoginResponse> getAllUser () throws InvocationTargetException, IllegalAccessException {
         ListResponse<LoginResponse> listResponse = new ListResponse<>();
@@ -65,7 +64,7 @@ public class LoginController {
 
     @SneakyThrows
     @RequestMapping(name = "getAllUserByPagination" , value = "/getALlUser/filter",method = {RequestMethod.POST})
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(levels = {Role.ADMIN})
     public PageResponse<Login> getAllUserByPagination(@RequestBody FilterSortRequest<LoginFilter, LoginSortBy> filterSortRequest){
         PageResponse<Login> pageResponse = new PageResponse<>();
         LoginFilter loginFilter = filterSortRequest.getFilter();
@@ -75,9 +74,6 @@ public class LoginController {
         pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
         return pageResponse;
     }
-
-
-
 
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
@@ -141,4 +137,5 @@ public class LoginController {
         dataResponse.setStatus(Response.logOutResponse());
         return dataResponse;
     }
+
 }

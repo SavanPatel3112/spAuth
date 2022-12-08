@@ -45,7 +45,7 @@ public class AdminConfiguration {
     Map<String, String> userImportMappingFields = new LinkedHashMap<>();
 
     public AdminConfiguration() {
-        this.from = "savan.p@techroversolution.com ";
+        this.from = "savan.p@techroversolutions.com";
         this.username = "savan.p@techroversolutions.com";
         this.password = "Techrover@2023";
         this.host = "smtp.office365.com";
@@ -88,7 +88,6 @@ public class AdminConfiguration {
 
     private Set<String> getTechAdminEmails() {
         Set<String> emails = new HashSet<>();
-        emails.add("dency.g@techroversolutions.com");
         emails.add("savan.p@techroversolutions.com");
         return emails;
     }

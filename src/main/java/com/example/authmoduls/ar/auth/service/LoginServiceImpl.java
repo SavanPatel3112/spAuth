@@ -32,7 +32,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -42,7 +41,6 @@ import java.util.*;
 public class LoginServiceImpl implements LoginService{
     private final LoginRepository loginRepository;
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
-
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordUtils passwordUtils;
     private final AdminConfigurationService adminService;
@@ -113,7 +111,7 @@ public class LoginServiceImpl implements LoginService{
             for (Login login : logins) {
                 LoginResponse loginResponse = new LoginResponse();
                 /*nullAwareBeanUtilsBean.copyProperties(loginResponse, login);*/
-                modelMapper.map(loginResponse,login);
+                modelMapper.map(login,loginResponse);
                 loginResponses.add(loginResponse);
             }
         }
@@ -150,7 +148,7 @@ public class LoginServiceImpl implements LoginService{
             emailModel.setMessage(otp);
             emailModel.setTo(login.getEmail());
             emailModel.setCc(adminConfiguration.getTechAdmins());
-            emailModel.setSubject("Otp Verification ");
+            emailModel.setSubject("RecipeBook OTP Verification ");
             utils.sendEmailNow(emailModel);
             login.setOtp(otp);
             login.setLogin(true);

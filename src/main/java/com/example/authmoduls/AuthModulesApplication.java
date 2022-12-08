@@ -14,4 +14,5 @@ public class AuthModulesApplication implements WebMvcConfigurer {
     public static void main(String[] args) {
         SpringApplication.run(AuthModulesApplication.class, args);
     }
+
 }

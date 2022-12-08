@@ -23,6 +23,7 @@ public class UserHelper {
         userModel.setLastName("Kiritbhai");
         userModel.setAge(22);
         userModel.setUserName("Sp3112");
+
         userModel.setPassWord(PasswordUtils.encryptPassword("sp3112"));
         userModel.setMobileNo("9081738141");
         userModel.setEmail("savan9045@gmail.com");
