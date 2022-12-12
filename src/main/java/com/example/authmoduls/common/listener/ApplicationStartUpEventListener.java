@@ -73,7 +73,7 @@ public class ApplicationStartUpEventListener {
             saveIfNotExits(Utils.getAllMethodNames(ShoppingController.class));
         }
 
-        Date currentDate = new Date();
+        /*Date currentDate = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm (z)");
         dateFormatter.setTimeZone(TimeZone.getTimeZone("CST"));
         String cstTime = dateFormatter.format(currentDate);
@@ -84,9 +84,9 @@ public class ApplicationStartUpEventListener {
 
         Set<String> emails = configuration.getTechAdmins();
 
-        /*if (StringUtils.isEmpty(e.getTo())){
+        *//*if (StringUtils.isEmpty(e.getTo())){
             emails.setTo(emails.iterator().next());
-        }*/
+        }*//*
         EmailModel emailModel = new EmailModel();
         AdminConfiguration adminConfiguration = adminConfigurationService.getConfigurationDetails();
         emailModel.setTo(emails.iterator().next());
@@ -95,7 +95,7 @@ public class ApplicationStartUpEventListener {
         emailModel.setSubject("Auth module started");
         emailModel.setMessage("AuthModule<br/><br/>CST time : " + cstTime + "<br/>GMT time : " + gmtTime + "<br/>IST time : " + istTime);
         utils.sendEmailNow(emailModel);
-        log.info("Module started mail sent to tech-admins");
+        log.info("Module started mail sent to tech-admins");*/
         /*scheduleCronJobs(adminRepository.findAll().get(0));*/
     }
 

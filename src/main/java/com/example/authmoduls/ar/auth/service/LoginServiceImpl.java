@@ -124,9 +124,15 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
+    public LoginTokenResponse userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
         Login login = getUserEmail(loginRequest.getEmail());
         String userPassword = login.getPassWord();
+        LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
+        loginTokenResponse.setRole(login.getRole());
+        JWTUser jwtUser = new JWTUser(login.getId(), Collections.singletonList(loginTokenResponse.getRole().toString()));
+        String token = jwtTokenUtil.generateToken(jwtUser);
+        modelMapper.map(loginTokenResponse,login);
+        loginTokenResponse.setToken(token);
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
@@ -145,6 +151,7 @@ public class LoginServiceImpl implements LoginService{
         } else {
             throw new NotFoundException(MessageConstant.PASSWORD_NOT_MATCHED);
         }
+        return loginTokenResponse;
     }
 
     @Override

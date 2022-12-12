@@ -87,11 +87,13 @@ public class LoginController {
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
     @RequestMapping(name = "userLogin", value = "/login", method = RequestMethod.POST)
-    public DataResponse<Object> userLogin(@RequestBody LoginRequest loginRequest) {
-        DataResponse<Object> dataResponse = new DataResponse<>();
-        loginService.userLogin(loginRequest);
-        dataResponse.setStatus(Response.getLoginResponse());
-        return dataResponse;
+    public TokenResponse<LoginTokenResponse> userLogin(@RequestBody LoginRequest loginRequest) {
+        TokenResponse<LoginTokenResponse> tokenResponse = new TokenResponse<>();
+        LoginTokenResponse loginTokenResponse = loginService.userLogin(loginRequest);
+        tokenResponse.setData(loginTokenResponse);
+        tokenResponse.setStatus(Response.getLoginResponse());
+        tokenResponse.setToken(loginTokenResponse.getToken());
+        return tokenResponse;
     }
 
     @Access(levels = Role.ANONYMOUS)

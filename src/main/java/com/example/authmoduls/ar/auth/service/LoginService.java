@@ -25,7 +25,7 @@ public interface LoginService {
 
     LoginResponse getToken(String id) throws InvocationTargetException, IllegalAccessException;
 
-    void userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException;
+    LoginTokenResponse userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException;
 
     String getEncryptPassword(String id) throws InvocationTargetException, IllegalAccessException;
 
