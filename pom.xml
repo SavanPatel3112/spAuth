@@ -257,6 +257,11 @@
             <version>5.2.2.RELEASE</version>
         </dependency>
         <dependency>
+            <groupId>org.containers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.17.6</version>
+            <scope>test</scope></dependency>
+        <dependency>
             <groupId>com.vaadin.external.google</groupId>
             <artifactId>android-json</artifactId>
             <version>0.0.20131108.vaadin1</version>
@@ -327,6 +332,20 @@
             <version>1.17.6</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>mongodb</artifactId>
+        <version>1.17.6</version>
+        <scope>test</scope>
+        </dependency>
+        <!--         test containers -->
+        <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>1.17.6</version>
+        <scope>test</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -351,6 +370,7 @@
             <version>1.12.352</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

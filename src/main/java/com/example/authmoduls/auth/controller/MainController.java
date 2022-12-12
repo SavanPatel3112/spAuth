@@ -54,9 +54,7 @@ public class MainController {
             int fileSize = files.length;
             log.info("length:{}",fileSize);
             AtomicReference<String> fileId = new AtomicReference<>("");
-            log.info("fileId:{}",fileId);
             AtomicReference<String> fileName = new AtomicReference<>("");
-            log.info("fileName:{}",fileName);
             Arrays.asList(files).forEach(
                     file -> {
                         fileId.set(fileUploaderService.uploadFile(file, path));

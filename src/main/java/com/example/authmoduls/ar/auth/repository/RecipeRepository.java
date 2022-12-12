@@ -11,4 +11,5 @@ public interface RecipeRepository extends MongoRepository<RecipeModel,String>,Re
     Optional<RecipeModel> findByIdAndSoftDeleteIsFalse(String id);
      List<RecipeModel> findAllBySoftDeleteFalse();
 
+
 }

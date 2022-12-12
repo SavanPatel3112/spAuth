@@ -275,7 +275,7 @@ public class UserServiceTest {
             UserModel userModel = dataSetHelper.getUserModel();
             userModel.setEmail("savan9045@gmail.com");
             userModel.setPassWord("sp3112");
-            userService.userLogin(userModel.getEmail(),userModel.getPassWord());
+            userService.userLogin(userModel.getEmail(), userModel.getPassWord());
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }
@@ -285,7 +285,7 @@ public class UserServiceTest {
         try {
             UserModel userModel = dataSetHelper.getUserModel();
             userModel.setPassWord("sp3112");
-            userService.userLogin(userModel.getUserName(),userModel.getPassWord());
+            userService.userLogin(userModel.getUserName(), userModel.getPassWord());
         }catch (Exception e){
             Assertions.fail(e.getMessage());
         }
@@ -480,6 +480,8 @@ public class UserServiceTest {
     @Test
     void userUpdate(){
         try {
+
+
             UserModel userModel = dataSetHelper.getUserModel();
             UserAddRequest userAddRequest = new UserAddRequest();
             userAddRequest.setUserName("pk1402");

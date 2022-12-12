@@ -174,7 +174,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         .append("then", "firstClass"), new Document("case", new Document("$lt", Arrays.asList("$results.spi", 4.0)))
                         .append("then", "fail"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 10.0)), new Document("$gte", Arrays.asList("$results.spi", 9.0)))))
                         .append("then", "secondClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 9.0)), new Document("$gte", Arrays.asList("$results.spi", 8.0)))))
-                        .append("then", "thirdClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 8.0)), new Document("$gte", Arrays.asList("$results.spi", 7.0))))).append("then", "fourthClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 7.0)), new Document("$gte", Arrays.asList("$results.spi", 4.0)))))
+                        .append("then", "thirdClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 8.0)), new Document("$gte", Arrays.asList("$results.spi", 7.0)))))
+                        .append("then", "fourthClass"), new Document("case", new Document("$and", Arrays.asList(new Document("$lt", Arrays.asList("$results.spi", 7.0)), new Document("$gte", Arrays.asList("$results.spi", 4.0)))))
                         .append("then", "fifthClass"))).append("default", "none"))).append("getFullName", 1.0).append("results", 1.0))));
         operations.add(new CustomAggregationOperation(new Document("$group", new Document("_id", "$_id")
                 .append("getFullName", new Document("$first", "$getFullName"))

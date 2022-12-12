@@ -64,16 +64,7 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public LoginResponse addOrUpdateUser(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException {
-        if (id !=null){
-            Login login = getLoginModel(id);
-            nullAwareBeanUtilsBean.copyProperties(login, loginAddRequest);
-            loginRepository.save(login);
-            return modelMapper.map(login, LoginResponse.class);
-        } else {
-            if (role == null)//check user role
-                throw new InvaildRequestException(MessageConstant.ROLE_NOT_FOUND);
-        }
+    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException {
         checkUserDetails(loginAddRequest);
         Login login = new Login();
         nullAwareBeanUtilsBean.copyProperties(login,loginAddRequest);

@@ -1,15 +1,16 @@
 package com.example.authmoduls.service;
 
 import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
+import com.example.authmoduls.ar.auth.decorator.LoginFilter;
 import com.example.authmoduls.ar.auth.decorator.LoginResponse;
+import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
 import com.example.authmoduls.auth.rabbitmq.UserPublisher;
-import com.example.authmoduls.common.decorator.NotificationParser;
-import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
+import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.model.AdminConfiguration;
@@ -25,6 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +41,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @Slf4j
-public class LoginServiceImplTest {
+class LoginServiceImplTest {
 
     private static final String id = "62ea7609e4eb6b6d0bf0aebc";
     private static final String userName = "sp3112";
@@ -94,9 +99,9 @@ public class LoginServiceImplTest {
         doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse,login);
 
         //when
-        loginService.addOrUpdateUser(loginAddRequest,id,role,gender);
+        loginService.addOrUpdateUsers(loginAddRequest,id,role,gender);
         //then
-        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUser(loginAddRequest,id,role,gender));
+        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUsers(loginAddRequest,id,role,gender));
     }
 
     @Test
@@ -139,6 +144,31 @@ public class LoginServiceImplTest {
     }
 
     @Test
+    void testGetAllUserByFilterAndSortAndPage(){
+        //given
+        //(LoginFilter loginFilter, FilterSortRequest.SortRequest<LoginSortBy> sort, PageRequest pagination);
+        LoginFilter loginFilter = new LoginFilter();
+        loginFilter.setGender(loginFilter.getGender());
+        FilterSortRequest.SortRequest<LoginSortBy> sort = new FilterSortRequest.SortRequest<>();
+        sort.setSortBy(LoginSortBy.EMAIL);
+        sort.setOrderBy(Sort.Direction.ASC);
+        Pagination pagination = new Pagination();
+        pagination.setLimit(5);
+        pagination.setPage(1);
+        PageRequest pageRequest = PageRequest.of(pagination.getLimit(),pagination.getPage());
+        var login = List.of(Login.builder().id(id).email(email).fullName(fullName).gender(gender).role(role).build());
+        Page<Login> page = new PageImpl<>(login);
+
+        when(loginRepository.findAllUserByFilterAndSortAndPage(loginFilter, sort, pageRequest)).thenReturn(page);
+        //when
+        loginService.getAllUserByFilterAndSortAndPage(loginFilter,sort,pageRequest);
+
+        //then
+        Assertions.assertEquals(page,loginService.getAllUserByFilterAndSortAndPage(loginFilter,sort,pageRequest));
+
+    }
+
+    @Test
     void testGetToken() throws InvocationTargetException, IllegalAccessException {
         //given
         List<String> roles = new ArrayList<>();
@@ -168,7 +198,6 @@ public class LoginServiceImplTest {
         when(passwordUtils.isPasswordAuthenticated(PasswordUtils.encryptPassword(passWord), PasswordUtils.encryptPassword(passWord), PasswordEncryptionType.BCRYPT)).thenReturn(true);
 
         //when
-        utils.sendEmailNow(emailModel);
         loginService.userLogin(email,PasswordUtils.encryptPassword(passWord));
 
         //then

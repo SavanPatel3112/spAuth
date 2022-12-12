@@ -1,5 +1,7 @@
 package com.example.authmoduls.ar.auth.decorator;
 
+import com.example.authmoduls.ar.auth.model.Gender;
+import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +19,6 @@ public class LoginAddRequest {
     String firstName;
     String middleName;
     String lastName;
-    String fullName;
     String email;
     String passWord;
     String confirmPassword;

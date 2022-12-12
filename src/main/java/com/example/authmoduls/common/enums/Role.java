@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public enum Role {
 
-    STUDENT("Student"), DEPARTMENT("Department"), ADMIN("Admin"), ANONYMOUS("Anonymous"), SYSTEM("System");
+    STUDENT("Student"), DEPARTMENT("Department"),USER("User"), ADMIN("Admin"), ANONYMOUS("Anonymous"), SYSTEM("System");
 
     private String value;
 

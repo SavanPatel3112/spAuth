@@ -21,6 +21,7 @@ import com.example.authmoduls.common.model.*;
 import com.example.authmoduls.common.repository.ImportedDataRepository;
 import com.example.authmoduls.common.repository.UserDataRepository;
 import com.example.authmoduls.common.service.AdminConfigurationService;
+import com.example.authmoduls.common.service.OtpService;
 import com.example.authmoduls.common.utils.ImportExcelDataHelper;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -72,6 +74,8 @@ public class UserServiceImpl implements UserService {
     private final UserPublisher userPublisher;
     private final ModelMapper modelMapper;
     private final RequestSession requestSession;
+    @Autowired
+    OtpService otpService;
 
     public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, UserPublisher userPublisher, ModelMapper modelMapper, RequestSession requestSession) {
         this.userRepository = userRepository;
@@ -289,14 +293,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void otpVerifications(String id, String otp) {
-        log.info("otp:{}", otp);
-        otpCache = CacheBuilder.newBuilder().
-                expireAfterWrite(EXPIRE_MIN,TimeUnit.MINUTES).build(new CacheLoader<String, Integer>() {
-                    @Override
-                    public Integer load(String key) throws Exception {
-                        return 0;
-                    }
-                });
         boolean exists = userRepository.existsByIdAndOtpAndSoftDeleteFalse(id, otp);
         if (!exists) {
             throw new NotFoundException(MessageConstant.INVAILD_OTP);

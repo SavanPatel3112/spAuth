@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface LoginService {
-    LoginResponse addOrUpdateUser(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException;
+    LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException;
 
     LoginResponse getUser(String id) throws InvocationTargetException, IllegalAccessException;
 

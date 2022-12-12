@@ -28,9 +28,9 @@ public class LoginController {
 
     @Access(levels = {Role.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateUser" , value = "addOrUpdate" , method = RequestMethod.POST)
-    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id,  @RequestParam Role role , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id, @RequestParam Role role , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException {
         DataResponse<LoginResponse> dataResponse = new DataResponse<>();
-        dataResponse.setData(loginService.addOrUpdateUser(loginAddRequest,id,role,gender));
+        dataResponse.setData(loginService.addOrUpdateUsers(loginAddRequest,id,role,gender));
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }

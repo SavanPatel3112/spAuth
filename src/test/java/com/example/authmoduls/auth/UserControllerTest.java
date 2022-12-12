@@ -526,7 +526,7 @@ public class UserControllerTest {
         JWTUser jwtUser = new JWTUser(userModel.getId(),Collections.singletonList(userModel.getRole().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
         UserImportVerifyRequest userImportVerifyRequest = new UserImportVerifyRequest();
-        userImportVerifyRequest.setId(Collections.singleton(userModel.getUserId()).toString());
+        userImportVerifyRequest.setId(Collections.singleton(userModel.getUserId()).toString()   );
         MvcResult mvcResult = mockMvc.perform(post("/users/import/user/verify")
                         .header(CustomHTTPHeaders.TOKEN.toString(),token)
                         .contentType(MediaType.APPLICATION_JSON))
