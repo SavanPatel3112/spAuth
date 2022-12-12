@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 import com.amazonaws.services.athena.model.InvalidRequestException;
@@ -16,9 +17,11 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
+*/
 /**
  * RMQ service implementation
- */
+ *//*
+
 @Component
 @Slf4j
 public class RMQServiceImpl implements RMQService {
@@ -44,9 +47,11 @@ public class RMQServiceImpl implements RMQService {
         }
     }
 
-    /**
+    */
+/**
      * Publish to Print module on the exchange with the routing Key on topic exchange
-     */
+     *//*
+
     @Override
     public void publishToQueue(String message, String exchange, String queueName, String routingKey) {
         ConnectionFactory factory = new ConnectionFactory();
@@ -63,3 +68,4 @@ public class RMQServiceImpl implements RMQService {
         }
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 import com.google.gson.Gson;
@@ -16,3 +17,4 @@ public class ConsumerHelper {
         return new Gson().fromJson(messageBody, type);
     }
 }
+*/

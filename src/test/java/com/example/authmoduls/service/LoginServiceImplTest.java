@@ -9,7 +9,7 @@ import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
-import com.example.authmoduls.auth.rabbitmq.UserPublisher;
+/*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
@@ -77,8 +77,8 @@ class LoginServiceImplTest {
     private final Utils utils = spy(Utils.class);
     private final NotificationParser notificationParser = mock(NotificationParser.class);
     private final ModelMapper modelMapper = getModelMapper();
-    private final UserPublisher userPublisher = mock(UserPublisher.class);
-    private final LoginService loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,modelMapper,userPublisher);
+    /*private final UserPublisher userPublisher = mock(UserPublisher.class);*/
+    private final LoginService loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,modelMapper/*,userPublisher*/);
 
     private ModelMapper getModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -116,6 +116,8 @@ class LoginServiceImplTest {
         //then
         Assertions.assertEquals(loginResponse,loginService.getUser(id));
     }
+
+
 
     @Test
     void testDeleteUser(){

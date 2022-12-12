@@ -18,6 +18,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class AbstractContainerTest {
     @Container
     private static final MongoDBContainer CONTAINER = MongoDBContainerSingleton.getInstance();
+
+
     static {
         try {
             CONTAINER.start();

@@ -8,7 +8,7 @@ import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
-import com.example.authmoduls.auth.rabbitmq.UserPublisher;
+/*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
 import com.example.authmoduls.common.decorator.NotificationParser;
@@ -47,11 +47,11 @@ public class LoginServiceImpl implements LoginService{
     private final Utils utils;
     private final NotificationParser notificationParser;
     private final ModelMapper modelMapper;
-    private final UserPublisher userPublisher;
+
 
     public LoginServiceImpl(LoginRepository loginRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean,
                             JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService,
-                            Utils utils, NotificationParser notificationParser, ModelMapper modelMapper , UserPublisher userPublisher ) {
+                            Utils utils, NotificationParser notificationParser, ModelMapper modelMapper ) {
         this.loginRepository = loginRepository;
         this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -60,7 +60,7 @@ public class LoginServiceImpl implements LoginService{
         this.utils = utils;
         this.notificationParser = notificationParser;
         this.modelMapper = modelMapper;
-        this.userPublisher = userPublisher;
+
     }
 
     @Override
@@ -80,7 +80,6 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public LoginResponse getUser(String id) throws InvocationTargetException, IllegalAccessException {
         Login login = getLoginModel(id);
-        userPublisher.publishToQueue(id);
         LoginResponse loginResponse = new LoginResponse();
         modelMapper.map(login, loginResponse);
         /*nullAwareBeanUtilsBean.copyProperties(loginResponse,login);*/

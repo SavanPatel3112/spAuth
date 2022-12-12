@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 import com.example.authmoduls.auth.model.UserModel;
@@ -22,3 +23,4 @@ public class UserConsumerServiceImpl implements UserConsumerService {
         return userModel.toString();
     }
 }
+*/

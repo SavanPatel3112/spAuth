@@ -4,7 +4,7 @@ import com.example.authmoduls.auth.decorator.*;
 import com.example.authmoduls.auth.enums.UserSortBy;
 import com.example.authmoduls.auth.enums.UserStatus;
 import com.example.authmoduls.auth.model.UserModel;
-import com.example.authmoduls.auth.rabbitmq.UserPublisher;
+/*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.auth.repository.userRepository.UserRepository;
 import com.example.authmoduls.auth.service.userService.UserService;
 import com.example.authmoduls.auth.service.userService.UserServiceImpl;
@@ -93,11 +93,11 @@ class UserServiceImplTest {
     private final AdminConfigurationService adminService = mock(AdminConfigurationService.class);
     private final Utils utils = spy(Utils.class);
     private final NotificationParser notificationParser = mock(NotificationParser.class);
-    private final UserPublisher userPublisher = mock(UserPublisher.class);
+    /*private final UserPublisher userPublisher = mock(UserPublisher.class);*/
     private final ModelMapper modelMapper = mock(ModelMapper.class);
     private final RequestSession requestSession = mock(RequestSession.class);
     private final SchedulerService schedulerService = mock(SchedulerService.class);
-    private final UserService userService = new UserServiceImpl(userRepository, importedDataRepository, userDataRepository, nullAwareBeanUtilsBean, jwtTokenUtil, passwordUtils, adminService, utils, notificationParser, userPublisher, modelMapper, requestSession);
+    private final UserService userService = new UserServiceImpl(userRepository, importedDataRepository, userDataRepository, nullAwareBeanUtilsBean, jwtTokenUtil, passwordUtils, adminService, utils, notificationParser, /*userPublisher,*/ modelMapper, requestSession);
 
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {

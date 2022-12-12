@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,3 +21,4 @@ public class UserPublisher {
         rmqService.publishToQueue(id, userExchangeName, queueName, userRouteKey);
     }
 }
+*/

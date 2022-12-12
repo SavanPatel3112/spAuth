@@ -6,7 +6,7 @@ import com.example.authmoduls.auth.decorator.bookDecorator.UserBookDetails;
 import com.example.authmoduls.auth.enums.UserSortBy;
 import com.example.authmoduls.auth.enums.UserStatus;
 import com.example.authmoduls.auth.model.UserModel;
-import com.example.authmoduls.auth.rabbitmq.UserPublisher;
+/*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.auth.repository.userRepository.UserRepository;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.RequestSession;
@@ -71,13 +71,13 @@ public class UserServiceImpl implements UserService {
     private final AdminConfigurationService adminService;
     private final Utils utils;
     private final NotificationParser notificationParser;
-    private final UserPublisher userPublisher;
+    /*private final UserPublisher userPublisher;*/
     private final ModelMapper modelMapper;
     private final RequestSession requestSession;
     @Autowired
     OtpService otpService;
 
-    public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, UserPublisher userPublisher, ModelMapper modelMapper, RequestSession requestSession) {
+    public UserServiceImpl(UserRepository userRepository, ImportedDataRepository importedDataRepository, UserDataRepository userDataRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean, JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService, Utils utils, NotificationParser notificationParser, /*UserPublisher userPublisher,*/ ModelMapper modelMapper, RequestSession requestSession) {
         this.userRepository = userRepository;
         this.importedDataRepository = importedDataRepository;
         this.userDataRepository = userDataRepository;
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         this.adminService = adminService;
         this.utils = utils;
         this.notificationParser = notificationParser;
-        this.userPublisher = userPublisher;
+        /*this.userPublisher = userPublisher;*/
         this.modelMapper = modelMapper;
         this.requestSession = requestSession;
     }
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUser(String id) throws InvocationTargetException, IllegalAccessException {
         UserModel userModel = getUserModel(id);
-        userPublisher.publishToQueue(id);
+        /*userPublisher.publishToQueue(id);*/
         UserResponse userResponse = new UserResponse();
         nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);
         //data

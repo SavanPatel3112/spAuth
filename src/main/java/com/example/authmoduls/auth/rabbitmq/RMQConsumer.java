@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 import com.example.authmoduls.auth.service.userService.UserService;
@@ -33,3 +34,4 @@ public class RMQConsumer {
         }
     }
 }
+*/

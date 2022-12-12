@@ -1,3 +1,4 @@
+/*
 package com.example.authmoduls.auth.rabbitmq;
 
 public interface RMQService {
@@ -7,3 +8,4 @@ public interface RMQService {
     void publishToQueue(String message, String exchange, String queueName, String routingKey);
 
 }
+*/
