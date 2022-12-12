@@ -1,9 +1,6 @@
 package com.example.authmoduls.auth.controller;
 
-import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
-import com.example.authmoduls.ar.auth.decorator.LoginFilter;
-import com.example.authmoduls.ar.auth.decorator.LoginResponse;
-import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
+import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.service.LoginService;
@@ -89,10 +86,10 @@ public class LoginController {
 
     @SneakyThrows
     @Access(levels = Role.ANONYMOUS)
-    @RequestMapping(name = "userLogin", value = "/login", method = RequestMethod.GET)
-    public DataResponse<Object> userLogin(@RequestParam String email, String password) {
+    @RequestMapping(name = "userLogin", value = "/login", method = RequestMethod.POST)
+    public DataResponse<Object> userLogin(@RequestBody LoginRequest loginRequest) {
         DataResponse<Object> dataResponse = new DataResponse<>();
-        loginService.userLogin(email, password);
+        loginService.userLogin(loginRequest);
         dataResponse.setStatus(Response.getLoginResponse());
         return dataResponse;
     }

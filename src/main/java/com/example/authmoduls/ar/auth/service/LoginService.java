@@ -1,9 +1,6 @@
 package com.example.authmoduls.ar.auth.service;
 
-import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
-import com.example.authmoduls.ar.auth.decorator.LoginFilter;
-import com.example.authmoduls.ar.auth.decorator.LoginResponse;
-import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
+import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
@@ -28,7 +25,7 @@ public interface LoginService {
 
     LoginResponse getToken(String id) throws InvocationTargetException, IllegalAccessException;
 
-    void userLogin(String email, String password) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException;
+    void userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException;
 
     String getEncryptPassword(String id) throws InvocationTargetException, IllegalAccessException;
 

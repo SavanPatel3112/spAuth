@@ -20,6 +20,8 @@ public class AbstractContainerTest {
     private static final MongoDBContainer CONTAINER = MongoDBContainerSingleton.getInstance();
 
 
+
+
     static {
         try {
             CONTAINER.start();

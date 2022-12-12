@@ -1,10 +1,7 @@
 package com.example.authmoduls.ar.auth.service;
 
 import com.amazonaws.services.athena.model.InvalidRequestException;
-import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
-import com.example.authmoduls.ar.auth.decorator.LoginFilter;
-import com.example.authmoduls.ar.auth.decorator.LoginResponse;
-import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
+import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
@@ -127,11 +124,11 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void userLogin(String email, String password) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
-        Login login = getUserEmail(email);
+    public void userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
+        Login login = getUserEmail(loginRequest.getEmail());
         String userPassword = login.getPassWord();
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
-        boolean passwords = passwordUtils.isPasswordAuthenticated(password, userPassword, PasswordEncryptionType.BCRYPT);
+        boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
             EmailModel emailModel = new EmailModel();
             String otp = generateOtp();
