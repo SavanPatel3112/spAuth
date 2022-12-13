@@ -289,7 +289,6 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     }
 
-
     private List<AggregationOperation> userBookDetails(UserIdsRequest userIdsRequest, FilterSortRequest.SortRequest<UserDataSortBy> sort, PageRequest pagination, boolean addPage) throws JSONException {
         List<AggregationOperation> operations = new ArrayList<>();
         Criteria criteria = new Criteria();

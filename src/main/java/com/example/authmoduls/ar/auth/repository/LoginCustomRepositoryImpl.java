@@ -67,17 +67,26 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
 
     private Criteria getCriteria(LoginFilter loginFilter, List<AggregationOperation> operations) {
         Criteria criteria = new Criteria();
-        operations.add(new CustomAggregationOperation(new Document("$addFields", new Document("search", new Document("$concat", Arrays.asList(new Document("$ifNull", Arrays.asList("$firstName", "")), "|@|", new Document("$ifNull", Arrays.asList("$middleName", "")), "|@|", new Document("$ifNull", Arrays.asList("$lastName", "")), "|@|", new Document("$ifNull", Arrays.asList("$email", "")), "|@|", new Document("$ifNull", Arrays.asList("$passWord", "")), "|@|", new Document("$ifNull", Arrays.asList("$otp", "")), new Document("$ifNull", Arrays.asList("$login", ""))))))));
+        operations.add(new CustomAggregationOperation(new Document("$addFields", new Document("search", new Document("$concat",
+                Arrays.asList(
+                        new Document("$ifNull", Arrays.asList("$firstName", "")), "|@|",
+                        new Document("$ifNull", Arrays.asList("$middleName", "")), "|@|",
+                        new Document("$ifNull", Arrays.asList("$lastName", "")), "|@|",
+                        new Document("$ifNull", Arrays.asList("$email", "")), "|@|",
+                        new Document("$ifNull", Arrays.asList("$passWord", "")), "|@|"))))));
         if (!StringUtils.isEmpty(loginFilter.getSearch())) {
-            loginFilter.setSearch(loginFilter.getSearch().replaceAll("\\|@\\|", ""));
-            loginFilter.setSearch(loginFilter.getSearch().replaceAll("\\|@@\\|", ""));
+            loginFilter.setSearch(loginFilter.getSearch().replace("\\|@\\|", ""));
+            loginFilter.setSearch(loginFilter.getSearch().replace("\\|@@\\|", ""));
             criteria = criteria.orOperator(Criteria.where("search").regex(".*" + loginFilter.getSearch() + ".*", "i"));
         }
         if (!StringUtils.isEmpty(loginFilter.getId())) {
             criteria = criteria.and("_id").is(loginFilter.getId());
         }
-        if (loginFilter.getRole() != null) {
+        if (loginFilter.getGender() != null) {
             criteria = criteria.and("gender").is(loginFilter.getGender());
+        }
+        if (loginFilter.getRole() !=null){
+            criteria = criteria.and("role").is(loginFilter.getRole());
         }
         criteria = criteria.and("softDelete").is(false);
         return criteria;
