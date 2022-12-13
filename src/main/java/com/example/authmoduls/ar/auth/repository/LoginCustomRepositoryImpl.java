@@ -4,8 +4,6 @@ import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
 import com.example.authmoduls.ar.auth.decorator.LoginFilter;
 import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
 import com.example.authmoduls.ar.auth.model.Login;
-import com.example.authmoduls.auth.decorator.UserAddRequest;
-import com.example.authmoduls.auth.model.UserModel;
 import com.example.authmoduls.common.decorator.CountQueryResult;
 import com.example.authmoduls.common.decorator.CustomAggregationOperation;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
@@ -85,8 +83,8 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
         if (loginFilter.getGender() != null) {
             criteria = criteria.and("gender").is(loginFilter.getGender());
         }
-        if (loginFilter.getRole() !=null){
-            criteria = criteria.and("role").is(loginFilter.getRole());
+        if (loginFilter.getAccess() !=null){
+            criteria = criteria.and("role").is(loginFilter.getAccess());
         }
         criteria = criteria.and("softDelete").is(false);
         return criteria;

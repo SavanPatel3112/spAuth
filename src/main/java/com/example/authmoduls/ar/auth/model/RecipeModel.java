@@ -1,5 +1,6 @@
 package com.example.authmoduls.ar.auth.model;
 
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class RecipeModel {
     String itemDescription;
     List<RecipeIngredient> recipeIngredient;
     Date data = new Date();
-    Role role;
+    Accesss accesss;
     @JsonIgnore
     boolean softDelete = false;
 }

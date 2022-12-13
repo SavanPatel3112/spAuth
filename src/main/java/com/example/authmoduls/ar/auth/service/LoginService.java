@@ -3,6 +3,7 @@ package com.example.authmoduls.ar.auth.service;
 import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
 import com.example.authmoduls.common.enums.Role;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface LoginService {
-    LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException;
+    LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException;
 
     LoginResponse getUser(String id) throws InvocationTargetException, IllegalAccessException;
 

@@ -10,6 +10,7 @@ import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
@@ -99,16 +100,16 @@ class LoginServiceImplTest {
         doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse,login);
 
         //when
-        loginService.addOrUpdateUsers(loginAddRequest,id,role,gender);
+        loginService.addOrUpdateUsers(loginAddRequest,id,Accesss.ADMIN,gender);
         //then
-        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUsers(loginAddRequest,id,role,gender));
+        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUsers(loginAddRequest,id,Accesss.ADMIN,gender));
     }
 
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {
         //given
-        var login = Login.builder().id(id).fullName(fullName).email(email).role(role).gender(gender).build();
-        var loginResponse = LoginResponse.builder().id(id).email(email).fullName(fullName).role(role).gender(gender).build();
+        var login = Login.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build();
+        var loginResponse = LoginResponse.builder().id(id).email(email).fullName(fullName).accesss(Accesss.ADMIN).gender(gender).build();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         //when
         loginService.getUser(id);
@@ -135,8 +136,8 @@ class LoginServiceImplTest {
     @Test
     void testGetAllUser() throws InvocationTargetException, IllegalAccessException {
         //given
-        var login = List.of(Login.builder().id(id).fullName(fullName).email(email).role(role).gender(gender).build());
-        var loginResponse = List.of(LoginResponse.builder().id(id).fullName(fullName).email(email).role(role).gender(gender).build());
+        var login = List.of(Login.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build());
+        var loginResponse = List.of(LoginResponse.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build());
         when(loginRepository.findAllBySoftDeleteFalse()).thenReturn(login);
         /*doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse,login);*/
         //when
@@ -158,7 +159,7 @@ class LoginServiceImplTest {
         pagination.setLimit(5);
         pagination.setPage(1);
         PageRequest pageRequest = PageRequest.of(pagination.getLimit(),pagination.getPage());
-        var login = List.of(Login.builder().id(id).email(email).fullName(fullName).gender(gender).role(role).build());
+        var login = List.of(Login.builder().id(id).email(email).fullName(fullName).gender(gender).accesss(Accesss.ADMIN).build());
         Page<Login> page = new PageImpl<>(login);
 
         when(loginRepository.findAllUserByFilterAndSortAndPage(loginFilter, sort, pageRequest)).thenReturn(page);
@@ -177,8 +178,8 @@ class LoginServiceImplTest {
         roles.add(Role.ANONYMOUS.toString());
         var jwtUser = JWTUser.builder().id(id).role(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
-        var login = Login.builder().id(id).email(email).role(role).build();
-        var loginResponse = LoginResponse.builder().id(id).email(email).role(role).build();
+        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
+        var loginResponse = LoginResponse.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
         when(jwtTokenUtil.generateToken(jwtUser)).thenReturn(token);
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         /*doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse, login);*/
@@ -192,7 +193,7 @@ class LoginServiceImplTest {
     @Test
     void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //given
-        var login = Login.builder().id(id).email(email).role(role).gender(gender).passWord(PasswordUtils.encryptPassword(passWord)).confirmPassword(PasswordUtils.encryptPassword(passWord)).build();
+        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).gender(gender).passWord(PasswordUtils.encryptPassword(passWord)).confirmPassword(PasswordUtils.encryptPassword(passWord)).build();
         var adminConfiguration = AdminConfiguration.builder().from(from).id(id).nameRegex(nameRegex).passwordRegex(passwordRegex).host(host).port(port).build();
         var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).message(message).subject(subject).build();
         when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
@@ -200,7 +201,7 @@ class LoginServiceImplTest {
         when(passwordUtils.isPasswordAuthenticated(PasswordUtils.encryptPassword(passWord), PasswordUtils.encryptPassword(passWord), PasswordEncryptionType.BCRYPT)).thenReturn(true);
 
         //when
-        loginService.userLogin(email,PasswordUtils.encryptPassword(passWord));
+        /*loginService.userLogin(email,PasswordUtils.encryptPassword(passWord));*/
 
         //then
         verify(loginRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);
@@ -210,7 +211,7 @@ class LoginServiceImplTest {
     void testGetEncryptPassword() throws InvocationTargetException, IllegalAccessException {
 
         //given
-        var login = Login.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).role(role).build();
+        var login = Login.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).accesss(Accesss.ADMIN).build();
         /*var loginResponse = LoginResponse.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).role(role).build();*/
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         //when
@@ -228,8 +229,8 @@ class LoginServiceImplTest {
         roles.add(Role.ANONYMOUS.toString());
         var jwtUser = JWTUser.builder().id(id).role(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
-        var login = Login.builder().id(id).role(role).passWord(passWord).token(token).build();
-        var loginResponse = LoginResponse.builder().role(role).passWord(passWord).token(token).build();
+        var login = Login.builder().id(id).accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
+        var loginResponse = LoginResponse.builder().accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
         when(loginRepository.existsByIdAndSoftDeleteFalse(id)).thenReturn(true);
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         when(jwtTokenUtil.validateToken(token, jwtUser)).thenReturn(true);

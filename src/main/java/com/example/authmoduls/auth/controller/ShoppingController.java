@@ -3,6 +3,7 @@ package com.example.authmoduls.auth.controller;
 import com.example.authmoduls.ar.auth.decorator.ShoppingAddRequest;
 import com.example.authmoduls.ar.auth.decorator.ShoppingResponse;
 import com.example.authmoduls.ar.auth.service.ShoppingService;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.DataResponse;
 import com.example.authmoduls.common.decorator.Response;
 import com.example.authmoduls.common.decorator.TokenResponse;
@@ -21,16 +22,16 @@ public class ShoppingController{
     @Autowired
     ShoppingService shoppingService;
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateShopping" , value = "/addOrUpdateShopping" , method = RequestMethod.POST)
-    public DataResponse<ShoppingResponse> addOrUpdateShopping(@RequestBody ShoppingAddRequest shoppingAddRequest, Role role,@RequestParam(required = false) String id) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<ShoppingResponse> addOrUpdateShopping(@RequestBody ShoppingAddRequest shoppingAddRequest, Accesss accesss, @RequestParam(required = false) String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<ShoppingResponse> dataResponse = new DataResponse<>();
-        dataResponse.setData(shoppingService.addOrUpdateShopping(shoppingAddRequest,role,id));
+        dataResponse.setData(shoppingService.addOrUpdateShopping(shoppingAddRequest, accesss,id));
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
 
-    @Access(levels = {Role.USER})
+    @Access(level = {Accesss.USER})
     @RequestMapping(name = "getShoppingList" , value = "/get/id" , method = RequestMethod.GET)
     public DataResponse<ShoppingResponse> getShoppingList(@RequestParam String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<ShoppingResponse> dataResponse = new DataResponse<>();
@@ -39,7 +40,7 @@ public class ShoppingController{
         return dataResponse;
     }
 
-    @Access(levels = {Role.USER})
+    @Access(level = {Accesss.USER})
     @RequestMapping(name = "deleteShoppingList", value = "/delete/id", method = RequestMethod.DELETE)
     public DataResponse<Object> deleteShoppingList(@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
@@ -49,7 +50,7 @@ public class ShoppingController{
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getToken", value = "/generateToken", method = RequestMethod.GET)
     public TokenResponse<ShoppingResponse> getToken(@RequestParam String id) {
         TokenResponse<ShoppingResponse> tokenResponse = new TokenResponse<>();

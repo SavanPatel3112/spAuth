@@ -5,8 +5,8 @@ import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
 import com.example.authmoduls.ar.auth.repository.RecipeRepository;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
-import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -34,7 +34,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id, Role role) throws InvocationTargetException, IllegalAccessException {
+    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id, Accesss accesss) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
             RecipeModel recipeModel = getRecipeModel(id);
             nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
@@ -43,7 +43,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
         RecipeModel recipeModel = new RecipeModel();
         nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
-        recipeModel.setRole(role);
+        recipeModel.setAccesss(accesss);
         recipeRepository.save(recipeModel);
         RecipeResponse recipeResponse = new RecipeResponse();
         nullAwareBeanUtilsBean.copyProperties(recipeResponse, recipeModel);
@@ -80,7 +80,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void recipeUpdate(String id, Role role, RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
+    public void recipeUpdate(String id, Accesss accesss, RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
         RecipeModel recipeModel = getRecipeModel(id);
         HashMap<String, String> changedProperties = new HashMap<>();
         boolean recipeUpdate = false;

@@ -57,7 +57,7 @@ public class AdminConfiguration {
         this.regex = "^(?=.{1,64}@)[a-z0-9_-]+(\\.[a-z0-9_-]+)*@" + "[^-][a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,})$";
         this.semesterRegex = "^[0-8]{1}$";
         this.spiRegex = "^[0-10]{2}$";
-        this.passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
+        this.passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
         this.mobileNoRegex = "^[0-9]{10}$";
         this.nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
         this.notificationConfiguration = new NotificationConfiguration();

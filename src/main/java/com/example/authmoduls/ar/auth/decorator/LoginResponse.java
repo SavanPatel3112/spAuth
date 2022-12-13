@@ -1,6 +1,7 @@
 package com.example.authmoduls.ar.auth.decorator;
 
 import com.example.authmoduls.ar.auth.model.Gender;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.auth.model.Address;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,7 +26,7 @@ public class LoginResponse {
     String fullName;
     String email;
     String passWord;
-    Role role;
+    Accesss accesss;
     Gender gender;
     @JsonIgnore
     String token;

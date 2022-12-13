@@ -1,8 +1,7 @@
 package com.example.authmoduls.ar.auth.decorator;
 
 import com.example.authmoduls.ar.auth.model.Gender;
-import com.example.authmoduls.cc.enums.Plan;
-import com.example.authmoduls.common.enums.Role;
+import com.example.authmoduls.auth.model.Accesss;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import groovy.transform.builder.Builder;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class LoginFilter {
 
     String search;
-    Role role;
+    Accesss accesss;
     Gender gender;
     String id;
     @JsonIgnore
@@ -28,8 +27,8 @@ public class LoginFilter {
         }
         return search;
     }
-    public Role getRole(){
-        return role;
+    public Accesss getAccess(){
+        return accesss;
     }
     public Gender getGender(){
         return gender;

@@ -2,13 +2,13 @@ package com.example.authmoduls.ar.auth.service;
 
 import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
-import com.example.authmoduls.common.enums.Role;
+import com.example.authmoduls.auth.model.Accesss;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface RecipeService {
-    RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Role role) throws InvocationTargetException, IllegalAccessException;
+    RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Accesss accesss) throws InvocationTargetException, IllegalAccessException;
 
     List<RecipeResponse> getAllRecipe() throws InvocationTargetException, IllegalAccessException;
 
@@ -16,6 +16,6 @@ public interface RecipeService {
 
     void deleteRecipe(String id);
 
-    void recipeUpdate(String id, Role role , RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException;
+    void recipeUpdate(String id, Accesss accesss , RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException;
 
 }

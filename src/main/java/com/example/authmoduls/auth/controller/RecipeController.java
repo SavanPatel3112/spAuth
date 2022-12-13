@@ -3,6 +3,7 @@ package com.example.authmoduls.auth.controller;
 import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
 import com.example.authmoduls.ar.auth.service.RecipeService;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.DataResponse;
 import com.example.authmoduls.common.decorator.ListResponse;
 import com.example.authmoduls.common.decorator.Response;
@@ -18,15 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 public class RecipeController {
     @Autowired
     RecipeService recipeService;
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateRecipe" , value = "/addOrUpdateRecipe" , method = RequestMethod.POST)
-    public DataResponse<RecipeResponse> addOrUpdateRecipe (@RequestBody RecipeAddRequest recipeAddRequest, Role role, @RequestParam(required = false)String id) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<RecipeResponse> addOrUpdateRecipe (@RequestBody RecipeAddRequest recipeAddRequest, Accesss accesss, @RequestParam(required = false)String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<RecipeResponse> dataResponse = new DataResponse<>();
-        dataResponse.setData(recipeService.addOrUpdateRecipe(recipeAddRequest, id ,role));
+        dataResponse.setData(recipeService.addOrUpdateRecipe(recipeAddRequest, id , accesss));
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "getAllRecipe" , value = "/getAllRecipe" , method = RequestMethod.GET)
     public ListResponse<RecipeResponse> getAllRecipe() throws InvocationTargetException, IllegalAccessException {
         ListResponse<RecipeResponse> listResponse = new ListResponse<>();
@@ -35,7 +36,7 @@ public class RecipeController {
         return listResponse;
     }
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "getRecipe" , value = "/get/id" , method = RequestMethod.GET)
     public DataResponse<RecipeResponse> getRecipe (@RequestParam String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<RecipeResponse> dataResponse = new DataResponse<>();
@@ -43,7 +44,7 @@ public class RecipeController {
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "deleteRecipe", value = "/delete/id", method = RequestMethod.DELETE)
     public DataResponse<Object> deleteUser (@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
@@ -51,11 +52,11 @@ public class RecipeController {
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "recipeUpdate" , value = "update/id" , method = RequestMethod.POST)
-    public DataResponse<Object> recipeUpdate (@RequestParam String id , @RequestParam Role role , @RequestBody RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<Object> recipeUpdate (@RequestParam String id , @RequestParam Accesss accesss , @RequestBody RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
         DataResponse<Object>  dataResponse = new DataResponse<>();
-        recipeService.recipeUpdate(id,role,recipeAddRequest);
+        recipeService.recipeUpdate(id, accesss,recipeAddRequest);
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }

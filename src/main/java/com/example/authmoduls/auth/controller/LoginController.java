@@ -4,6 +4,7 @@ import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.service.LoginService;
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.ResponseConstant;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.Role;
@@ -23,16 +24,16 @@ public class LoginController {
     @Autowired
     GeneralHelper generalHelper;
 
-    @Access(levels = {Role.ANONYMOUS})
+    @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateUser" , value = "addOrUpdate" , method = RequestMethod.POST)
-    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id, @RequestParam Role role , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id, @RequestParam Accesss accesss , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException {
         DataResponse<LoginResponse> dataResponse = new DataResponse<>();
-        dataResponse.setData(loginService.addOrUpdateUsers(loginAddRequest,id,role,gender));
+        dataResponse.setData(loginService.addOrUpdateUsers(loginAddRequest,id, accesss,gender));
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
 
-    @Access(levels = {Role.ADMIN})
+    @Access(level = {Accesss.ADMIN})
     @RequestMapping(name = "getUser" , value = "getUser/id" , method = RequestMethod.GET)
     public DataResponse<LoginResponse> getUser(String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<LoginResponse> dataResponse= new DataResponse<>();
@@ -41,7 +42,7 @@ public class LoginController {
         return dataResponse;
     }
 
-    @Access(levels = {Role.ADMIN})
+    @Access(level = {Accesss.ADMIN})
     @RequestMapping(name = "deleteUser" , value = "deleteUser/id" , method = RequestMethod.DELETE)
     public DataResponse<LoginResponse> deleteUser(String id){
         DataResponse<LoginResponse> dataResponse = new DataResponse<>();
@@ -50,7 +51,7 @@ public class LoginController {
         return dataResponse;
     }
 
-    @Access(levels = {Role.ADMIN})
+    @Access(level = {Accesss.ADMIN})
     @RequestMapping(name = "getAllUser" , value = "getAllUser" , method = RequestMethod.GET)
     public ListResponse<LoginResponse> getAllUser () throws InvocationTargetException, IllegalAccessException {
         ListResponse<LoginResponse> listResponse = new ListResponse<>();
@@ -61,7 +62,7 @@ public class LoginController {
 
     @SneakyThrows
     @RequestMapping(name = "getAllUserByPagination" , value = "/getALlUser/filter",method = {RequestMethod.POST})
-    @Access(levels = {Role.ADMIN})
+    @Access(level = {Accesss.ADMIN})
     public PageResponse<Login> getAllUserByPagination(@RequestBody FilterSortRequest<LoginFilter, LoginSortBy> filterSortRequest){
         PageResponse<Login> pageResponse = new PageResponse<>();
         LoginFilter loginFilter = filterSortRequest.getFilter();
@@ -73,7 +74,7 @@ public class LoginController {
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getToken", value = "/generateToken", method = RequestMethod.GET)
     public TokenResponse<LoginResponse> getToken(@RequestParam String id) {
         TokenResponse<LoginResponse> tokenResponse = new TokenResponse<>();
@@ -85,7 +86,7 @@ public class LoginController {
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "userLogin", value = "/login", method = RequestMethod.POST)
     public TokenResponse<LoginTokenResponse> userLogin(@RequestBody LoginRequest loginRequest) {
         TokenResponse<LoginTokenResponse> tokenResponse = new TokenResponse<>();
@@ -96,7 +97,7 @@ public class LoginController {
         return tokenResponse;
     }
 
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getEncryptPassword" , value = "/getEncryptPassword" , method = RequestMethod.GET)
     public DataResponse<String> getEncryptPassword (@RequestParam String id) throws InvocationTargetException, IllegalAccessException {
         DataResponse<String> dataResponse = new DataResponse<>();
@@ -106,7 +107,7 @@ public class LoginController {
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getValidityOfToken", value = "/validate/token", method = RequestMethod.GET)
     public TokenResponse<LoginResponse> getValidityOfToken(@RequestParam String token) {
         TokenResponse<LoginResponse> tokenResponse = new TokenResponse<>();
@@ -117,7 +118,7 @@ public class LoginController {
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getIdFromToken", value = "/getIdFromToken", method = RequestMethod.GET)
     public TokenResponse<String> getIdFromToken(@RequestParam String token) {
         TokenResponse<String> tokenResponse = new TokenResponse<>();
@@ -128,7 +129,7 @@ public class LoginController {
     }
 
     @SneakyThrows
-    @Access(levels = Role.ANONYMOUS)
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "logOut", value = "/logOut/{id}", method = RequestMethod.GET)
     public DataResponse<Object> logOut(@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();

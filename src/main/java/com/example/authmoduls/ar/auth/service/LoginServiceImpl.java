@@ -6,12 +6,12 @@ import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
 import com.example.authmoduls.common.decorator.NotificationParser;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
-import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.exception.AlreadyExistException;
 import com.example.authmoduls.common.exception.InvaildRequestException;
 import com.example.authmoduls.common.exception.NotFoundException;
@@ -61,12 +61,12 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Role role, Gender gender) throws InvocationTargetException, IllegalAccessException {
+    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException {
         checkUserDetails(loginAddRequest);
         Login login = new Login();
         nullAwareBeanUtilsBean.copyProperties(login,loginAddRequest);
         login.setFullName();
-        login.setRole(role);
+        login.setAccesss(accesss);
         login.setGender(gender);
         loginRepository.save(login);
         LoginResponse loginResponse = new LoginResponse();
@@ -114,8 +114,8 @@ public class LoginServiceImpl implements LoginService{
     public LoginResponse getToken(String id) throws InvocationTargetException, IllegalAccessException {
         Login login = getLoginModel(id);
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setRole(login.getRole());
-        JWTUser jwtUser = new JWTUser(id, Collections.singletonList(loginResponse.getRole().toString()));
+        loginResponse.setAccesss(login.getAccesss());
+        JWTUser jwtUser = new JWTUser(id, Collections.singletonList(loginResponse.getAccesss().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
         /*nullAwareBeanUtilsBean.copyProperties(loginResponse, login);*/
         modelMapper.map(loginResponse,login);
@@ -128,8 +128,8 @@ public class LoginServiceImpl implements LoginService{
         Login login = getUserEmail(loginRequest.getEmail());
         String userPassword = login.getPassWord();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
-        loginTokenResponse.setRole(login.getRole());
-        JWTUser jwtUser = new JWTUser(login.getId(), Collections.singletonList(loginTokenResponse.getRole().toString()));
+        loginTokenResponse.setAccesss(login.getAccesss());
+        JWTUser jwtUser = new JWTUser(login.getId(), Collections.singletonList(loginTokenResponse.getAccesss().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);

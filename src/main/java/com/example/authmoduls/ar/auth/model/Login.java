@@ -1,5 +1,6 @@
 package com.example.authmoduls.ar.auth.model;
 
+import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.auth.model.Address;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +31,7 @@ public class Login {
     String email;
     String passWord;
     String confirmPassword;
-    Role role;
+    Accesss accesss;
     Gender gender;
     String token;
     String otp;
