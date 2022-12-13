@@ -6,6 +6,7 @@ import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
+import com.example.authmoduls.auth.decorator.UserResponse;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
@@ -62,14 +63,30 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException {
+        if (id != null) {
+            Login login = getLoginModel(id);
+            nullAwareBeanUtilsBean.copyProperties(login, loginAddRequest);
+            loginRepository.save(login);
+            return modelMapper.map(login, LoginResponse.class);
+        } else {
+            if (accesss == null)//check user role
+                throw new InvaildRequestException(MessageConstant.ROLE_NOT_FOUND);
+        }
         checkUserDetails(loginAddRequest);
         Login login = new Login();
         nullAwareBeanUtilsBean.copyProperties(login,loginAddRequest);
+        LoginResponse loginResponse = new LoginResponse();
         login.setFullName();
         login.setAccesss(accesss);
         login.setGender(gender);
+        loginResponse.setPassWord(login.getPassWord());
+        if (login.getPassWord() != null) {
+            String password = PasswordUtils.encryptPassword(login.getPassWord());
+            login.setPassWord(password);
+            loginResponse.setPassWord(password);
+            nullAwareBeanUtilsBean.copyProperties(loginResponse, login);
+        }
         loginRepository.save(login);
-        LoginResponse loginResponse = new LoginResponse();
         nullAwareBeanUtilsBean.copyProperties(loginResponse,login);
         return loginResponse;
     }
