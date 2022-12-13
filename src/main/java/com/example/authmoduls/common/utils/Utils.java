@@ -252,7 +252,7 @@ public class Utils {
             stringBuilder.append(changedProperties);
             stringBuilder.append("br/");
             stringBuilder.append("updated By:");
-            stringBuilder.append(requestSession.getJwtUser().getRole());
+            stringBuilder.append(requestSession.getJwtUser().getAccesss());
         }
         log.info(stringBuilder.toString());
         return stringBuilder.toString();

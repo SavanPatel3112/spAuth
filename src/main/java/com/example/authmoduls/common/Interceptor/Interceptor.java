@@ -96,7 +96,7 @@ public class Interceptor extends HandlerInterceptorAdapter implements HandlerInt
         try {
             user = tokenUtil.getJwtUserFromToken(jwtToken);
             log.info("user" + user);
-            if (!restAPIService.hasAccess(user.getRole(), method.getMethod().getName())) {
+            if (!restAPIService.hasAccess(user.getAccesss(), method.getMethod().getName())) {
                 log.error("Role is not allowed");
                 Response errorResponse = response1.getResponse(HttpStatus.FORBIDDEN, MessageConstant.ROLE_NOT_ALLOWED, MessageConstant.ROLE_NOT_ALLOWED);
                 // if Role is not allowed

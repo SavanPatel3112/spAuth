@@ -170,7 +170,7 @@ class UserServiceImplTest {
         var userResponse = UserResponse.builder().userName(userName).firstName(firstName).lastName(lastName).middleName(middleName).role(Role.ADMIN).build();
         List<String> roles = new ArrayList<>();
         roles.add(Role.ADMIN.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
         when(userRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(userModel));
         when(jwtTokenUtil.generateToken(jwtUser)).thenReturn(token);

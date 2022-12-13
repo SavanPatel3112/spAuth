@@ -17,11 +17,11 @@ import java.util.Map;
 public class JWTUser {
 
     private enum ClaimFiledNames{
-        ID,ROLE
+        ID, ACCESSS
     }
 
     String id;
-    List<String> role;
+    List<String> accesss;
 
     public JWTUser(String id) {
         this.id = id;
@@ -30,19 +30,19 @@ public class JWTUser {
     public Map<String, Object> toClaim(){
         Map<String, Object> claim   = new HashMap<>();
         claim.put(ClaimFiledNames.ID.toString(),id);
-        claim.put(ClaimFiledNames.ROLE.toString(),role);
+        claim.put(ClaimFiledNames.ACCESSS.toString(),accesss);
         return claim;
     }
 
     public boolean hasRole(String role){
 
-        return this.role.contains(role);
+        return this.accesss.contains(role);
     }
 
     public static JWTUser fromClaim(Claims claim){
         JWTUser jwtUser = new JWTUser();
         jwtUser.setId((String) claim.get(ClaimFiledNames.ID.toString()));
-        jwtUser.setRole((List<String>) claim.get(ClaimFiledNames.ROLE.toString()));
+        jwtUser.setAccesss((List<String>) claim.get(ClaimFiledNames.ACCESSS.toString()));
         return jwtUser;
     }
 }

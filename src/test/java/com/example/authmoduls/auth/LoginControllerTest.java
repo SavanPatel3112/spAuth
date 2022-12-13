@@ -192,7 +192,7 @@ class LoginControllerTest  {
         loginRepository.insert(login);
         List<String> roles = new ArrayList<>();
         roles.add(Role.ANONYMOUS.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
         var loginResponse = LoginResponse.builder().id(id).accesss(Accesss.ADMIN).softDelete(false).token(token).build();
 
@@ -257,7 +257,7 @@ class LoginControllerTest  {
         loginRepository.insert(login);
         List<String> roles = new ArrayList<>();
         roles.add(Role.ADMIN.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
         var loginResponse = LoginResponse.builder().id(id).token(token).softDelete(true).build();
 
@@ -278,7 +278,7 @@ class LoginControllerTest  {
         loginRepository.insert(login);
         List<String> roles = new ArrayList<>();
         roles.add(Role.ADMIN.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
 
         //when

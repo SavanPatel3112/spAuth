@@ -30,7 +30,7 @@ public class Login {
     String fullName;
     String email;
     String passWord;
-    String confirmPassword;
+    /*String confirmPassword;*/
     Accesss accesss;
     Gender gender;
     String token;

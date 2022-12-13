@@ -176,7 +176,7 @@ class LoginServiceImplTest {
         //given
         List<String> roles = new ArrayList<>();
         roles.add(Role.ANONYMOUS.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
         var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
         var loginResponse = LoginResponse.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
@@ -227,7 +227,7 @@ class LoginServiceImplTest {
         //given
         List<String> roles = new ArrayList<>();
         roles.add(Role.ANONYMOUS.toString());
-        var jwtUser = JWTUser.builder().id(id).role(roles).build();
+        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
         var login = Login.builder().id(id).accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
         var loginResponse = LoginResponse.builder().accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
