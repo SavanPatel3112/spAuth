@@ -6,7 +6,6 @@ import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
-import com.example.authmoduls.auth.decorator.UserResponse;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
@@ -65,6 +64,7 @@ public class LoginServiceImpl implements LoginService{
     public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
             Login login = getLoginModel(id);
+            login.setFullName();
             nullAwareBeanUtilsBean.copyProperties(login, loginAddRequest);
             loginRepository.save(login);
             return modelMapper.map(login, LoginResponse.class);
@@ -75,10 +75,10 @@ public class LoginServiceImpl implements LoginService{
         checkUserDetails(loginAddRequest);
         Login login = new Login();
         nullAwareBeanUtilsBean.copyProperties(login,loginAddRequest);
-        LoginResponse loginResponse = new LoginResponse();
         login.setFullName();
         login.setAccesss(accesss);
         login.setGender(gender);
+        LoginResponse loginResponse = new LoginResponse();
         loginResponse.setPassWord(login.getPassWord());
         if (login.getPassWord() != null) {
             String password = PasswordUtils.encryptPassword(login.getPassWord());
@@ -266,7 +266,7 @@ public class LoginServiceImpl implements LoginService{
         }
     }
 
-    private Login getLoginModel(String id) {
+    public Login getLoginModel(String id) {
         return loginRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.USER_ID_NOT_FOUND));
     }
     private Login getUserEmail(String email) {

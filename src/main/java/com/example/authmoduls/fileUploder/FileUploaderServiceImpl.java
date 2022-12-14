@@ -66,6 +66,7 @@ public class FileUploaderServiceImpl implements FileUploaderService{
                 File fileMetadata = new File();
                 fileMetadata.setParents(Collections.singletonList(folderId));
                 fileMetadata.setName(file.getOriginalFilename());
+                log.info("fileMeteData:{}",fileMetadata);
                 File uploadFile = googleDriveManager.getInstance()
                         .files()
                         .create(fileMetadata, new InputStreamContent(
@@ -73,6 +74,7 @@ public class FileUploaderServiceImpl implements FileUploaderService{
                                 new ByteArrayInputStream(file.getBytes()))
                         )
                         .setFields("id").execute();
+                log.info("uploadFile:{}",uploadFile);
                 return uploadFile.getId();
             }else {
                 return "Select file";

@@ -52,7 +52,6 @@ public class MainController {
         log.info("fileUpload start");
         if (files!=null) {
             int fileSize = files.length;
-            log.info("length:{}",fileSize);
             AtomicReference<String> fileId = new AtomicReference<>("");
             AtomicReference<String> fileName = new AtomicReference<>("");
             Arrays.asList(files).forEach(
@@ -61,6 +60,9 @@ public class MainController {
                         fileName.set(file.getOriginalFilename());
                     }
             );
+            log.info("length:{}",fileSize);
+            log.info("fileId:{}",fileId);
+            log.info("fileName:{}",fileName);
 
             if (fileSize > 1) {
                 return ResponseEntity.ok("files uploaded successfully");
@@ -68,7 +70,9 @@ public class MainController {
             return ResponseEntity.ok(fileName + ", uploaded successfully");
         }
         return ResponseEntity.ok("Success");
+
     }
+
 
 /*    @GetMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {

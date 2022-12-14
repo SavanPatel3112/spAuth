@@ -198,6 +198,7 @@ public class UserController {
         dataResponse.setStatus(Response.getLoginResponse());
         return dataResponse;
     }
+
     //pass id,otp
     //check existsBy(id,otp)
     //if exists then show all details
@@ -410,7 +411,8 @@ public class UserController {
         return ResponseEntity.ok()
                 .contentLength(resource.contentLength())
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "exported_data_xlsx" + "\"")
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                /*.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))*/
+                .contentType(MediaType.parseMediaType("application/pdf"))
                 .body(resource);
     }
     @SneakyThrows

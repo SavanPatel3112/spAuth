@@ -6,9 +6,11 @@ import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.DataResponse;
 import com.example.authmoduls.common.decorator.ListResponse;
+import com.example.authmoduls.common.decorator.RequestSession;
 import com.example.authmoduls.common.decorator.Response;
 import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.utils.Access;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 public class RecipeController {
     @Autowired
     RecipeService recipeService;
+    @Autowired
+    RequestSession requestSession;
     @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateRecipe" , value = "/addOrUpdateRecipe" , method = RequestMethod.POST)
     public DataResponse<RecipeResponse> addOrUpdateRecipe (@RequestBody RecipeAddRequest recipeAddRequest, Accesss accesss, @RequestParam(required = false)String id) throws InvocationTargetException, IllegalAccessException {
@@ -57,6 +61,17 @@ public class RecipeController {
     public DataResponse<Object> recipeUpdate (@RequestParam String id , @RequestParam Accesss accesss , @RequestBody RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
         DataResponse<Object>  dataResponse = new DataResponse<>();
         recipeService.recipeUpdate(id, accesss,recipeAddRequest);
+        dataResponse.setStatus(Response.getOkResponse());
+        return dataResponse;
+    }
+
+    @SneakyThrows
+    @Access(level = {Accesss.USER})
+    @RequestMapping(name = "shoppingList ", value = "shoppingList", method = RequestMethod.POST)
+    public DataResponse<Object> shoppingList(@RequestParam String id) {
+        DataResponse<Object> dataResponse = new DataResponse<>();
+        String loginID = requestSession.getJwtUser().getId();
+        recipeService.shoppingList(id, loginID);
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }

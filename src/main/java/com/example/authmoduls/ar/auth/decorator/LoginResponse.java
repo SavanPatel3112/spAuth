@@ -35,6 +35,8 @@ public class LoginResponse {
     @JsonIgnore
     boolean softDelete = false;
     @JsonIgnore
+    boolean login = false;
+    @JsonIgnore
     Date loginTime;
     @JsonIgnore
     Date logOutTime;

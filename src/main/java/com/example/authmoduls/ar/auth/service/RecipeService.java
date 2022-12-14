@@ -18,4 +18,6 @@ public interface RecipeService {
 
     void recipeUpdate(String id, Accesss accesss , RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException;
 
+    void shoppingList(String id, String loginID);
+
 }

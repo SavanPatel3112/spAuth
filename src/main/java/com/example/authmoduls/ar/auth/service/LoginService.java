@@ -5,7 +5,6 @@ import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
-import com.example.authmoduls.common.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -35,4 +34,6 @@ public interface LoginService {
     String getIdFromToken(String token);
 
     void logOut(String id);
+
+    Login getLoginModel(String id);
 }

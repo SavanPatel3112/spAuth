@@ -45,6 +45,7 @@ public class BookController {
         bookResponse.setStatus(Response.getOkResponse());
         return bookResponse;
     }
+
     @SneakyThrows
     @RequestMapping(name = "bookChartApi", value = "/chart", method = RequestMethod.GET)
     public DataResponse<BookPurchaseDetail> bookChartApi(@RequestParam int year) {
@@ -64,6 +65,7 @@ public class BookController {
         return bookResponse;
     }
     @SneakyThrows
+    @Access(levels = {Role.ADMIN})
     @RequestMapping(name = "getUserBookData", value = "/user/book/data", method = RequestMethod.GET)
     public ResponseEntity<Resource> getUserBookData() {
         Workbook workbook = bookService.getUserBookData();
@@ -72,7 +74,7 @@ public class BookController {
         return ResponseEntity.ok()
                 .contentLength(resource.contentLength())
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + "exported_user_book_data.xlsx" + "\"")
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel "))
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(resource);
     }
 

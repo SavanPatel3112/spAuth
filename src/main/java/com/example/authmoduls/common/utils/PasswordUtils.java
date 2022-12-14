@@ -19,7 +19,6 @@ public class PasswordUtils {
 
 
     public static String encryptPassword(String password) {
-
         // gensalt's log_rounds parameter determines the complexity
         // the work factor is 2**log_rounds, and the default is 10
         return BCrypt.hashpw(password, BCrypt.gensalt(12));

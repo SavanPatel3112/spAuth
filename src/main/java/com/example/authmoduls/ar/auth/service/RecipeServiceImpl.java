@@ -3,8 +3,12 @@ package com.example.authmoduls.ar.auth.service;
 import com.example.authmoduls.ar.auth.constant.MessageConstant;
 import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
+import com.example.authmoduls.ar.auth.decorator.ShoppingListLog;
+import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
+import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.repository.RecipeRepository;
+import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.exception.NotFoundException;
@@ -26,11 +30,17 @@ public class RecipeServiceImpl implements RecipeService {
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
     private final ModelMapper modelMapper;
     private final RecipeRepository recipeRepository;
+    private final LoginService loginService;
+    private final LoginRepository loginRepository;
+    private final ShoppingListLogRepository shoppingListLogRepository;
 
-    public RecipeServiceImpl(NullAwareBeanUtilsBean nullAwareBeanUtilsBean, ModelMapper modelMapper, RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(NullAwareBeanUtilsBean nullAwareBeanUtilsBean, ModelMapper modelMapper, RecipeRepository recipeRepository,LoginService loginService,LoginRepository loginRepository,ShoppingListLogRepository shoppingListLogRepository) {
         this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
+        this.loginService = loginService;
+        this.loginRepository = loginRepository;
+        this.shoppingListLogRepository = shoppingListLogRepository;
     }
 
     @Override
@@ -125,6 +135,19 @@ public class RecipeServiceImpl implements RecipeService {
                 }
             }
         }
+    }
+
+    @Override
+    public void shoppingList(String id, String loginID) {
+        RecipeModel recipeModel = getRecipeModel(id);
+        Login login = loginService.getLoginModel(loginID);
+        ShoppingListLog shoppingListLog = new ShoppingListLog();
+        loginRepository.save(login);
+        shoppingListLog.setIngredients(recipeModel.getRecipeIngredient());
+        shoppingListLog.setLoginId(loginID);
+        shoppingListLog.setRecipeId(id);
+        shoppingListLog.setSoftDelete(false);
+        shoppingListLogRepository.save(shoppingListLog);
     }
 
     private RecipeModel getRecipeModel(String id) {
