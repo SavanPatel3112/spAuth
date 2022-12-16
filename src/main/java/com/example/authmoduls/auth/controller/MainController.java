@@ -70,9 +70,7 @@ public class MainController {
             return ResponseEntity.ok(fileName + ", uploaded successfully");
         }
         return ResponseEntity.ok("Success");
-
     }
-
 
 /*    @GetMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
@@ -94,4 +92,5 @@ public class MainController {
         }
         return null;
     }*/
+
 }

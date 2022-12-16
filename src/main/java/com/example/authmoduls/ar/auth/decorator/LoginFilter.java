@@ -27,11 +27,5 @@ public class LoginFilter {
         }
         return search;
     }
-    public Accesss getAccess(){
-        return accesss;
-    }
-    public Gender getGender(){
-        return gender;
-    }
 
 }

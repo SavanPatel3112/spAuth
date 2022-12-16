@@ -2,6 +2,7 @@ package com.example.authmoduls.ar.auth.repository;
 
 import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
 import com.example.authmoduls.ar.auth.decorator.LoginFilter;
+import com.example.authmoduls.ar.auth.decorator.LoginResponse;
 import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.common.decorator.CountQueryResult;
@@ -42,9 +43,12 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
         operationForCount.add(group().count().as("count"));
         operationForCount.add(project("count"));
         Aggregation aggregationCount = newAggregation(LoginAddRequest.class, operationForCount);
-        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, Login.class, CountQueryResult.class);
-        long count = countQueryResults.getMappedResults().size() == 0 ? 0 : countQueryResults.getMappedResults().get(0).getCount();
-        return PageableExecutionUtils.getPage(logins, pagination, () -> count);
+        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, "userData", CountQueryResult.class);
+        long count = countQueryResults.getMappedResults().isEmpty() ? 0 : countQueryResults.getMappedResults().get(0).getCount();
+        return PageableExecutionUtils.getPage(
+                logins,
+                pagination,
+                () -> count);
     }
 
     private List<AggregationOperation> filterAggregation(LoginFilter loginFilter, FilterSortRequest.SortRequest<LoginSortBy> sort, PageRequest pagination, boolean addPage) {
@@ -65,13 +69,21 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
 
     private Criteria getCriteria(LoginFilter loginFilter, List<AggregationOperation> operations) {
         Criteria criteria = new Criteria();
-        operations.add(new CustomAggregationOperation(new Document("$addFields", new Document("search", new Document("$concat",
-                Arrays.asList(
-                        new Document("$ifNull", Arrays.asList("$firstName", "")), "|@|",
-                        new Document("$ifNull", Arrays.asList("$middleName", "")), "|@|",
-                        new Document("$ifNull", Arrays.asList("$lastName", "")), "|@|",
-                        new Document("$ifNull", Arrays.asList("$email", "")), "|@|",
-                        new Document("$ifNull", Arrays.asList("$passWord", "")), "|@|"))))));
+        operations.add(
+                new CustomAggregationOperation(
+                        new Document("$addFields",
+                                new Document("search",
+                                        new Document("$concat", Arrays.asList(
+                                                new Document("$ifNull", Arrays.asList("$firstName", "")),
+                                                "|@|",new Document("$ifNull", Arrays.asList("$middleName", "")),
+                                                "|@|",new Document("$ifNull", Arrays.asList("$lastName", "")),
+                                                "|@|",new Document("$ifNull",Arrays.asList("$email", ""))
+                                        )
+                                        )
+                                )
+                        )
+                )
+        );
         if (!StringUtils.isEmpty(loginFilter.getSearch())) {
             loginFilter.setSearch(loginFilter.getSearch().replace("\\|@\\|", ""));
             loginFilter.setSearch(loginFilter.getSearch().replace("\\|@@\\|", ""));
@@ -83,10 +95,36 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
         if (loginFilter.getGender() != null) {
             criteria = criteria.and("gender").is(loginFilter.getGender());
         }
-        if (loginFilter.getAccess() !=null){
-            criteria = criteria.and("role").is(loginFilter.getAccess());
+        if (loginFilter.getAccesss() !=null){
+            criteria = criteria.and("accesss").is(loginFilter.getAccesss());
         }
-        criteria = criteria.and("softDelete").is(false);
+        criteria = criteria.and("softDelete").is(loginFilter.isSoftDelete());
         return criteria;
     }
+
+    private Criteria getSearchCriteria(String search, List<AggregationOperation> operations) {
+
+        Criteria criteria = new Criteria();
+        operations.add(new CustomAggregationOperation(
+                new Document("$addFields",
+                        new Document("search",
+                                new Document("$concat", Arrays.asList(
+                                        new Document("$ifNull",Arrays.asList("$portfolioName","")),
+                                        "|@|",new Document("$ifNull",Arrays.asList("$crmSettings.crmSystem","")),
+                                        "|@|",new Document("$ifNull",Arrays.asList("$crmSettings.crmSystemName",""))
+                                )
+                                )
+                        )
+                ))
+        );
+        if (!StringUtils.isEmpty(search)) {
+            search = search.replaceAll("\\|@\\|","");
+            search = search.replaceAll("\\|@@\\|","");
+            criteria = criteria.orOperator(
+                    Criteria.where("search").regex(".*" + search + ".*", "i")
+            );
+        }
+        return criteria;
+    }
+
 }

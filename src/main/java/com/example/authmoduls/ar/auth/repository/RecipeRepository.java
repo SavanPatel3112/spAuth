@@ -1,5 +1,6 @@
 package com.example.authmoduls.ar.auth.repository;
 
+import com.example.authmoduls.ar.auth.decorator.ShoppingListLog;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

@@ -5,11 +5,9 @@ import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
-/*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
-import com.example.authmoduls.common.decorator.NotificationParser;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.exception.AlreadyExistException;
@@ -29,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -42,20 +41,18 @@ public class LoginServiceImpl implements LoginService{
     private final PasswordUtils passwordUtils;
     private final AdminConfigurationService adminService;
     private final Utils utils;
-    private final NotificationParser notificationParser;
     private final ModelMapper modelMapper;
 
 
     public LoginServiceImpl(LoginRepository loginRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean,
                             JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService,
-                            Utils utils, NotificationParser notificationParser, ModelMapper modelMapper ) {
+                            Utils utils, ModelMapper modelMapper ) {
         this.loginRepository = loginRepository;
         this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
         this.jwtTokenUtil = jwtTokenUtil;
         this.passwordUtils = passwordUtils;
         this.adminService = adminService;
         this.utils = utils;
-        this.notificationParser = notificationParser;
         this.modelMapper = modelMapper;
 
     }
@@ -269,6 +266,8 @@ public class LoginServiceImpl implements LoginService{
     public Login getLoginModel(String id) {
         return loginRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.USER_ID_NOT_FOUND));
     }
+
+
     private Login getUserEmail(String email) {
         return loginRepository.findByEmailAndSoftDeleteIsFalse(email).orElseThrow(()-> new NotFoundException(MessageConstant.EMAIL_NOT_FOUND));
     }

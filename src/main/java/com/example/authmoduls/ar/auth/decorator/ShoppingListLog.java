@@ -16,6 +16,7 @@ public class ShoppingListLog {
 
     String recipeId;
     String loginId;
+    String itemName;
     List<RecipeIngredient> ingredients;
     Date data;
     @JsonIgnore

@@ -5,6 +5,7 @@ import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RecipeResponse {
     String id;
     String itemName;

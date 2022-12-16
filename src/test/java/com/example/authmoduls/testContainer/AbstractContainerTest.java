@@ -1,4 +1,4 @@
-package com.example.authmoduls;
+package com.example.authmoduls.testContainer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.TestInstance;
@@ -18,9 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class AbstractContainerTest {
     @Container
     private static final MongoDBContainer CONTAINER = MongoDBContainerSingleton.getInstance();
-
-
-
 
     static {
         try {

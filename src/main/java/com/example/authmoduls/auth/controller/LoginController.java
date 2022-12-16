@@ -7,12 +7,12 @@ import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.ResponseConstant;
 import com.example.authmoduls.common.decorator.*;
-import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.utils.Access;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
 import java.lang.reflect.InvocationTargetException;
 
 @RestController
@@ -66,9 +66,9 @@ public class LoginController {
     public PageResponse<Login> getAllUserByPagination(@RequestBody FilterSortRequest<LoginFilter, LoginSortBy> filterSortRequest){
         PageResponse<Login> pageResponse = new PageResponse<>();
         LoginFilter loginFilter = filterSortRequest.getFilter();
-        Page<Login> logins = loginService.getAllUserByFilterAndSortAndPage(loginFilter,filterSortRequest.getSort(),
+        Page<Login> loginResponses = loginService.getAllUserByFilterAndSortAndPage(loginFilter,filterSortRequest.getSort(),
                 generalHelper.getPagination(filterSortRequest.getPage().getPage(),filterSortRequest.getPage().getLimit()));
-        pageResponse.setData(logins);
+        pageResponse.setData(loginResponses);
         pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
         return pageResponse;
     }
@@ -137,5 +137,6 @@ public class LoginController {
         dataResponse.setStatus(Response.logOutResponse());
         return dataResponse;
     }
+
 
 }

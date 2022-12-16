@@ -19,10 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -98,7 +95,6 @@ public class RecipeServiceImpl implements RecipeService {
             updateRecipeDetail(id,recipeAddRequest);
             difference(recipeModel,recipeAddRequest,changedProperties);
         }
-
     }
 
     public void updateRecipeDetail(String id, RecipeAddRequest recipeAddRequest) {
@@ -120,6 +116,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
 
     }
+
     public void difference(RecipeModel recipeModel, RecipeAddRequest recipeAddRequest, HashMap<String, String> changedProperties) throws IllegalAccessException, InvocationTargetException {
         RecipeModel recipeModel1 = new RecipeModel();
         nullAwareBeanUtilsBean.copyProperties(recipeModel1, recipeAddRequest);
@@ -146,11 +143,21 @@ public class RecipeServiceImpl implements RecipeService {
         shoppingListLog.setIngredients(recipeModel.getRecipeIngredient());
         shoppingListLog.setLoginId(loginID);
         shoppingListLog.setRecipeId(id);
+        shoppingListLog.setItemName(recipeModel.getItemName());
         shoppingListLog.setSoftDelete(false);
         shoppingListLogRepository.save(shoppingListLog);
     }
 
+    @Override
+    public List<ShoppingListLog> getRecipeList(String loginId) {
+        return getShoppingLog(loginId);
+    }
+
     private RecipeModel getRecipeModel(String id) {
         return recipeRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.RECIPE_ID_NOT_FOUND));
+    }
+
+    private List<ShoppingListLog> getShoppingLog(String loginId){
+        return shoppingListLogRepository.findByLoginIdAndSoftDeleteIsFalse(loginId);
     }
 }

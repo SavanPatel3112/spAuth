@@ -412,7 +412,7 @@ public class UserController {
                 .contentLength(resource.contentLength())
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "exported_data_xlsx" + "\"")
                 /*.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))*/
-                .contentType(MediaType.parseMediaType("application/pdf"))
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(resource);
     }
     @SneakyThrows

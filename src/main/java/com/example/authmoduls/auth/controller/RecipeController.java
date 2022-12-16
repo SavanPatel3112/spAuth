@@ -2,22 +2,27 @@ package com.example.authmoduls.auth.controller;
 
 import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
+import com.example.authmoduls.ar.auth.decorator.ShoppingListLog;
 import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.auth.model.Accesss;
-import com.example.authmoduls.common.decorator.DataResponse;
-import com.example.authmoduls.common.decorator.ListResponse;
-import com.example.authmoduls.common.decorator.RequestSession;
-import com.example.authmoduls.common.decorator.Response;
-import com.example.authmoduls.common.enums.Role;
+import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.utils.Access;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/recipe")
 @CrossOrigin("*")
+@Slf4j
 public class RecipeController {
     @Autowired
     RecipeService recipeService;
@@ -74,6 +79,23 @@ public class RecipeController {
         recipeService.shoppingList(id, loginID);
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
+    }
+
+    @SneakyThrows
+    @Access(level = Accesss.USER)
+    @RequestMapping(name = "generatePdfFile" , value = "/export-to-pdf" , method = RequestMethod.GET)
+    public void generatePdfFile(HttpServletResponse response){
+        String loginId = requestSession.getJwtUser().getId();
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+        String currentDateTime = dateFormat.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=RecipeIngredient" + currentDateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
+        List<ShoppingListLog> shoppingListLogs = recipeService.getRecipeList(loginId);
+        PdfGenerator generator = new PdfGenerator();
+        log.info("generator:{}",generator);
+        generator.generate(shoppingListLogs, response);
     }
 
 }

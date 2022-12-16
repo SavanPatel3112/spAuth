@@ -76,10 +76,9 @@ class LoginServiceImplTest {
     private final PasswordUtils passwordUtils = spy(PasswordUtils.class);
     private final AdminConfigurationService adminService = mock(AdminConfigurationService.class);
     private final Utils utils = spy(Utils.class);
-    private final NotificationParser notificationParser = mock(NotificationParser.class);
     private final ModelMapper modelMapper = getModelMapper();
     /*private final UserPublisher userPublisher = mock(UserPublisher.class);*/
-    private final LoginService loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils,notificationParser,modelMapper/*,userPublisher*/);
+    private final LoginService loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils, modelMapper/*,userPublisher*/);
 
     private ModelMapper getModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -193,7 +192,7 @@ class LoginServiceImplTest {
     @Test
     void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //given
-        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).gender(gender).passWord(PasswordUtils.encryptPassword(passWord)).confirmPassword(PasswordUtils.encryptPassword(passWord)).build();
+        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).gender(gender).passWord(PasswordUtils.encryptPassword(passWord)).build();
         var adminConfiguration = AdminConfiguration.builder().from(from).id(id).nameRegex(nameRegex).passwordRegex(passwordRegex).host(host).port(port).build();
         var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).message(message).subject(subject).build();
         when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
