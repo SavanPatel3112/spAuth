@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +69,22 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
     }
 
     private Criteria getCriteria(LoginFilter loginFilter, List<AggregationOperation> operations) {
+        Criteria criteria = getSearchCriteria(loginFilter.getSearch(),operations);
+        if (!CollectionUtils.isEmpty(loginFilter.getId())) {
+            criteria = criteria.and("_id").is(loginFilter.getId());
+        }
+        if (loginFilter.getGender() != null) {
+            criteria = criteria.and("gender").is(loginFilter.getGender());
+        }
+        if (loginFilter.getAccesss() !=null){
+            criteria = criteria.and("accesss").is(loginFilter.getAccesss());
+        }
+        criteria = criteria.and("softDelete").is(loginFilter.isSoftDelete());
+        return criteria;
+    }
+
+    private Criteria getSearchCriteria(String search, List<AggregationOperation> operations) {
+
         Criteria criteria = new Criteria();
         operations.add(
                 new CustomAggregationOperation(
@@ -84,42 +101,9 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
                         )
                 )
         );
-        if (!StringUtils.isEmpty(loginFilter.getSearch())) {
-            loginFilter.setSearch(loginFilter.getSearch().replace("\\|@\\|", ""));
-            loginFilter.setSearch(loginFilter.getSearch().replace("\\|@@\\|", ""));
-            criteria = criteria.orOperator(Criteria.where("search").regex(".*" + loginFilter.getSearch() + ".*", "i"));
-        }
-        if (!StringUtils.isEmpty(loginFilter.getId())) {
-            criteria = criteria.and("_id").is(loginFilter.getId());
-        }
-        if (loginFilter.getGender() != null) {
-            criteria = criteria.and("gender").is(loginFilter.getGender());
-        }
-        if (loginFilter.getAccesss() !=null){
-            criteria = criteria.and("accesss").is(loginFilter.getAccesss());
-        }
-        criteria = criteria.and("softDelete").is(loginFilter.isSoftDelete());
-        return criteria;
-    }
-
-    private Criteria getSearchCriteria(String search, List<AggregationOperation> operations) {
-
-        Criteria criteria = new Criteria();
-        operations.add(new CustomAggregationOperation(
-                new Document("$addFields",
-                        new Document("search",
-                                new Document("$concat", Arrays.asList(
-                                        new Document("$ifNull",Arrays.asList("$portfolioName","")),
-                                        "|@|",new Document("$ifNull",Arrays.asList("$crmSettings.crmSystem","")),
-                                        "|@|",new Document("$ifNull",Arrays.asList("$crmSettings.crmSystemName",""))
-                                )
-                                )
-                        )
-                ))
-        );
         if (!StringUtils.isEmpty(search)) {
-            search = search.replaceAll("\\|@\\|","");
-            search = search.replaceAll("\\|@@\\|","");
+            search = search.replace("\\|@\\|","");
+            search = search.replace("\\|@@\\|","");
             criteria = criteria.orOperator(
                     Criteria.where("search").regex(".*" + search + ".*", "i")
             );

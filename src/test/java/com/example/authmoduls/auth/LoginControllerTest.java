@@ -175,10 +175,10 @@ class LoginControllerTest  {
         var login = List.of(Login.builder().id(id).accesss(Accesss.ADMIN).fullName(fullName).softDelete(false).email(email).build());
         Page<Login> page = new PageImpl<>(login);
         //when
-        PageResponse<LoginResponse> pageResponse = loginController.getAllUserByPagination(filterSortRequest);
+        PageResponse<Login> pageResponse = loginController.getAllUserByPagination(filterSortRequest);
 
         //then
-        Page<LoginResponse> logins = pageResponse.getData();
+        Page<Login> logins = pageResponse.getData();
         Assertions.assertEquals(page,logins);
 
     }

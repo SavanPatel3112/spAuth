@@ -65,8 +65,7 @@ public class LoginController {
     @Access(level = {Accesss.ADMIN})
     public PageResponse<Login> getAllUserByPagination(@RequestBody FilterSortRequest<LoginFilter, LoginSortBy> filterSortRequest){
         PageResponse<Login> pageResponse = new PageResponse<>();
-        LoginFilter loginFilter = filterSortRequest.getFilter();
-        Page<Login> loginResponses = loginService.getAllUserByFilterAndSortAndPage(loginFilter,filterSortRequest.getSort(),
+        Page<Login> loginResponses = loginService.getAllUserByFilterAndSortAndPage(filterSortRequest.getFilter(),filterSortRequest.getSort(),
                 generalHelper.getPagination(filterSortRequest.getPage().getPage(),filterSortRequest.getPage().getLimit()));
         pageResponse.setData(loginResponses);
         pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
