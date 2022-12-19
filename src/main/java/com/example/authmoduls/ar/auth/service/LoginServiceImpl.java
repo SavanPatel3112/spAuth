@@ -141,18 +141,18 @@ public class LoginServiceImpl implements LoginService{
     public LoginTokenResponse userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
         Login login = getUserEmail(loginRequest.getEmail());
         String userPassword = login.getPassWord();
+        String otp = generateOtp();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setAccesss(login.getAccesss());
         JWTUser jwtUser = new JWTUser(login.getId(), Collections.singletonList(loginTokenResponse.getAccesss().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
+
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
-        loginTokenResponse.setOtp(generateOtp());
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
             EmailModel emailModel = new EmailModel();
-            String otp = generateOtp();
             emailModel.setMessage(otp);
             emailModel.setTo(login.getEmail());
             emailModel.setCc(adminConfiguration.getTechAdmins());
@@ -162,6 +162,7 @@ public class LoginServiceImpl implements LoginService{
             login.setLogin(true);
             Date date = new Date();
             login.setLoginTime(date);
+            loginTokenResponse.setOtp(otp);
             loginRepository.save(login);
         } else {
             throw new NotFoundException(MessageConstant.PASSWORD_NOT_MATCHED);

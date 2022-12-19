@@ -1,6 +1,5 @@
 package com.example.authmoduls.ar.auth.repository;
 
-import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
 import com.example.authmoduls.ar.auth.decorator.RecipeFilter;
 import com.example.authmoduls.ar.auth.decorator.RecipeSortBy;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
@@ -13,7 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -24,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Repository
 public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
@@ -47,7 +48,7 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
         List<AggregationOperation> operationForCount = filterAggregation(recipeFilter, sort, pagination, false);
         operationForCount.add(group().count().as("count"));
         operationForCount.add(project("count"));
-        Aggregation aggregationCount = newAggregation(RecipeAddRequest.class, operationForCount);
+        Aggregation aggregationCount = newAggregation(RecipeModel.class, operationForCount);
         AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, "recipe", CountQueryResult.class);
         long count = countQueryResults.getMappedResults().isEmpty() ? 0 : countQueryResults.getMappedResults().get(0).getCount();
         return PageableExecutionUtils.getPage(
@@ -76,7 +77,7 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
     }
 
     private Criteria getCriteria(RecipeFilter recipeFilter, List<AggregationOperation> operations) {
-        Criteria criteria = getSearchCriteria(recipeFilter.getSearch(),operations);
+        Criteria criteria = searchCriteria(recipeFilter.getSearch(),operations);
         if (!CollectionUtils.isEmpty(recipeFilter.getId())) {
             criteria = criteria.and("_id").is(recipeFilter.getId());
         }
@@ -92,7 +93,7 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
 
     }
 
-    private Criteria getSearchCriteria(String search, List<AggregationOperation> operations) {
+    private Criteria searchCriteria(String search, List<AggregationOperation> operations) {
 
         Criteria criteria = new Criteria();
         operations.add(
@@ -117,6 +118,7 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
         }
         return criteria;
 
-    }*/
+    }
+*/
 
 }

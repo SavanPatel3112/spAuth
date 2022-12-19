@@ -12,8 +12,8 @@ import java.util.Map;
 public enum RecipeSortBy {
 
 
-    ITEMNAME("itemName"),
-    ITEMDESCRIPTION("itemDescription");
+    ITEM_NAME("itemName"),
+    ITEM_DESCRIPTION("itemDescription");
 
     @JsonIgnore
     private String value;

@@ -149,15 +149,14 @@ public class RecipeServiceImpl implements RecipeService {
         shoppingListLog.setSoftDelete(false);
         return shoppingListLogRepository.save(shoppingListLog);
     }
+    @Override
+    public Page<RecipeModel> getAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+        return /*recipeRepository.findAllRecipeByFilterAndSortAndPage(recipeFilter,sort,pagination);*/null;
+    }
 
     @Override
     public List<ShoppingListLog> getRecipeList(String loginId) {
         return getShoppingLog(loginId);
-    }
-
-    @Override
-    public Page<RecipeModel> getAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
-        return /*recipeRepository.findAllRecipeByFilterAndSortAndPage(recipeFilter,sort,pagination);*/null;
     }
 
     private RecipeModel getRecipeModel(String id) {
