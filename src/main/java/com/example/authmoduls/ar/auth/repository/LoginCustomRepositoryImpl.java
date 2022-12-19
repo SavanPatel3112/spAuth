@@ -9,7 +9,6 @@ import com.example.authmoduls.common.decorator.CustomAggregationOperation;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,8 +28,12 @@ import java.util.List;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 public class LoginCustomRepositoryImpl implements LoginCustomRepository{
-    @Autowired
-    MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
+
+    public LoginCustomRepositoryImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
     @Override
     public Page<Login> findAllUserByFilterAndSortAndPage(LoginFilter loginFilter, FilterSortRequest.SortRequest<LoginSortBy> sort, PageRequest pagination) {
         List<AggregationOperation> operations = filterAggregation(loginFilter, sort, pagination, true);
@@ -82,7 +85,6 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
     }
 
     private Criteria getSearchCriteria(String search, List<AggregationOperation> operations) {
-
         Criteria criteria = new Criteria();
         operations.add(
                 new CustomAggregationOperation(

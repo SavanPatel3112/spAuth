@@ -18,62 +18,52 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
-@Repository
-public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
+public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
 
-    private final MongoTemplate mongoTemplate;
+  private final MongoTemplate mongoTemplate;
 
-    public RecipeCustomRepositoryImp(MongoTemplate mongoTemplate) {
+    public RecipeCustomRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
 
-    /*@Override
-    public Page<RecipeModel> findAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+    @Override
+   public Page<RecipeModel> getAllRecipesByFilterAndSort(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+       List<AggregationOperation> operations = filterAggregation(recipeFilter,sort,pagination,true);
+       Aggregation aggregation = newAggregation(operations);
+       List<RecipeModel> recipeResponse = mongoTemplate.aggregate(aggregation,"recipe",RecipeModel.class).getMappedResults();
+       List<AggregationOperation> operationList = filterAggregation(recipeFilter,sort,pagination,false);
+       operationList.add(group().count().as("count"));
+       operations.add(project("count"));
+       Aggregation aggregation1 = newAggregation(RecipeModel.class,operationList);
+       AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregation1,"recipe", CountQueryResult.class);
+       long count = countQueryResults.getMappedResults().isEmpty() ? 0 :countQueryResults.getMappedResults().get(0).getCount();
+       return PageableExecutionUtils.getPage(
+               recipeResponse,
+               pagination,
+               () ->count);
 
-        List<AggregationOperation> operations = filterAggregation(recipeFilter, sort, pagination, true);
-        //created Aggregation operation
-        Aggregation aggregation = newAggregation(operations);
-        List<RecipeModel> recipeModels = mongoTemplate.aggregate(aggregation, "recipe", RecipeModel.class).getMappedResults();
-        // Find Count
-        List<AggregationOperation> operationForCount = filterAggregation(recipeFilter, sort, pagination, false);
-        operationForCount.add(group().count().as("count"));
-        operationForCount.add(project("count"));
-        Aggregation aggregationCount = newAggregation(RecipeModel.class, operationForCount);
-        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregationCount, "recipe", CountQueryResult.class);
-        long count = countQueryResults.getMappedResults().isEmpty() ? 0 : countQueryResults.getMappedResults().get(0).getCount();
-        return PageableExecutionUtils.getPage(
-                recipeModels,
-                pagination,
-                () -> count);
-
-    }
+   }
 
     private List<AggregationOperation> filterAggregation(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination, boolean addPage) {
-
         List<AggregationOperation> operations = new ArrayList<>();
-        operations.add(match(getCriteria(recipeFilter, operations)));
-        if (addPage) {
-            //sorting
-            if (sort != null && sort.getSortBy() != null && sort.getOrderBy() != null) {
-                operations.add(new SortOperation(Sort.by(sort.getOrderBy(), sort.getSortBy().getValue())));
-            }
-            if (pagination != null) {
+        operations.add(match(getCriteria(recipeFilter,operations)));
+        if (addPage){
+            if (sort !=null && sort.getSortBy() !=null && sort.getOrderBy() !=null){
+                operations.add(new SortOperation(Sort.by(sort.getOrderBy(),sort.getSortBy().getValue())));
+            }if (pagination!=null){
                 operations.add(skip(pagination.getOffset()));
                 operations.add(limit(pagination.getPageSize()));
             }
         }
         return operations;
-
     }
 
     private Criteria getCriteria(RecipeFilter recipeFilter, List<AggregationOperation> operations) {
@@ -88,13 +78,10 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
             criteria = criteria.and("itemDescription").is(recipeFilter.getItemDescription());
         }
         criteria = criteria.and("softDelete").is(recipeFilter.isSoftDelete());
-
         return criteria;
-
     }
 
     private Criteria searchCriteria(String search, List<AggregationOperation> operations) {
-
         Criteria criteria = new Criteria();
         operations.add(
                 new CustomAggregationOperation(
@@ -117,8 +104,7 @@ public class RecipeCustomRepositoryImp implements RecipeCustomRepository {
             );
         }
         return criteria;
-
     }
-*/
+
 
 }

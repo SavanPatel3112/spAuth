@@ -1,8 +1,6 @@
 package com.example.authmoduls.ar.auth.model;
 
 import com.example.authmoduls.auth.model.Accesss;
-import com.example.authmoduls.auth.model.Address;
-import com.example.authmoduls.common.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,7 +46,6 @@ public class Login {
 
 
     public void setFullName(){
-
         this.firstName = StringUtils.normalizeSpace(this.firstName);
         this.middleName = StringUtils.normalizeSpace(this.middleName);
         this.lastName = StringUtils.normalizeSpace(this.lastName);
