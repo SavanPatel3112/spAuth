@@ -267,6 +267,17 @@ public class LoginServiceImpl implements LoginService{
         return loginRepository.findByIdAndSoftDeleteIsFalse(id).orElseThrow(() -> new NotFoundException(MessageConstant.USER_ID_NOT_FOUND));
     }
 
+    @Override
+    public void otpVerification(OtpVerification otp) {
+        Login login = getUserEmail(otp.getEmail());
+        if (StringUtils.isEmpty(login.getEmail())){
+            throw new NotFoundException(MessageConstant.EMAIL_NOT_FOUND);
+        }
+        boolean exists = loginRepository.existsByEmailAndOtpAndSoftDeleteFalse(otp.getEmail(),otp.getOtp());
+        if (!exists){
+            throw new NotFoundException(MessageConstant.INVAILD_OTP);
+        }
+    }
 
     private Login getUserEmail(String email) {
         return loginRepository.findByEmailAndSoftDeleteIsFalse(email).orElseThrow(()-> new NotFoundException(MessageConstant.EMAIL_NOT_FOUND));

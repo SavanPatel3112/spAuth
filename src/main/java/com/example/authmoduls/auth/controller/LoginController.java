@@ -96,6 +96,15 @@ public class LoginController {
         return tokenResponse;
     }
 
+    @RequestMapping(name = "otpVerification" , value = "/otp/verification" , method = RequestMethod.POST)
+    public DataResponse<OtpVerification> otpVerification(@RequestBody OtpVerification otp){
+        DataResponse<OtpVerification> dataResponse = new DataResponse<>();
+        loginService.otpVerification(otp);
+        dataResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
+        return dataResponse;
+
+    }
+
     @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getEncryptPassword" , value = "/getEncryptPassword" , method = RequestMethod.GET)
     public DataResponse<String> getEncryptPassword (@RequestParam String id) throws InvocationTargetException, IllegalAccessException {

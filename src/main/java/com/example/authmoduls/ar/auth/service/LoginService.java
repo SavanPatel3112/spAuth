@@ -37,5 +37,5 @@ public interface LoginService {
 
     Login getLoginModel(String id);
 
-
+    void otpVerification(OtpVerification otp);
 }

@@ -30,7 +30,7 @@ public class RMQConsumer {
             userService.sendMessage(id);
             userConsumerService.getUser(id);
         } catch (Exception e) {
-            log.info("Error happen in consuming data");
+            log.info("Error happen in consuming date");
         }
     }
 }

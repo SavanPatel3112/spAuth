@@ -18,7 +18,7 @@ public class ShoppingListLog {
     String loginId;
     String itemName;
     List<RecipeIngredient> ingredients;
-    Date data;
+    Date date;
     @JsonIgnore
     boolean softDelete = false;    
     

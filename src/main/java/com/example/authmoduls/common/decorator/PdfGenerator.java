@@ -31,7 +31,7 @@ public class PdfGenerator {
         Font fontTitle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
         fontTitle.setSize(20);
 
-        // Creating paragraph (Heading for the PDF data)
+        // Creating paragraph (Heading for the PDF date)
         Paragraph paragraph1 = new Paragraph("List of the Shopping", fontTitle);
         paragraph1.setAlignment(Element.ALIGN_CENTER);
 

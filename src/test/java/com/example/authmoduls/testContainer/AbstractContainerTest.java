@@ -30,6 +30,6 @@ public class AbstractContainerTest {
 
     @DynamicPropertySource
     static void mongoDbProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", CONTAINER::getReplicaSetUrl);
+        registry.add("spring.date.mongodb.uri", CONTAINER::getReplicaSetUrl);
     }
 }

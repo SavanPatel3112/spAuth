@@ -66,7 +66,7 @@ public class BookController {
     }
     @SneakyThrows
     @Access(levels = {Role.ADMIN})
-    @RequestMapping(name = "getUserBookData", value = "/user/book/data", method = RequestMethod.GET)
+    @RequestMapping(name = "getUserBookData", value = "/user/book/date", method = RequestMethod.GET)
     public ResponseEntity<Resource> getUserBookData() {
         Workbook workbook = bookService.getUserBookData();
         assert workbook != null;
@@ -92,7 +92,7 @@ public class BookController {
     }
 
     @SneakyThrows
-    @RequestMapping(name = "getBookDataWithMonthAndYear", value = "/data/month", method = RequestMethod.POST)
+    @RequestMapping(name = "getBookDataWithMonthAndYear", value = "/date/month", method = RequestMethod.POST)
     public ResponseEntity<Resource> getBookDataWithMonthAndYear(@RequestBody FilterSortRequest<BookFilter,BookSortBy> filterSortRequest) {
         BookFilter bookFilter =  filterSortRequest.getFilter();
         FilterSortRequest.SortRequest<BookSortBy> sort= filterSortRequest.getSort();
@@ -108,7 +108,7 @@ public class BookController {
                 .body(resource);
     }
     @SneakyThrows
-    @RequestMapping(name = "getBookData", value = "/data", method = RequestMethod.GET)
+    @RequestMapping(name = "getBookData", value = "/date", method = RequestMethod.GET)
     public ResponseEntity<Resource> getBookData() {
         Workbook workbook = bookService.getBookData();
         assert workbook != null;

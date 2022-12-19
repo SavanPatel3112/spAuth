@@ -26,7 +26,7 @@ public class ExcelUtil {
         // Create A Sheet
         Sheet sheet = workbook.createSheet("Sheet1");
         log.info("Sheet -> {}", sheet);
-        // If no data then return no work needed
+        // If no date then return no work needed
         if (data.size() == 0) {
             return workbook;
         }
@@ -60,7 +60,7 @@ public class ExcelUtil {
     }
 
     private static List<Method> setHeaders(Row row, Class c) {
-        // This is the list of method to be called on object in order to get data...
+        // This is the list of method to be called on object in order to get date...
         List<Method> methods = new ArrayList<>();
         Method[] fields = c.getMethods();
         for (Method m : fields) {
@@ -122,7 +122,7 @@ public class ExcelUtil {
         Workbook workbook = createWorkbook();
         // Create A Sheet
         Sheet sheet = workbook.createSheet("Sheet1");
-        // If no data then return no work needed
+        // If no date then return no work needed
         if (data.size() == 0) {
             return workbook;
         }

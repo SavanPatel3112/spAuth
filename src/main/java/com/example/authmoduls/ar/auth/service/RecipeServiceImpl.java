@@ -1,19 +1,20 @@
 package com.example.authmoduls.ar.auth.service;
 
 import com.example.authmoduls.ar.auth.constant.MessageConstant;
-import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
-import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
-import com.example.authmoduls.ar.auth.decorator.ShoppingListLog;
+import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.repository.RecipeRepository;
 import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
 import com.example.authmoduls.auth.model.Accesss;
+import com.example.authmoduls.common.decorator.FilterSortRequest;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -135,7 +136,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void shoppingList(String id, String loginID) {
+    public ShoppingListLog shoppingList(String id, String loginID) {
         RecipeModel recipeModel = getRecipeModel(id);
         Login login = loginService.getLoginModel(loginID);
         ShoppingListLog shoppingListLog = new ShoppingListLog();
@@ -144,13 +145,20 @@ public class RecipeServiceImpl implements RecipeService {
         shoppingListLog.setLoginId(loginID);
         shoppingListLog.setRecipeId(id);
         shoppingListLog.setItemName(recipeModel.getItemName());
+        shoppingListLog.setDate(new Date());
         shoppingListLog.setSoftDelete(false);
-        shoppingListLogRepository.save(shoppingListLog);
+        return shoppingListLogRepository.save(shoppingListLog);
     }
 
     @Override
     public List<ShoppingListLog> getRecipeList(String loginId) {
         return getShoppingLog(loginId);
+    }
+
+    @Override
+    public Page<RecipeModel> getAllRecipeByFilterAndSortAndRequest(RecipeFilter filter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+        /*return recipeRepository.findAAllRecipeByFilterAndSortAndPage(filter,sort,pagination);*/
+        return null;
     }
 
     private RecipeModel getRecipeModel(String id) {
@@ -160,4 +168,5 @@ public class RecipeServiceImpl implements RecipeService {
     private List<ShoppingListLog> getShoppingLog(String loginId){
         return shoppingListLogRepository.findByLoginIdAndSoftDeleteIsFalse(loginId);
     }
+
 }

@@ -278,7 +278,7 @@ public class UserController {
         return dataResponse;
     }
     //if user pass role as student then
-    //show only student data
+    //show only student date
     @RequestMapping(name = "getUserByRole", value = "getUser", method = RequestMethod.POST)
     @Access(levels = Role.ANONYMOUS)
     public ListResponse<UserResponse> getUserByRole(@RequestBody UserFilter userFilter) {
@@ -316,7 +316,7 @@ public class UserController {
         return listResponse;
     }
     //user pass multiple id and semester
-    //match in database, unwind result , and find this result total marks and average // group all data
+    //match in database, unwind result , and find this result total marks and average // group all date
     //find total marks and average to this user
     @SneakyThrows
     @Access(levels = {Role.ADMIN})
@@ -362,7 +362,7 @@ public class UserController {
         listResponse.setStatus(Response.getOkResponse());
         return listResponse;
     }
-    //pass id n semester which semester you want to change th data
+    //pass id n semester which semester you want to change th date
     //update result
     @SneakyThrows
     @Access(levels = {Role.ADMIN, Role.DEPARTMENT})
@@ -458,9 +458,9 @@ public class UserController {
         return dataResponse;
     }
     //pass excel file
-    //excel file data import into database
+    //excel file date import into database
     @SneakyThrows
-    @RequestMapping(name = "importUsers", value = {"/import"}, method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @RequestMapping(name = "importUsers", value = {"/import"}, method = RequestMethod.POST, consumes = {"multipart/form-date"})
     @Access(levels = {Role.ADMIN})
     public DataResponse<UserImportResponse> importUsers(@RequestParam(value = "file") MultipartFile file) {
         DataResponse<UserImportResponse> dataResponse = new DataResponse<>();
@@ -471,8 +471,8 @@ public class UserController {
     //pass FirstName: firstname, as it all header and pass id
     //check  id in importDataUser
     //set the value in database
-    //check email is exists or not in imported xlxs data if email is same then throw error
-    //add all data in user_imported_data collection(json format)
+    //check email is exists or not in imported xlxs date if email is same then throw error
+    //add all date in user_imported_data collection(json format)
     @RequestMapping(name = "importUsersVerify", value = {"/import/user/verify"}, method = RequestMethod.POST)
     @Access(levels = {Role.ADMIN})
     public ListResponse<UserDataModel> importUsersVerify(@RequestBody UserImportVerifyRequest verifyRequest) {
@@ -485,7 +485,7 @@ public class UserController {
     //check userDataRepository ma--> true
     @SneakyThrows
     @Access(levels = Role.ADMIN)
-    @RequestMapping(name = "importDataInUser", value = "/import/data/user", method = RequestMethod.POST)
+    @RequestMapping(name = "importDataInUser", value = "/import/date/user", method = RequestMethod.POST)
     public ListResponse<UserResponse> importDataInUser(@RequestBody UserIdsRequest userIdsRequest) {
         ListResponse<UserResponse> listResponse = new ListResponse<>();
         listResponse.setData(userService.importDataInUser(userIdsRequest));

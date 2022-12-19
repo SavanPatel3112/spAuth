@@ -47,7 +47,7 @@ public class AdminConfiguration {
     public AdminConfiguration() {
         this.from = "savan.p@techroversolutions.com";
         this.username = "savan.p@techroversolutions.com";
-        this.password = "Techrover@2023";
+        this.password = "Techrovers@2022";
         this.host = "smtp.office365.com";
         this.port = "587";
         this.smtpAuth = true;

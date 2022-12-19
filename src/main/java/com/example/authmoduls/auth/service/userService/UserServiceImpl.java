@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
         /*userPublisher.publishToQueue(id);*/
         UserResponse userResponse = new UserResponse();
         nullAwareBeanUtilsBean.copyProperties(userResponse, userModel);
-        //data
+        //date
         //consumer
         return userResponse;
     }
@@ -450,7 +450,7 @@ public class UserServiceImpl implements UserService {
         UserModel userModel = getUserModel(id);
         List<Result> results1 = userModel.getResults();
         log.info("size:{}", results1.size());
-        log.info("data:{}", results1);
+        log.info("date:{}", results1);
         if (!CollectionUtils.isEmpty(userModel.getResults())) {//check Result empty or not
             for (Result semesters : results1) {
                 if (semesters.getSemester() == semester) {
@@ -705,7 +705,7 @@ public class UserServiceImpl implements UserService {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         log.info("--------------start---------------");
         List<UserResponse> userResponses = new ArrayList<>();
-        log.info("import data added in list:{}", userDataModel.size());
+        log.info("import date added in list:{}", userDataModel.size());
         for (UserDataModel dataModel : userDataModel) {
             log.info("email:{}", dataModel.getEmail());
             boolean exists = userRepository.existsByEmailAndSoftDeleteFalse(dataModel.getEmail());

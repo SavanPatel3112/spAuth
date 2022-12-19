@@ -112,7 +112,7 @@ public class MemberServiceImpl implements MemberService {
         MemberModel memberModel = getMemberModel(id);
         MemberResponse memberResponse = new MemberResponse();
         nullAwareBeanUtilsBean.copyProperties(memberResponse, memberModel);
-        //data
+        //date
         //consumer
         return memberResponse;
     }

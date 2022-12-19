@@ -60,7 +60,7 @@ public class ApplicationStartUpEventListener {
             configuration = adminRepository.insert(configuration);
             log.debug("Automatically create the module technical configurations");
         }
-        // On Application Start up , create the list of authorized services for authorized data
+        // On Application Start up , create the list of authorized services for authorized date
         if (!skip) {
             saveIfNotExits(Utils.getAllMethodNames(UserController.class));
             saveIfNotExits(Utils.getAllMethodNames(AdminConfigurationController.class));
@@ -114,9 +114,9 @@ public class ApplicationStartUpEventListener {
             for (ComplianceHistory history : complianceHistories) {
                 adminConfigurationService.saveHistory(history);
             }*/
-            //TODO NB Need to stop resident cnc run after fetch data
+            //TODO NB Need to stop resident cnc run after fetch date
             /*schedulerService.scheduleCronJob(ResidentRefreshScheduleJob.class,"0 14 * * * *", "resident_update",null,null);*/
-            //TODO NB Need to stop resident cnc run after fetch data
+            //TODO NB Need to stop resident cnc run after fetch date
       /*      schedulerService.scheduleCronJob(Residen tPolicyStateUpdateScheduleJob.class,"0 0 6 1/1 * ? *", "resident_policy_state_update",null,null);
             //Monthly scheduler like 24th
             schedulerService.scheduleCronJob(MonthlyComplianceScheduleJob.class,"0 0 6 1/1 * ? *", "monthly_compliance_calculation",null,null);*/

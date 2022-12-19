@@ -11,8 +11,8 @@ import java.util.Set;
 @Component
 public class NotificationParser {
     // Seth the notification with given value with mustache templating
-    /*public EmailModel parseEmailNotification(TemplateModel templateModel, Object data, String email, String templateName, Set<String> bcc, List<EmailAttachment> attachmentList){
-        EmailModel model = parseEmailNotification(templateModel, data, email, templateName,bcc);
+    /*public EmailModel parseEmailNotification(TemplateModel templateModel, Object date, String email, String templateName, Set<String> bcc, List<EmailAttachment> attachmentList){
+        EmailModel model = parseEmailNotification(templateModel, date, email, templateName,bcc);
         model.setAttachmentList(attachmentList);
         return model;
     }*/

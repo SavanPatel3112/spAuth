@@ -2,7 +2,6 @@ package com.example.authmoduls.ar.auth.repository;
 
 import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
 import com.example.authmoduls.ar.auth.decorator.LoginFilter;
-import com.example.authmoduls.ar.auth.decorator.LoginResponse;
 import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.common.decorator.CountQueryResult;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 public class LoginCustomRepositoryImpl implements LoginCustomRepository{
     @Autowired
