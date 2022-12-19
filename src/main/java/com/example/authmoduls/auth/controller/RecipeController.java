@@ -80,18 +80,17 @@ public class RecipeController {
         return dataResponse;
     }
 
+    @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "getAllRecipeByPagination" , value = "/getAllRecipe/pagination" , method = RequestMethod.POST)
     public PageResponse<RecipeModel> getAllRecipeByPagination(@RequestBody FilterSortRequest<RecipeFilter,RecipeSortBy> filterSortRequest){
         PageResponse<RecipeModel> pageResponse = new PageResponse<>();
-        Page<RecipeModel> recipeResponse = recipeService.getAllRecipeByFilterAndSortAndRequest(filterSortRequest.getFilter(),filterSortRequest.getSort(),
+        Page<RecipeModel> recipeResponse = recipeService.getAllRecipeByFilterAndSortAndPage(filterSortRequest.getFilter(),filterSortRequest.getSort(),
                 generalHelper.getPagination(filterSortRequest.getPage().getPage(),filterSortRequest.getPage().getLimit()));
         pageResponse.setData(recipeResponse);
         pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
         return pageResponse;
 
     }
-
-
 
     @SneakyThrows
     @Access(level = {Accesss.USER})

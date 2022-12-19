@@ -1,6 +1,5 @@
 package com.example.authmoduls.common.listener;
 
-import com.example.authmoduls.auth.controller.RecipeController;
 import com.example.authmoduls.auth.controller.*;
 import com.example.authmoduls.common.decorator.RestAPI;
 import com.example.authmoduls.common.model.AdminConfiguration;
@@ -41,7 +40,6 @@ public class ApplicationStartUpEventListener {
     @Autowired
     Utils utils;
 
-
     @EventListener()
     @Async
     public void onApplicationEvent(ContextRefreshedEvent event) throws InvocationTargetException, IllegalAccessException {
@@ -72,7 +70,7 @@ public class ApplicationStartUpEventListener {
             saveIfNotExits(Utils.getAllMethodNames(LoginController.class));
         }
 
-        /*Date currentDate = new Date();
+/*        Date currentDate = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm (z)");
         dateFormatter.setTimeZone(TimeZone.getTimeZone("CST"));
         String cstTime = dateFormatter.format(currentDate);
@@ -94,8 +92,8 @@ public class ApplicationStartUpEventListener {
         emailModel.setSubject("Auth module started");
         emailModel.setMessage("AuthModule<br/><br/>CST time : " + cstTime + "<br/>GMT time : " + gmtTime + "<br/>IST time : " + istTime);
         utils.sendEmailNow(emailModel);
-        log.info("Module started mail sent to tech-admins");*/
-        /*scheduleCronJobs(adminRepository.findAll().get(0));*/
+        log.info("Module started mail sent to tech-admins");
+        scheduleCronJobs(adminRepository.findAll().get(0));*/
     }
 
     public void saveIfNotExits(List<RestAPI> apis) {

@@ -9,4 +9,5 @@ import org.springframework.data.domain.PageRequest;
 
 public interface RecipeCustomRepository {
 
+    /*Page<RecipeModel> findAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination);*/
 }

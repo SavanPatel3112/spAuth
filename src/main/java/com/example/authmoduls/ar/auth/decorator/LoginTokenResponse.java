@@ -14,4 +14,5 @@ public class LoginTokenResponse {
     @JsonIgnore
     String token;
     Accesss accesss;
+    String otp;
 }

@@ -147,6 +147,7 @@ public class LoginServiceImpl implements LoginService{
         String token = jwtTokenUtil.generateToken(jwtUser);
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
+        loginTokenResponse.setOtp(generateOtp());
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {

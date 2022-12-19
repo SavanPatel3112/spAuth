@@ -156,9 +156,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Page<RecipeModel> getAllRecipeByFilterAndSortAndRequest(RecipeFilter filter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
-        /*return recipeRepository.findAAllRecipeByFilterAndSortAndPage(filter,sort,pagination);*/
-        return null;
+    public Page<RecipeModel> getAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+        return /*recipeRepository.findAllRecipeByFilterAndSortAndPage(recipeFilter,sort,pagination);*/null;
     }
 
     private RecipeModel getRecipeModel(String id) {
