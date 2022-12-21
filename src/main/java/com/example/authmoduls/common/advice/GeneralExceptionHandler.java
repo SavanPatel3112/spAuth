@@ -41,7 +41,7 @@ public class GeneralExceptionHandler {
 
     @ExceptionHandler(InvaildRequestException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, InvaildRequestException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getInvaildResponse(ex.getMessage())), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getInvaildResponse(ex.getMessage())), HttpStatus.NOT_FOUND);
     }
 
 }
