@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class RecipeModel {
+
     @Id
     String id;
     String itemName;
@@ -30,4 +31,5 @@ public class RecipeModel {
     Accesss accesss;
     @JsonIgnore
     boolean softDelete = false;
+
 }

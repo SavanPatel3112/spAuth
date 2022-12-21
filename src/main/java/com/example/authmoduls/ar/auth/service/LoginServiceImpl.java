@@ -5,6 +5,7 @@ import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
+import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
@@ -20,9 +21,11 @@ import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,14 @@ import java.util.*;
 @Service
 @Slf4j
 public class LoginServiceImpl implements LoginService{
+
+    @Autowired
+    RecipeService recipeService;
+
+    @Autowired
+    ShoppingListLogRepository shoppingListLogRepository;
+
+
     private final LoginRepository loginRepository;
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
     private final JwtTokenUtil jwtTokenUtil;
@@ -146,7 +157,6 @@ public class LoginServiceImpl implements LoginService{
         loginTokenResponse.setAccesss(login.getAccesss());
         JWTUser jwtUser = new JWTUser(login.getId(), Collections.singletonList(loginTokenResponse.getAccesss().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
-
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
@@ -222,16 +232,26 @@ public class LoginServiceImpl implements LoginService{
     public void logOut(String id) {
         Login login = getLoginModel(id);
         login.setLogin(false);
-        Date date = new Date();
-        login.setLogoutTime(date);
+        login.setLogoutTime(new Date());
         loginRepository.save(login);
+        List<ShoppingListLog> shoppingListLog = recipeService.getShoppingList(id);
+        for (ShoppingListLog listLog : shoppingListLog) {
+            listLog.setSoftDelete(true);
+            shoppingListLogRepository.save(listLog);
+        }
     }
 
+    @VisibleForTesting
     public String generateOtp() {
         Random random = new Random();
         int number = random.nextInt(999999);
         // this will convert any number sequence into 6 character.
         return String.format("%06d", number);
+    }
+    @VisibleForTesting
+    public String token(String id,Accesss accesss){
+        JWTUser jwtUser = new JWTUser(id, Collections.singletonList(accesss.toString()));
+        return jwtTokenUtil.generateToken(jwtUser);
     }
 
     public void checkUserDetails(LoginAddRequest loginAddRequest) throws InvocationTargetException, IllegalAccessException {

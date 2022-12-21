@@ -5,6 +5,7 @@ import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.auth.model.Accesss;
+import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.constant.ResponseConstant;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.utils.Access;
@@ -23,6 +24,8 @@ public class LoginController {
     LoginService loginService;
     @Autowired
     GeneralHelper generalHelper;
+    @Autowired
+    RequestSession requestSession;
 
     @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateUser" , value = "addOrUpdate" , method = RequestMethod.POST)
@@ -91,7 +94,7 @@ public class LoginController {
         TokenResponse<LoginTokenResponse> tokenResponse = new TokenResponse<>();
         LoginTokenResponse loginTokenResponse = loginService.userLogin(loginRequest);
         tokenResponse.setData(loginTokenResponse);
-        tokenResponse.setStatus(Response.getLoginResponse());
+        tokenResponse.setStatus(Response.getOkSuccessResponse(MessageConstant.EMAIL_NOT_FOUND));
         tokenResponse.setToken(loginTokenResponse.getToken());
         return tokenResponse;
     }
@@ -142,7 +145,7 @@ public class LoginController {
     public DataResponse<Object> logOut(@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
         loginService.logOut(id);
-        dataResponse.setStatus(Response.logOutResponse());
+        dataResponse.setStatus(Response.getSuccessResponse(MessageConstant.EMAIL_NOT_FOUND));
         return dataResponse;
     }
 

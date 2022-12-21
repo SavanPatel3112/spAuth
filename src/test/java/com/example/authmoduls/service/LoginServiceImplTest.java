@@ -1,21 +1,17 @@
 package com.example.authmoduls.service;
 
-import com.example.authmoduls.ar.auth.decorator.LoginAddRequest;
-import com.example.authmoduls.ar.auth.decorator.LoginFilter;
-import com.example.authmoduls.ar.auth.decorator.LoginResponse;
-import com.example.authmoduls.ar.auth.decorator.LoginSortBy;
+import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
-import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
+import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.model.AdminConfiguration;
-import com.example.authmoduls.common.model.EmailModel;
 import com.example.authmoduls.common.model.JWTUser;
 import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
@@ -35,7 +31,6 @@ import org.springframework.data.domain.Sort;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +48,7 @@ class LoginServiceImplTest {
     private static final String email = "savan9045@gmail.com";
     private static final Role role = Role.ANONYMOUS;
     private static final Gender gender = Gender.FEMALE;
-    private static final String passWord = "Aa@123456";
+    private static final String passWord = PasswordUtils.encryptPassword("Aa@123456");
     private static final String confirmPassword = "Aa@123456";
     private static final String host = "smtp.office365.com";
     private static final String port = "587";
@@ -77,14 +72,16 @@ class LoginServiceImplTest {
     private final AdminConfigurationService adminService = mock(AdminConfigurationService.class);
     private final Utils utils = spy(Utils.class);
     private final ModelMapper modelMapper = getModelMapper();
+    private final RecipeService recipeService = mock(RecipeService.class);
     /*private final UserPublisher userPublisher = mock(UserPublisher.class);*/
-    private final LoginService loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils, modelMapper/*,userPublisher*/);
+    private final LoginServiceImpl loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils, modelMapper/*,userPublisher*/);
 
     private ModelMapper getModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
+
     @Test
     void testAddOrUpdate() throws InvocationTargetException, IllegalAccessException {
         //LoginAddRequest loginAddRequest, String id, Role role, Gender gender
@@ -192,25 +189,52 @@ class LoginServiceImplTest {
     @Test
     void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //given
-        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).gender(gender).passWord(PasswordUtils.encryptPassword(passWord)).build();
+
+        var login = Login.builder().id(id).email(email).accesss(Accesss.USER).gender(gender).passWord(passWord).build();
+        /*JWTUser jwtUser = new JWTUser(id, Collections.singletonList(Accesss.USER.toString()));
+        String token = jwtTokenUtil.generateToken(jwtUser);*/
+        String otps = loginService.generateOtp();
+        String token = loginService.token(id,Accesss.USER);
+        var loginTokeResponse = LoginTokenResponse.builder().token(token).accesss(Accesss.USER).otp(otps).build();
+        var loginRequest = LoginRequest.builder().password(passWord).email(email).build();
         var adminConfiguration = AdminConfiguration.builder().from(from).id(id).nameRegex(nameRegex).passwordRegex(passwordRegex).host(host).port(port).build();
-        var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).message(message).subject(subject).build();
+
+        /*var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).message(message).subject(subject).build();*/
         when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
-        when(passwordUtils.isPasswordAuthenticated(PasswordUtils.encryptPassword(passWord), PasswordUtils.encryptPassword(passWord), PasswordEncryptionType.BCRYPT)).thenReturn(true);
+        when(passwordUtils.isPasswordAuthenticated(passWord, passWord, PasswordEncryptionType.BCRYPT)).thenReturn(true);
 
         //when
-        /*loginService.userLogin(email,PasswordUtils.encryptPassword(passWord));*/
+        loginService.userLogin(loginRequest);
 
         //then
-        verify(loginRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);
+        /*verify(loginRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);*/
+        Assertions.assertEquals(loginTokeResponse,loginService.userLogin(loginRequest));
     }
+
+/*
+    @Test
+    void testLogin(){
+        //given
+        var loginRequest = LoginRequest.builder().password(passWord).email(email).build();
+        var login = Login.builder().email(email).passWord(passWord).accesss(Accesss.USER).build();
+        String otp = loginService.generateOtp();
+        //when
+        when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
+
+
+        //then
+
+    }
+*/
+
 
     @Test
     void testGetEncryptPassword() throws InvocationTargetException, IllegalAccessException {
 
         //given
         var login = Login.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).accesss(Accesss.ADMIN).build();
+
         /*var loginResponse = LoginResponse.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).role(role).build();*/
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         //when
@@ -248,7 +272,7 @@ class LoginServiceImplTest {
         var login = Login.builder().id(id).login(false).build();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         //when
-        loginService.logOut(id);
+       /* loginService.logOut(id, );*/
         //then
         verify(loginRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
     }

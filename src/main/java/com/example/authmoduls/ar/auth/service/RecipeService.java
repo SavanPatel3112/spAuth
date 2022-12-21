@@ -29,4 +29,6 @@ public interface RecipeService {
 
     Page<RecipeModel> getAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination);
 
+    List<ShoppingListLog> getShoppingList(String loginId);
+
 }

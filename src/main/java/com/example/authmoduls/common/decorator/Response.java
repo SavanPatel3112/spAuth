@@ -18,8 +18,12 @@ public class Response {
         this.description = okDescription;
     }
 
-    public static Response getOkResponse() {
+    public static Response getOkResponse( ) {
         return new Response(HttpStatus.OK, ResponseConstant.OK, ResponseConstant.OK);
+    }
+
+    public static Response getOkSuccessResponse(String message){
+        return new Response(HttpStatus.OK , ResponseConstant.SUCCESS , message);
     }
 
     public static Response getSuccessResponse(String success) {

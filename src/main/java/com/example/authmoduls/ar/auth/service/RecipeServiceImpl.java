@@ -155,6 +155,11 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public List<ShoppingListLog> getShoppingList(String loginId) {
+        return shoppingListLogRepository.findByLoginIdAndSoftDeleteIsFalse(loginId);
+    }
+
+    @Override
     public List<ShoppingListLog> getRecipeList(String loginId) {
         return getShoppingLog(loginId);
     }

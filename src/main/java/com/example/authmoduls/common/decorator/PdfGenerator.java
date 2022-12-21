@@ -66,23 +66,21 @@ public class PdfGenerator {
         cell.setPhrase(new Phrase("Quantity", font));
         table.addCell(cell);
 
-
-
-        int i =0;
+       /* int i =0;*/
         // Iterating the list of shopping
         for (ShoppingListLog shoppingListLog : shoppingListLogs) {
             for (RecipeIngredient ingredient : shoppingListLog.getIngredients()) {
-                if (i==0) {
+                /*if (i==0) {*/
                     PdfPCell cell1 = new PdfPCell();
                     cell1.setPadding(5);
                     cell1.setPhrase(new Phrase(shoppingListLog.getItemName()));
-                    cell1.setRowspan(3);
+                  /*  cell1.setRowspan(3);*/
                     cell1.setHorizontalAlignment(1);
                     table.addCell(cell1);
-                }
+                /*}*/
                 table.addCell(ingredient.getIngredientName());
                 table.addCell(String.valueOf(ingredient.getQuantity()));
-                i++;
+                /*i++;*/
             }
         }
         // Adding the created table to the document

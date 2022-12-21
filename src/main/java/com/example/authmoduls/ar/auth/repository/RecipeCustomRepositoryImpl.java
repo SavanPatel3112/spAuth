@@ -27,43 +27,40 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
 
-  private final MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public RecipeCustomRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
-
-
     @Override
-   public Page<RecipeModel> getAllRecipesByFilterAndSort(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
-       List<AggregationOperation> operations = filterAggregation(recipeFilter,sort,pagination,true);
-       Aggregation aggregation = newAggregation(operations);
-       List<RecipeModel> recipeResponse = mongoTemplate.aggregate(aggregation,"recipe",RecipeModel.class).getMappedResults();
-       List<AggregationOperation> operationList = filterAggregation(recipeFilter,sort,pagination,false);
-       operationList.add(group().count().as("count"));
-       operations.add(project("count"));
-       Aggregation aggregation1 = newAggregation(RecipeModel.class,operationList);
-       AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregation1,"recipe", CountQueryResult.class);
-       long count = countQueryResults.getMappedResults().isEmpty() ? 0 :countQueryResults.getMappedResults().get(0).getCount();
-       return PageableExecutionUtils.getPage(
+    public Page<RecipeModel> getAllRecipesByFilterAndSort(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
+        List<AggregationOperation> operations = filterAggregation(recipeFilter,sort,pagination,true);
+        Aggregation aggregation = newAggregation(operations);
+        List<RecipeModel> recipeResponse = mongoTemplate.aggregate(aggregation,"recipe",RecipeModel.class).getMappedResults();
+        List<AggregationOperation> operationList = filterAggregation(recipeFilter,sort,pagination,false);
+        operationList.add(group().count().as("count"));
+        operations.add(project("count"));
+        Aggregation aggregation1 = newAggregation(RecipeModel.class,operationList);
+        AggregationResults<CountQueryResult> countQueryResults = mongoTemplate.aggregate(aggregation1,"recipe", CountQueryResult.class);
+        long count = countQueryResults.getMappedResults().isEmpty() ? 0 :countQueryResults.getMappedResults().get(0).getCount();
+        return PageableExecutionUtils.getPage(
                recipeResponse,
                pagination,
                () ->count);
-
-   }
+    }
 
     private List<AggregationOperation> filterAggregation(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination, boolean addPage) {
-        List<AggregationOperation> operations = new ArrayList<>();
-        operations.add(match(getCriteria(recipeFilter,operations)));
+        List<AggregationOperation> operationList = new ArrayList<>();
+        operationList.add(match(getCriteria(recipeFilter, operationList)));
         if (addPage){
             if (sort !=null && sort.getSortBy() !=null && sort.getOrderBy() !=null){
-                operations.add(new SortOperation(Sort.by(sort.getOrderBy(),sort.getSortBy().getValue())));
+                operationList.add(new SortOperation(Sort.by(sort.getOrderBy(),sort.getSortBy().getValue())));
             }if (pagination!=null){
-                operations.add(skip(pagination.getOffset()));
-                operations.add(limit(pagination.getPageSize()));
+                operationList.add(skip(pagination.getOffset()));
+                operationList.add(limit(pagination.getPageSize()));
             }
         }
-        return operations;
+        return operationList;
     }
 
     private Criteria getCriteria(RecipeFilter recipeFilter, List<AggregationOperation> operations) {
@@ -105,6 +102,5 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         }
         return criteria;
     }
-
 
 }

@@ -89,7 +89,6 @@ public class RecipeController {
         pageResponse.setData(recipeResponse);
         pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
         return pageResponse;
-
     }
 
     @SneakyThrows
