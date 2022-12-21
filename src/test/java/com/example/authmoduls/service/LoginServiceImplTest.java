@@ -83,7 +83,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void testAddOrUpdate() throws InvocationTargetException, IllegalAccessException {
+    void testAddOrUpdate() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //LoginAddRequest loginAddRequest, String id, Role role, Gender gender
         //given
         var loginAddRequest = LoginAddRequest.builder().firstName(fullName).email(email).build();

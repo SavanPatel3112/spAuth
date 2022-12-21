@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/userData")
@@ -28,7 +29,7 @@ public class LoginController {
 
     @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateUser" , value = "addOrUpdate" , method = RequestMethod.POST)
-    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id, @RequestParam Accesss accesss , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<LoginResponse> addOrUpdateUser(@RequestBody LoginAddRequest loginAddRequest , @RequestParam(required = false) String id, @RequestParam Accesss accesss , @RequestParam Gender gender) throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         DataResponse<LoginResponse> dataResponse = new DataResponse<>();
         dataResponse.setData(loginService.addOrUpdateUsers(loginAddRequest,id, accesss,gender));
         dataResponse.setStatus(Response.getOkResponse());

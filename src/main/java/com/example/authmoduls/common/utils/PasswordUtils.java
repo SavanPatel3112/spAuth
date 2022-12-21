@@ -24,7 +24,7 @@ public class PasswordUtils {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 
-    public boolean isPasswordAuthenticated(String userProvided, String passwordInDatabase, PasswordEncryptionType passwordType) throws NoSuchAlgorithmException {
+    public static boolean isPasswordAuthenticated(String userProvided, String passwordInDatabase, PasswordEncryptionType passwordType) throws NoSuchAlgorithmException {
         // Check that an unencrypted password matches one that has
         // previously been hashed
         // If Password bi s null

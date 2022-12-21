@@ -69,7 +69,7 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException {
+    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         if (id != null) {
             Login login = getLoginModel(id);
             login.setFullName();
@@ -89,6 +89,9 @@ public class LoginServiceImpl implements LoginService{
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setPassWord(login.getPassWord());
         if (login.getPassWord() != null) {
+            if (!PasswordUtils.isPasswordAuthenticated(Utils.decodeBase64(login.getPassWord()), login.getPassWord(), PasswordEncryptionType.BCRYPT)) {
+                throw new InvalidRequestException(MessageConstant.PASSWORD_NOT_MATCHED);
+            }
             String password = PasswordUtils.encryptPassword(login.getPassWord());
             login.setPassWord(password);
             loginResponse.setPassWord(password);
@@ -151,7 +154,6 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public LoginTokenResponse userLogin(LoginRequest loginRequest) throws NoSuchAlgorithmException, InvocationTargetException, IllegalAccessException {
         Login login = getUserEmail(loginRequest.getEmail());
-        String userPassword = login.getPassWord();
         String otp = generateOtp();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setAccesss(login.getAccesss());
@@ -160,7 +162,7 @@ public class LoginServiceImpl implements LoginService{
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
         /*AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();*/
-        boolean passwords = passwordUtils.isPasswordAuthenticated(Utils.decodeBase64(loginRequest.getPassword()), userPassword, PasswordEncryptionType.BCRYPT);
+        boolean passwords = passwordUtils.isPasswordAuthenticated(Utils.decodeBase64(loginRequest.getPassword()), login.getPassWord(), PasswordEncryptionType.BCRYPT);
         if (passwords) {
           /*  EmailModel emailModel = new EmailModel();
             emailModel.setMessage(otp);

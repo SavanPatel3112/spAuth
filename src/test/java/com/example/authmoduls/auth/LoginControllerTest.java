@@ -89,7 +89,7 @@ class LoginControllerTest  {
 
 
     @Test
-    void testAddOrUpdateUser() throws InvocationTargetException, IllegalAccessException {
+    void testAddOrUpdateUser() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //given
         var loginResponse = LoginResponse.builder().accesss(Accesss.ADMIN).id(id).fullName(fullName).softDelete(false).email(email).build();
         var loginAddRequest = LoginAddRequest.builder().email(email).build();
