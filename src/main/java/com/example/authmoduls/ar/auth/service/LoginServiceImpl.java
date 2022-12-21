@@ -159,7 +159,7 @@ public class LoginServiceImpl implements LoginService{
         String token = jwtTokenUtil.generateToken(jwtUser);
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
-        AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
+        /*AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();*/
         boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
           /*  EmailModel emailModel = new EmailModel();
@@ -257,31 +257,31 @@ public class LoginServiceImpl implements LoginService{
     public void checkUserDetails(LoginAddRequest loginAddRequest) throws InvocationTargetException, IllegalAccessException {
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         if ((StringUtils.isEmpty(loginAddRequest.getFirstName()) || (loginAddRequest.getFirstName().matches(adminConfiguration.getNameRegex())))) {
-            throw new InvaildRequestException(MessageConstant.FIRSTNAME_NOT_EMPTY);
+            throw new NotFoundException(MessageConstant.FIRSTNAME_NOT_EMPTY);
         }
         if ((StringUtils.isEmpty(loginAddRequest.getMiddleName()) || (loginAddRequest.getMiddleName().matches(adminConfiguration.getNameRegex())))) {
-            throw new InvaildRequestException(MessageConstant.MIDDLENAME_NOT_EMPTY);
+            throw new NotFoundException(MessageConstant.MIDDLENAME_NOT_EMPTY);
         }
         if ((StringUtils.isEmpty(loginAddRequest.getLastName()) || (loginAddRequest.getLastName().matches(adminConfiguration.getNameRegex())))) {
-            throw new InvaildRequestException(MessageConstant.LASTNAME_NOT_EMPTY);
+            throw new NotFoundException(MessageConstant.LASTNAME_NOT_EMPTY);
         }
         if (StringUtils.isEmpty(loginAddRequest.getEmail())) {
-            throw new InvaildRequestException(MessageConstant.EMAIL_NOT_FOUND);
+            throw new NotFoundException(MessageConstant.EMAIL_NOT_FOUND);
         }
         if (loginRepository.existsByEmailAndSoftDeleteFalse(loginAddRequest.getEmail())) {
-            throw new AlreadyExistException(MessageConstant.EMAIL_NAME_EXISTS);
+            throw new NotFoundException(MessageConstant.EMAIL_NAME_EXISTS);
         }
         if (StringUtils.isEmpty(loginAddRequest.getEmail()) && CollectionUtils.isEmpty(adminConfiguration.getRequiredEmailItems())) {
-            throw new InvaildRequestException(MessageConstant.EMAIL_EMPTY);
+            throw new NotFoundException(MessageConstant.EMAIL_EMPTY);
         }
         if (!loginAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
-            throw new InvalidRequestException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
+            throw new NotFoundException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
         }
         if (!loginAddRequest.getPassWord().matches(adminConfiguration.getPasswordRegex())) {
-            throw new InvaildRequestException(MessageConstant.INVAILD_PASSWORD);
+            throw new NotFoundException(MessageConstant.INVAILD_PASSWORD);
         }
         if (!Objects.equals(loginAddRequest.getPassWord(), loginAddRequest.getConfirmPassword())){
-            throw new InvaildRequestException(MessageConstant.PASSWORD_INVALID);
+            throw new NotFoundException(MessageConstant.PASSWORD_INVALID);
         }
     }
 

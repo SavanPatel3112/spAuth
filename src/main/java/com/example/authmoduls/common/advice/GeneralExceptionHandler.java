@@ -16,13 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GeneralExceptionHandler {
-
-    @Autowired
-    Response response;
+    
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, NotFoundException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getNotFoundResponse(ex.getMessage())), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getNotFoundResponse(ex.getMessage())), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

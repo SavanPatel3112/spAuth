@@ -26,7 +26,7 @@ public class Response {
     }
 
     public static Response getSuccessResponse(String success) {
-        return new Response(HttpStatus.OK, ResponseConstant.SUCCESS, ResponseConstant.USER_FOUND);
+        return new Response(HttpStatus.OK, ResponseConstant.SUCCESS, success);
     }
 
     public static Response getNotFoundResponse(String msg) {
