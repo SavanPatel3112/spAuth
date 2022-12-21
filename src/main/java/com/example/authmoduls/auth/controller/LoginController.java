@@ -94,7 +94,7 @@ public class LoginController {
         TokenResponse<LoginTokenResponse> tokenResponse = new TokenResponse<>();
         LoginTokenResponse loginTokenResponse = loginService.userLogin(loginRequest);
         tokenResponse.setData(loginTokenResponse);
-        tokenResponse.setStatus(Response.getOkSuccessResponse(MessageConstant.EMAIL_NOT_FOUND));
+        tokenResponse.setStatus(Response.getOkResponse());
         tokenResponse.setToken(loginTokenResponse.getToken());
         return tokenResponse;
     }

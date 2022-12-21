@@ -61,7 +61,6 @@ public class AdminConfiguration {
         this.mobileNoRegex = "^[0-9]{10}$";
         this.nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
         this.notificationConfiguration = new NotificationConfiguration();
-
         userImportMappingFields.put("First Name", "firstName");
         userImportMappingFields.put("Last Name", "lastName");
         userImportMappingFields.put("Middle Name", "middleName");

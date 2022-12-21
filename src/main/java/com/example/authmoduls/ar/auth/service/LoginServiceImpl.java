@@ -162,12 +162,12 @@ public class LoginServiceImpl implements LoginService{
         AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();
         boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
-            EmailModel emailModel = new EmailModel();
+          /*  EmailModel emailModel = new EmailModel();
             emailModel.setMessage(otp);
             emailModel.setTo(login.getEmail());
             emailModel.setCc(adminConfiguration.getTechAdmins());
             emailModel.setSubject("RecipeBook OTP Verification ");
-            utils.sendEmailNow(emailModel);
+            utils.sendEmailNow(emailModel);*/
             login.setOtp(otp);
             login.setLogin(true);
             Date date = new Date();
