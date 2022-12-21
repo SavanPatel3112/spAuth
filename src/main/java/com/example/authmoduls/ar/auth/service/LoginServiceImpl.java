@@ -160,7 +160,7 @@ public class LoginServiceImpl implements LoginService{
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
         /*AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();*/
-        boolean passwords = passwordUtils.isPasswordAuthenticated(loginRequest.getPassword(), userPassword, PasswordEncryptionType.BCRYPT);
+        boolean passwords = passwordUtils.isPasswordAuthenticated(Utils.decodeBase64(loginRequest.getPassword()), userPassword, PasswordEncryptionType.BCRYPT);
         if (passwords) {
           /*  EmailModel emailModel = new EmailModel();
             emailModel.setMessage(otp);
