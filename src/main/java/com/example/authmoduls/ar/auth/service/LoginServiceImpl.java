@@ -89,10 +89,7 @@ public class LoginServiceImpl implements LoginService{
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setPassWord(login.getPassWord());
         if (login.getPassWord() != null) {
-            if (!PasswordUtils.isPasswordAuthenticated(Utils.decodeBase64(login.getPassWord()), login.getPassWord(), PasswordEncryptionType.BCRYPT)) {
-                throw new InvalidRequestException(MessageConstant.PASSWORD_NOT_MATCHED);
-            }
-            String password = PasswordUtils.encryptPassword(login.getPassWord());
+            String password = PasswordUtils.encryptPassword(Utils.decodeBase64(login.getPassWord()));
             login.setPassWord(password);
             loginResponse.setPassWord(password);
             nullAwareBeanUtilsBean.copyProperties(loginResponse, login);
@@ -279,7 +276,7 @@ public class LoginServiceImpl implements LoginService{
         if (!loginAddRequest.getEmail().matches(adminConfiguration.getRegex())) {
             throw new NotFoundException(MessageConstant.EMAIL_FORMAT_NOT_VALID);
         }
-        if (!loginAddRequest.getPassWord().matches(adminConfiguration.getPasswordRegex())) {
+        if (!Utils.decodeBase64(loginAddRequest.getPassWord()).matches(adminConfiguration.getPasswordRegex())) {
             throw new NotFoundException(MessageConstant.INVAILD_PASSWORD);
         }
         if (!Objects.equals(loginAddRequest.getPassWord(), loginAddRequest.getConfirmPassword())){
