@@ -22,28 +22,28 @@ public class GeneralExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, NotFoundException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getNotFoundResponse(ex.getMessage())), HttpStatus.OK);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getNotFoundResponse(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, Exception ex) {
         ex.printStackTrace();
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getInternalServerErrorResponse()), HttpStatus.OK);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getInternalServerErrorResponse()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AlreadyExistException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, AlreadyExistException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getAlreadyExists(ex.getMessage())), HttpStatus.OK);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getAlreadyExists(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmptyException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, EmptyException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getEmptyResponse(ex.getMessage())), HttpStatus.OK);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getEmptyResponse(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvaildRequestException.class)
     public ResponseEntity<DataResponse<Object>> getError(HttpServletRequest req, InvaildRequestException ex) {
-        return new ResponseEntity<>(new DataResponse<>(null, Response.getInvaildResponse(ex.getMessage())), HttpStatus.OK);
+        return new ResponseEntity<>(new DataResponse<>(null, Response.getInvaildResponse(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
 }

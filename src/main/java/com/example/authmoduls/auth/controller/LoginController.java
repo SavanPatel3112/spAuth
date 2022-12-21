@@ -145,7 +145,7 @@ public class LoginController {
     public DataResponse<Object> logOut(@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
         loginService.logOut(id);
-        dataResponse.setStatus(Response.getSuccessResponse(MessageConstant.EMAIL_NOT_FOUND));
+        dataResponse.setStatus(Response.getSuccessResponse(ResponseConstant.ERROR));
         return dataResponse;
     }
 

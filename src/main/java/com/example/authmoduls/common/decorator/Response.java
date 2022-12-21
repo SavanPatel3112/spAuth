@@ -1,25 +1,24 @@
 package com.example.authmoduls.common.decorator;
 
 import com.example.authmoduls.common.constant.ResponseConstant;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Response {
     HttpStatus httpStatus;
     String status;
     String description;
 
-    public Response(HttpStatus ok, String ok1, String okDescription) {
-        this.httpStatus = ok;
-        this.status = ok1;
-        this.description = okDescription;
-    }
-
     public static Response getOkResponse( ) {
-        return new Response(HttpStatus.OK, ResponseConstant.OK, ResponseConstant.OK);
+        return new Response(HttpStatus.OK, ResponseConstant.SUCCESS, ResponseConstant.OK);
     }
 
     public static Response getOkSuccessResponse(String message){
@@ -31,15 +30,15 @@ public class Response {
     }
 
     public static Response getNotFoundResponse(String msg) {
-        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.OK, msg);
+        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.ERROR, msg);
     }
 
     public static Response getEmptyResponse(String msg) {
-        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.OK, msg);
+        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.ERROR, msg);
     }
 
     public static Response getInvaildResponse(String msg) {
-        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.OK, msg);
+        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.ERROR, msg);
     }
 
 
@@ -52,7 +51,7 @@ public class Response {
     }
 
     public static Response getAlreadyExists(String msg) {
-        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.OK, msg);
+        return new Response(HttpStatus.BAD_REQUEST, ResponseConstant.ERROR, msg);
     }
 
     public static Response getTokensucessResponse() {
