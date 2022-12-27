@@ -18,6 +18,7 @@ public class LoginFilter {
 
     String search;
     Accesss accesss;
+    String firstName;
     Gender gender;
     Set<String> id;
     @JsonIgnore

@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 public class RecipeResponse {
     String id;
+    String loginId;
     String itemName;
     String itemUrl;
     String itemDescription;

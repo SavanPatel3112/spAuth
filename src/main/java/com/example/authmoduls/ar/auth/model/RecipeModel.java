@@ -29,6 +29,7 @@ public class RecipeModel {
     List<RecipeIngredient> recipeIngredient;
     Date data = new Date();
     Accesss accesss;
+    String  loginId;
     @JsonIgnore
     boolean softDelete = false;
 

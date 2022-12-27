@@ -52,5 +52,6 @@ public class MessageConstant {
     public static final String NOT_VALID_BALANCE = "student has no Enough balance";
     public static final String NOT_VALID_REFUND_DISCOUNT = "it is not valid refund discount";
     public static final String INVALID_ZIPCODE = "please enter the valid zipCode";
+    public static final String RECIPE_NOT_FOUND = "Recipe not found";
 
 }

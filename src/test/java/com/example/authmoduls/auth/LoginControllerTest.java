@@ -1,6 +1,5 @@
 package com.example.authmoduls.auth;
 
-/*import com.example.authmoduls.AbstractContainerTest;*/
 import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
@@ -17,6 +16,7 @@ import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import com.example.authmoduls.testContainer.AbstractContainerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -35,20 +35,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-@Deprecated
-class LoginControllerTest  {
+class LoginControllerTest extends AbstractContainerTest {
 
     @Autowired
     LoginController loginController;
 
     private static final String id = "62ea7609e4eb6b6d0bf0aebc";
-    private static final String userName = "sp3112";
     private static final String firstName = "Savan";
     private static final String middleName = "Kiritbhai";
     private static final String lastName = "Patel";
     private static final String fullName = "Savan Kiritbhai Patel";
     private static final String email = "savan9045@gmail.com";
-    private static final Role role = Role.ANONYMOUS;
+    private static final Accesss accesss = Accesss.USER;
     private static final Gender gender = Gender.FEMALE;
     private static final String passWord = "Aa@123456";
     private static final String confirmPassword = "Aa@123456";
@@ -56,10 +54,6 @@ class LoginControllerTest  {
     private static final String port = "587";
     private static final String otp = "123456";
     private static final String from = "savan.p@techroversolutions.com";
-    private static final String message = "successfully";
-    private static final String to = "savan.p@techroversolutions.com";
-    private static final String cc = "savan.p@techroversolutions.com";
-    private static final String subject = "user";
     private static final String nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
     private static final String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
     private static final String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";

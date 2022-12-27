@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -42,7 +41,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id, Accesss accesss) throws InvocationTargetException, IllegalAccessException {
+    public RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id, Accesss accesss ) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
             RecipeModel recipeModel = getRecipeModel(id);
             nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
@@ -85,17 +84,6 @@ public class RecipeServiceImpl implements RecipeService {
         RecipeModel recipeModel = getRecipeModel(id);
         recipeModel.setSoftDelete(true);
         recipeRepository.save(recipeModel);
-    }
-
-    @Override
-    public void recipeUpdate(String id, Accesss accesss, RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
-        RecipeModel recipeModel = getRecipeModel(id);
-        HashMap<String, String> changedProperties = new HashMap<>();
-        boolean recipeUpdate = false;
-        if (recipeUpdate){
-            updateRecipeDetail(id,recipeAddRequest);
-            difference(recipeModel,recipeAddRequest,changedProperties);
-        }
     }
 
     public void updateRecipeDetail(String id, RecipeAddRequest recipeAddRequest) {
@@ -149,6 +137,7 @@ public class RecipeServiceImpl implements RecipeService {
         shoppingListLog.setSoftDelete(false);
         return shoppingListLogRepository.save(shoppingListLog);
     }
+
     @Override
     public Page<RecipeModel> getAllRecipeByFilterAndSortAndPage(RecipeFilter recipeFilter, FilterSortRequest.SortRequest<RecipeSortBy> sort, PageRequest pagination) {
         return recipeRepository.getAllRecipesByFilterAndSort(recipeFilter,sort,pagination);

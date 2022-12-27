@@ -4,6 +4,7 @@ import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
+import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
 import com.example.authmoduls.ar.auth.service.RecipeService;
@@ -11,12 +12,12 @@ import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
-import com.example.authmoduls.common.model.AdminConfiguration;
 import com.example.authmoduls.common.model.JWTUser;
 import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import com.example.authmoduls.helper.LoginServiceTestDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.testcontainers.shaded.com.google.common.annotations.VisibleForTesting;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
@@ -39,42 +41,23 @@ import static org.mockito.Mockito.*;
 @Slf4j
 class LoginServiceImplTest {
 
-    private static final String id = "62ea7609e4eb6b6d0bf0aebc";
-    private static final String userName = "sp3112";
-    private static final String firstName = "Savan";
-    private static final String middleName = "Kiritbhai";
-    private static final String lastName = "Patel";
-    private static final String fullName = "Savan Kiritbhai Patel";
+    private static final String id = "6398478a1311382b51c49584";
+    private static final String recipeId = "639b03d1665fa56d3ec3ca95";
+    private static final String loginId = "6398478a1311382b51c49584";
     private static final String email = "savan9045@gmail.com";
-    private static final Role role = Role.ANONYMOUS;
+    private static final Accesss accesss = Accesss.USER;
     private static final Gender gender = Gender.FEMALE;
-    private static final String passWord = PasswordUtils.encryptPassword("Aa@123456");
-    private static final String confirmPassword = "Aa@123456";
-    private static final String host = "smtp.office365.com";
-    private static final String port = "587";
-    private static final String title = "All Data";
-    private static final String newPassword = "Aa@123456";
-    private static final String otp = "123456";
-    private static final String from = "savan.p@techroversolutions.com";
-    private static final String message = "successfully";
-    private static final String to = "savan.p@techroversolutions.com";
-    private static final String cc = "savan.p@techroversolutions.com";
-    private static final String subject = "user";
-    private static final String nameRegex = "^[0-9#$@!%&*?.-_=]{1,15}$";
-    private static final String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,15}$";
-    private static final String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-    private static final String requiredEmailItems = "@";
+    private static final String passWord = ("$2a$12$WF3kZGAv0b0W/B/mCwc4h.2XcMJom/uKwTtB9fGLMyP/s8/t3Sihu");
 
     private final LoginRepository loginRepository = mock(LoginRepository.class);
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean = mock(NullAwareBeanUtilsBean.class);
     private final JwtTokenUtil jwtTokenUtil = mock(JwtTokenUtil.class);
-    private final PasswordUtils passwordUtils = spy(PasswordUtils.class);
     private final AdminConfigurationService adminService = mock(AdminConfigurationService.class);
     private final Utils utils = spy(Utils.class);
     private final ModelMapper modelMapper = getModelMapper();
-    private final RecipeService recipeService = mock(RecipeService.class);
-    /*private final UserPublisher userPublisher = mock(UserPublisher.class);*/
-    private final LoginServiceImpl loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,passwordUtils,adminService,utils, modelMapper/*,userPublisher*/);
+    /*private final RecipeService recipeService = mock(RecipeService.class);*/
+    private final ShoppingListLogRepository listLogRepository = mock(ShoppingListLogRepository.class);
+    private final LoginServiceImpl loginService = new LoginServiceImpl(loginRepository,nullAwareBeanUtilsBean,jwtTokenUtil,adminService,utils, modelMapper,listLogRepository/*, *//*recipeService*/);
 
     private ModelMapper getModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -84,29 +67,28 @@ class LoginServiceImplTest {
 
     @Test
     void testAddOrUpdate() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
-        //LoginAddRequest loginAddRequest, String id, Role role, Gender gender
         //given
-        var loginAddRequest = LoginAddRequest.builder().firstName(fullName).email(email).build();
-        var login = Login.builder().id(id).fullName(fullName).email(email).build();
-        var loginResponse = LoginResponse.builder().id(id).fullName(fullName).email(email).build();
+        var loginAddRequest = LoginServiceTestDataGenerator.loginAddRequest();
+        var login = LoginServiceTestDataGenerator.login();
+        var loginResponse=LoginServiceTestDataGenerator.loginResponse();
 
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
-        nullAwareBeanUtilsBean.copyProperties(login, loginAddRequest);
-
-        doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse,login);
 
         //when
-        loginService.addOrUpdateUsers(loginAddRequest,id,Accesss.ADMIN,gender);
+        loginService.addOrUpdateUsers(loginAddRequest,id, Accesss.USER,gender);
+
         //then
-        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUsers(loginAddRequest,id,Accesss.ADMIN,gender));
+        Assertions.assertEquals(loginResponse,loginService.addOrUpdateUsers(loginAddRequest,id, Accesss.USER,gender));
+
     }
 
     @Test
     void testGetUser() throws InvocationTargetException, IllegalAccessException {
         //given
-        var login = Login.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build();
-        var loginResponse = LoginResponse.builder().id(id).email(email).fullName(fullName).accesss(Accesss.ADMIN).gender(gender).build();
+        var login = LoginServiceTestDataGenerator.login();
+        var loginResponse=LoginServiceTestDataGenerator.loginResponse();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
+
         //when
         loginService.getUser(id);
 
@@ -119,7 +101,7 @@ class LoginServiceImplTest {
     @Test
     void testDeleteUser(){
         //given
-        var login = Login.builder().fullName(fullName).email(email).id(id).softDelete(true).build();
+        var login = LoginServiceTestDataGenerator.login();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
 
         //When
@@ -132,8 +114,8 @@ class LoginServiceImplTest {
     @Test
     void testGetAllUser() throws InvocationTargetException, IllegalAccessException {
         //given
-        var login = List.of(Login.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build());
-        var loginResponse = List.of(LoginResponse.builder().id(id).fullName(fullName).email(email).accesss(Accesss.ADMIN).gender(gender).build());
+        var login = LoginServiceTestDataGenerator.loginList();
+        var loginResponse=LoginServiceTestDataGenerator.loginResponseList();
         when(loginRepository.findAllBySoftDeleteFalse()).thenReturn(login);
         /*doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse,login);*/
         //when
@@ -155,7 +137,7 @@ class LoginServiceImplTest {
         pagination.setLimit(5);
         pagination.setPage(1);
         PageRequest pageRequest = PageRequest.of(pagination.getLimit(),pagination.getPage());
-        var login = List.of(Login.builder().id(id).email(email).fullName(fullName).gender(gender).accesss(Accesss.ADMIN).build());
+        var login = LoginServiceTestDataGenerator.loginList();
         Page<Login> page = new PageImpl<>(login);
 
         when(loginRepository.findAllUserByFilterAndSortAndPage(loginFilter, sort, pageRequest)).thenReturn(page);
@@ -170,15 +152,11 @@ class LoginServiceImplTest {
     @Test
     void testGetToken() throws InvocationTargetException, IllegalAccessException {
         //given
-        List<String> roles = new ArrayList<>();
-        roles.add(Role.ANONYMOUS.toString());
-        var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
-        String token = jwtTokenUtil.generateToken(jwtUser);
-        var login = Login.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
-        var loginResponse = LoginResponse.builder().id(id).email(email).accesss(Accesss.ADMIN).build();
-        when(jwtTokenUtil.generateToken(jwtUser)).thenReturn(token);
+        var login = LoginServiceTestDataGenerator.login();
+        var loginResponse=LoginServiceTestDataGenerator.loginResponse();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         /*doNothing().when(nullAwareBeanUtilsBean).copyProperties(loginResponse, login);*/
+
         //when
         loginService.getToken(id);
 
@@ -190,19 +168,14 @@ class LoginServiceImplTest {
     void testUserLogin() throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
         //given
 
-        var login = Login.builder().id(id).email(email).accesss(Accesss.USER).gender(gender).passWord(passWord).build();
-        /*JWTUser jwtUser = new JWTUser(id, Collections.singletonList(Accesss.USER.toString()));
-        String token = jwtTokenUtil.generateToken(jwtUser);*/
-        String otps = loginService.generateOtp();
-        String token = loginService.token(id,Accesss.USER);
-        var loginTokeResponse = LoginTokenResponse.builder().token(token).accesss(Accesss.USER).otp(otps).build();
-        var loginRequest = LoginRequest.builder().password(passWord).email(email).build();
-        var adminConfiguration = AdminConfiguration.builder().from(from).id(id).nameRegex(nameRegex).passwordRegex(passwordRegex).host(host).port(port).build();
-
+        var login = LoginServiceTestDataGenerator.login();
+        var loginTokeResponse = LoginServiceTestDataGenerator.loginTokenResponse();
+        var loginRequest = LoginRequest.builder().password(Utils.decodeBase64("Sp@31122000")).email(email).build();
+        var adminConfiguration = LoginServiceTestDataGenerator.adminConfiguration();
+        LoginServiceImpl.passWord();
         /*var emailModel = EmailModel.builder().to(to).cc(Collections.singleton(cc)).message(message).subject(subject).build();*/
         when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
         when(adminService.getConfigurationDetails()).thenReturn(adminConfiguration);
-        when(passwordUtils.isPasswordAuthenticated(passWord, passWord, PasswordEncryptionType.BCRYPT)).thenReturn(true);
 
         //when
         loginService.userLogin(loginRequest);
@@ -210,38 +183,7 @@ class LoginServiceImplTest {
         //then
         /*verify(loginRepository,times(1)).findByEmailAndSoftDeleteIsFalse(email);*/
         Assertions.assertEquals(loginTokeResponse,loginService.userLogin(loginRequest));
-    }
 
-/*
-    @Test
-    void testLogin(){
-        //given
-        var loginRequest = LoginRequest.builder().password(passWord).email(email).build();
-        var login = Login.builder().email(email).passWord(passWord).accesss(Accesss.USER).build();
-        String otp = loginService.generateOtp();
-        //when
-        when(loginRepository.findByEmailAndSoftDeleteIsFalse(email)).thenReturn(Optional.ofNullable(login));
-
-
-        //then
-
-    }
-*/
-
-
-    @Test
-    void testGetEncryptPassword() throws InvocationTargetException, IllegalAccessException {
-
-        //given
-        var login = Login.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).accesss(Accesss.ADMIN).build();
-
-        /*var loginResponse = LoginResponse.builder().id(id).fullName(fullName).email(email).passWord(PasswordUtils.encryptPassword(passWord)).role(role).build();*/
-        when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
-        //when
-        loginService.getEncryptPassword(id);
-
-        //then
-        Assertions.assertEquals(PasswordUtils.encryptPassword(passWord),loginService.getEncryptPassword(id));
     }
 
     @Test
@@ -252,8 +194,8 @@ class LoginServiceImplTest {
         roles.add(Role.ANONYMOUS.toString());
         var jwtUser = JWTUser.builder().id(id).accesss(roles).build();
         String token = jwtTokenUtil.generateToken(jwtUser);
-        var login = Login.builder().id(id).accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
-        var loginResponse = LoginResponse.builder().accesss(Accesss.ADMIN).passWord(passWord).token(token).build();
+        var login = LoginServiceTestDataGenerator.login();
+        var loginResponse = LoginServiceTestDataGenerator.loginResponse();
         when(loginRepository.existsByIdAndSoftDeleteFalse(id)).thenReturn(true);
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
         when(jwtTokenUtil.validateToken(token, jwtUser)).thenReturn(true);
@@ -269,12 +211,22 @@ class LoginServiceImplTest {
     @Test
     void testLogOut(){
         //given
-        var login = Login.builder().id(id).login(false).build();
+        var login = LoginServiceTestDataGenerator.login();
+        var shoppingLogList = LoginServiceTestDataGenerator.shoppingListLog();
+        var listLog = LoginServiceTestDataGenerator.shoppingListLogs();
         when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
+        when(listLogRepository.findByLoginIdAndSoftDeleteIsFalse(loginId)).thenReturn(shoppingLogList);
+
         //when
-       /* loginService.logOut(id, );*/
+        loginService.logOut(id);
+
         //then
-        verify(loginRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);
+        /*verify(loginRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);*/
+        /*Assertions.assertEquals(shoppingLogList,recipeService.getShoppingList(id));*/
+        verify(listLogRepository).save(listLog);
+
+
     }
+
 
 }

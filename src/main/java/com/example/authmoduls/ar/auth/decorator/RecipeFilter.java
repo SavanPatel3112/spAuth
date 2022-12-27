@@ -13,8 +13,6 @@ import java.util.Set;
 public class RecipeFilter {
 
     String search;
-    String itemName;
-    String itemDescription;
     Set<String> id;
     @JsonIgnore
     boolean softDelete = false;

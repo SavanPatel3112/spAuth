@@ -80,6 +80,9 @@ public class LoginCustomRepositoryImpl implements LoginCustomRepository{
         if (loginFilter.getAccesss() !=null){
             criteria = criteria.and("accesss").is(loginFilter.getAccesss());
         }
+        if (loginFilter.getFirstName() !=null){
+            criteria = criteria.and("firstName").is(loginFilter.getFirstName());
+        }
         criteria = criteria.and("softDelete").is(loginFilter.isSoftDelete());
         return criteria;
     }

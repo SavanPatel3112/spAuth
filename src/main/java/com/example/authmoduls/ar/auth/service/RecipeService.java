@@ -13,15 +13,13 @@ import java.util.List;
 
 @Service
 public interface RecipeService {
-    RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Accesss accesss) throws InvocationTargetException, IllegalAccessException;
+    RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Accesss accesss ) throws InvocationTargetException, IllegalAccessException;
 
     List<RecipeResponse> getAllRecipe() throws InvocationTargetException, IllegalAccessException;
 
     RecipeResponse getRecipe(String id) throws InvocationTargetException, IllegalAccessException;
 
     void deleteRecipe(String id);
-
-    void recipeUpdate(String id, Accesss accesss , RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException;
 
     ShoppingListLog shoppingList(String id, String loginID);
 

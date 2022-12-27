@@ -2,13 +2,14 @@ package com.example.authmoduls.auth.controller;
 
 import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
+import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.auth.model.Accesss;
-import com.example.authmoduls.common.constant.ResponseConstant;
 import com.example.authmoduls.common.decorator.*;
 import com.example.authmoduls.common.utils.Access;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,8 @@ import java.util.List;
 @Slf4j
 public class RecipeController {
 
+    @Autowired
+    LoginService loginService;
 
     private final RecipeService recipeService;
     private final RequestSession requestSession;
@@ -37,7 +40,7 @@ public class RecipeController {
 
     @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "addOrUpdateRecipe" , value = "/addOrUpdateRecipe" , method = RequestMethod.POST)
-    public DataResponse<RecipeResponse> addOrUpdateRecipe (@RequestBody RecipeAddRequest recipeAddRequest, Accesss accesss, @RequestParam(required = false)String id) throws InvocationTargetException, IllegalAccessException {
+    public DataResponse<RecipeResponse> addOrUpdateRecipe (@RequestBody RecipeAddRequest recipeAddRequest, Accesss accesss, @RequestParam(required = false)String id ) throws InvocationTargetException, IllegalAccessException {
         DataResponse<RecipeResponse> dataResponse = new DataResponse<>();
         dataResponse.setData(recipeService.addOrUpdateRecipe(recipeAddRequest, id , accesss));
         dataResponse.setStatus(Response.getOkResponse());
@@ -64,18 +67,9 @@ public class RecipeController {
 
     @Access(level = {Accesss.ANONYMOUS})
     @RequestMapping(name = "deleteRecipe", value = "/delete/id", method = RequestMethod.DELETE)
-    public DataResponse<Object> deleteUser (@RequestParam String id) {
+    public DataResponse<Object> deleteRecipe(@RequestParam String id) {
         DataResponse<Object> dataResponse = new DataResponse<>();
         recipeService.deleteRecipe(id);
-        dataResponse.setStatus(Response.getOkResponse());
-        return dataResponse;
-    }
-
-    @Access(level = {Accesss.ANONYMOUS})
-    @RequestMapping(name = "recipeUpdate" , value = "update/id" , method = RequestMethod.POST)
-    public DataResponse<Object> recipeUpdate (@RequestParam String id , @RequestParam Accesss accesss , @RequestBody RecipeAddRequest recipeAddRequest) throws InvocationTargetException, IllegalAccessException {
-        DataResponse<Object>  dataResponse = new DataResponse<>();
-        recipeService.recipeUpdate(id, accesss,recipeAddRequest);
         dataResponse.setStatus(Response.getOkResponse());
         return dataResponse;
     }
@@ -87,7 +81,7 @@ public class RecipeController {
         Page<RecipeModel> recipeResponse = recipeService.getAllRecipeByFilterAndSortAndPage(filterSortRequest.getFilter(),filterSortRequest.getSort(),
                 generalHelper.getPagination(filterSortRequest.getPage().getPage(),filterSortRequest.getPage().getLimit()));
         pageResponse.setData(recipeResponse);
-        pageResponse.setStatus(Response.getSuccessResponse(ResponseConstant.SUCCESS));
+        pageResponse.setStatus(Response.getOkResponse());
         return pageResponse;
     }
 

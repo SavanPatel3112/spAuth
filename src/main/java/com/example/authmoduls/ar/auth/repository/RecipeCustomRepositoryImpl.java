@@ -3,9 +3,11 @@ package com.example.authmoduls.ar.auth.repository;
 import com.example.authmoduls.ar.auth.decorator.RecipeFilter;
 import com.example.authmoduls.ar.auth.decorator.RecipeSortBy;
 import com.example.authmoduls.ar.auth.model.RecipeModel;
+import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.CountQueryResult;
 import com.example.authmoduls.common.decorator.CustomAggregationOperation;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
+import com.example.authmoduls.common.exception.NotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.data.domain.Page;
@@ -67,12 +69,6 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         Criteria criteria = searchCriteria(recipeFilter.getSearch(),operations);
         if (!CollectionUtils.isEmpty(recipeFilter.getId())) {
             criteria = criteria.and("_id").is(recipeFilter.getId());
-        }
-        if (recipeFilter.getItemName() != null) {
-            criteria = criteria.and("itemName").is(recipeFilter.getItemName());
-        }
-        if (recipeFilter.getItemDescription() !=null){
-            criteria = criteria.and("itemDescription").is(recipeFilter.getItemDescription());
         }
         criteria = criteria.and("softDelete").is(recipeFilter.isSoftDelete());
         return criteria;

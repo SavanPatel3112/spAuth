@@ -1,8 +1,5 @@
 package com.example.authmoduls.service;
 
-import com.example.authmoduls.ar.auth.decorator.RecipeAddRequest;
-import com.example.authmoduls.ar.auth.decorator.RecipeResponse;
-import com.example.authmoduls.ar.auth.model.RecipeModel;
 import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.repository.RecipeRepository;
 import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
@@ -10,14 +7,14 @@ import com.example.authmoduls.ar.auth.service.LoginService;
 import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.ar.auth.service.RecipeServiceImpl;
 import com.example.authmoduls.auth.model.Accesss;
-import com.example.authmoduls.common.decorator.NotificationParser;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import com.example.authmoduls.helper.RecipeServiceTestDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -32,9 +29,8 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public class RecipeServiceImplTest {
 
-    private static final String itemName = "string";
-    private static final String itemDescription = "some mast dish";
-    private static final String id = "id";
+    private static final String id = "639b03d1665fa56d3ec3ca95";
+    private static final String loginId = "6398478a1311382b51c49584";
     private static final String access = String.valueOf(Accesss.ADMIN);
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean = mock(NullAwareBeanUtilsBean.class);
     private final JwtTokenUtil jwtTokenUtil = mock(JwtTokenUtil.class);
@@ -54,25 +50,88 @@ public class RecipeServiceImplTest {
         return modelMapper;
     }
 
-    @Test
-    void testAddOrUpdateRecipe() throws InvocationTargetException, IllegalAccessException {
+/*    @Test
+      void testAddOrUpdateRecipe() throws InvocationTargetException, IllegalAccessException {
         //given
-        var recipeAddRequest = RecipeAddRequest.builder().itemName(itemName).itemDescription(itemDescription).build();
-        var recipeModel = RecipeModel.builder().id(id).itemDescription(itemDescription).itemName(itemName).build();
-        var recipeResponse = RecipeResponse.builder().id(id).itemDescription(itemDescription).build();
-        when( recipeRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(recipeModel));
-        doNothing().when(nullAwareBeanUtilsBean).copyProperties(recipeModel, recipeAddRequest);
-        doNothing().when(nullAwareBeanUtilsBean).copyProperties(recipeResponse, recipeModel);
+        //RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Accesss accesss)
+        var recipeModel = RecipeServiceTestDataGenerator.recipeModel();
+        var recipeAddRequest = RecipeServiceTestDataGenerator.recipeAddRequest();
+        when(recipeRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(recipeModel));
+        var recipeResponse = RecipeServiceTestDataGenerator.recipeResponse();
 
         //when
-        recipeService.addOrUpdateRecipe(recipeAddRequest, id , Accesss.ADMIN);
+        recipeService.addOrUpdateRecipe(recipeAddRequest, id , Accesss.USER, );
 
         //then
-        Assert.assertEquals(recipeResponse, recipeService.addOrUpdateRecipe(recipeAddRequest, id , Accesss.ADMIN));
+        Assertions.assertEquals(recipeResponse,recipeService.addOrUpdateRecipe(recipeAddRequest,id,Accesss.USER, ));
 
+    }*/
+
+    @Test
+    void testGetAllRecipe() throws InvocationTargetException, IllegalAccessException {
+        //given
+        var recipeModel = RecipeServiceTestDataGenerator.recipeModelList();
+        var recipeResponse = RecipeServiceTestDataGenerator.recipeResponseList();
+        when(recipeRepository.findAllBySoftDeleteFalse()).thenReturn(recipeModel);
+
+        //when
+        recipeService.getAllRecipe();
+
+        //then
+        Assertions.assertEquals(recipeResponse,recipeService.getAllRecipe());
 
     }
 
-    //RecipeResponse addOrUpdateRecipe(RecipeAddRequest recipeAddRequest, String id , Accesss accesss)
+    @Test
+    void testGetRecipe() throws InvocationTargetException, IllegalAccessException {
+        //given
+        var recipeModel = RecipeServiceTestDataGenerator.recipeModel();
+        var recipeResponse = RecipeServiceTestDataGenerator.recipeResponse();
+        when(recipeRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(recipeModel));
+
+        //when
+        recipeService.getRecipe(id);
+
+        //then
+        Assertions.assertEquals(recipeResponse,recipeService.getRecipe(id));
+    }
+
+    @Test
+    void testDeleteRecipe(){
+        //given
+        var recipeModel = RecipeServiceTestDataGenerator.recipeModel();
+        when(recipeRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(recipeModel));
+        //when
+        recipeService.deleteRecipe(id);
+
+        //then
+        assert recipeModel != null;
+        verify(recipeRepository).save(recipeModel);
+
+    }
+
+    @Test
+    void testShoppingList(){
+        //given
+        var recipeModel = RecipeServiceTestDataGenerator.recipeModel();
+        var login = RecipeServiceTestDataGenerator.login();
+        var shoppingListLog = RecipeServiceTestDataGenerator.shoppingListLog();
+        when(recipeRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(recipeModel));
+        when(loginRepository.findByIdAndSoftDeleteIsFalse(id)).thenReturn(Optional.ofNullable(login));
+
+        //when
+        recipeService.shoppingList(id, loginId);
+
+        //then
+        Assertions.assertEquals(shoppingListLogRepository.save(shoppingListLog),recipeService.shoppingList(id, loginId));
+
+    }
+
+    @Test
+    void testGeneratePdfFile(){
+
+
+
+    }
 
 }

@@ -1,6 +1,5 @@
 package com.example.authmoduls.ar.auth.service;
 
-import com.amazonaws.services.athena.model.InvalidRequestException;
 import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
@@ -11,11 +10,9 @@ import com.example.authmoduls.common.constant.MessageConstant;
 import com.example.authmoduls.common.decorator.FilterSortRequest;
 import com.example.authmoduls.common.decorator.NullAwareBeanUtilsBean;
 import com.example.authmoduls.common.enums.PasswordEncryptionType;
-import com.example.authmoduls.common.exception.AlreadyExistException;
 import com.example.authmoduls.common.exception.InvaildRequestException;
 import com.example.authmoduls.common.exception.NotFoundException;
 import com.example.authmoduls.common.model.AdminConfiguration;
-import com.example.authmoduls.common.model.EmailModel;
 import com.example.authmoduls.common.model.JWTUser;
 import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
@@ -41,35 +38,30 @@ public class LoginServiceImpl implements LoginService{
 
     @Autowired
     RecipeService recipeService;
-
-    @Autowired
-    ShoppingListLogRepository shoppingListLogRepository;
-
-
     private final LoginRepository loginRepository;
     private final NullAwareBeanUtilsBean nullAwareBeanUtilsBean;
     private final JwtTokenUtil jwtTokenUtil;
-    private final PasswordUtils passwordUtils;
     private final AdminConfigurationService adminService;
     private final Utils utils;
     private final ModelMapper modelMapper;
+    private final ShoppingListLogRepository shoppingListLogRepository;
 
 
     public LoginServiceImpl(LoginRepository loginRepository, NullAwareBeanUtilsBean nullAwareBeanUtilsBean,
-                            JwtTokenUtil jwtTokenUtil, PasswordUtils passwordUtils, AdminConfigurationService adminService,
-                            Utils utils, ModelMapper modelMapper ) {
+                            JwtTokenUtil jwtTokenUtil , AdminConfigurationService adminService,
+                            Utils utils, ModelMapper modelMapper, ShoppingListLogRepository shoppingListLogRepository/*, RecipeService recipeService*/) {
         this.loginRepository = loginRepository;
         this.nullAwareBeanUtilsBean = nullAwareBeanUtilsBean;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.passwordUtils = passwordUtils;
         this.adminService = adminService;
         this.utils = utils;
         this.modelMapper = modelMapper;
 
+        this.shoppingListLogRepository = shoppingListLogRepository;
     }
 
     @Override
-    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException, NoSuchAlgorithmException {
+    public LoginResponse addOrUpdateUsers(LoginAddRequest loginAddRequest, String id, Accesss accesss, Gender gender) throws InvocationTargetException, IllegalAccessException {
         if (id != null) {
             Login login = getLoginModel(id);
             login.setFullName();
@@ -104,7 +96,6 @@ public class LoginServiceImpl implements LoginService{
         Login login = getLoginModel(id);
         LoginResponse loginResponse = new LoginResponse();
         modelMapper.map(login, loginResponse);
-        /*nullAwareBeanUtilsBean.copyProperties(loginResponse,login);*/
         return loginResponse;
     }
 
@@ -122,7 +113,6 @@ public class LoginServiceImpl implements LoginService{
         if (!CollectionUtils.isEmpty(logins)) {
             for (Login login : logins) {
                 LoginResponse loginResponse = new LoginResponse();
-                /*nullAwareBeanUtilsBean.copyProperties(loginResponse, login);*/
                 modelMapper.map(login,loginResponse);
                 loginResponses.add(loginResponse);
             }
@@ -142,7 +132,6 @@ public class LoginServiceImpl implements LoginService{
         loginResponse.setAccesss(login.getAccesss());
         JWTUser jwtUser = new JWTUser(id, Collections.singletonList(loginResponse.getAccesss().toString()));
         String token = jwtTokenUtil.generateToken(jwtUser);
-        /*nullAwareBeanUtilsBean.copyProperties(loginResponse, login);*/
         modelMapper.map(loginResponse,login);
         loginResponse.setToken(token);
         return loginResponse;
@@ -159,7 +148,7 @@ public class LoginServiceImpl implements LoginService{
         modelMapper.map(loginTokenResponse,login);
         loginTokenResponse.setToken(token);
         /*AdminConfiguration adminConfiguration = adminService.getConfigurationDetails();*/
-        boolean passwords = passwordUtils.isPasswordAuthenticated(Utils.decodeBase64(loginRequest.getPassword()), login.getPassWord(), PasswordEncryptionType.BCRYPT);
+        boolean passwords = PasswordUtils.isPasswordAuthenticated(Utils.decodeBase64(loginRequest.getPassword()), login.getPassWord(), PasswordEncryptionType.BCRYPT);
         if (passwords) {
           /*  EmailModel emailModel = new EmailModel();
             emailModel.setMessage(otp);
@@ -190,7 +179,6 @@ public class LoginServiceImpl implements LoginService{
             loginResponse.setPassWord(password);
             loginRepository.save(login);
             String passwords = loginResponse.getPassWord();
-            /*nullAwareBeanUtilsBean.copyProperties(loginResponse, login);*/
             modelMapper.map(loginResponse,login);
             return passwords;
         } else {
@@ -208,7 +196,6 @@ public class LoginServiceImpl implements LoginService{
         JWTUser jwtUser = new JWTUser(tokenId,new ArrayList<>());
         boolean getValidate = jwtTokenUtil.validateToken(token, jwtUser);
         if (getValidate) {
-            /*nullAwareBeanUtilsBean.copyProperties(loginResponse , login );*/
             modelMapper.map(loginResponse,login);
             return loginResponse;
         } else {
@@ -251,6 +238,13 @@ public class LoginServiceImpl implements LoginService{
     public String token(String id,Accesss accesss){
         JWTUser jwtUser = new JWTUser(id, Collections.singletonList(accesss.toString()));
         return jwtTokenUtil.generateToken(jwtUser);
+    }
+
+    @VisibleForTesting
+    public static void passWord() throws NoSuchAlgorithmException {
+
+        PasswordUtils.isPasswordAuthenticated(Utils.decodeBase64("Sp@31122000"), PasswordUtils.encryptPassword(Utils.decodeBase64("Sp@31122000")), PasswordEncryptionType.BCRYPT);
+
     }
 
     public void checkUserDetails(LoginAddRequest loginAddRequest) throws InvocationTargetException, IllegalAccessException {

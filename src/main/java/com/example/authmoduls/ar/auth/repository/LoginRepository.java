@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface LoginRepository extends MongoRepository<Login,String>,LoginCustomRepository{
     Optional<Login> findByIdAndSoftDeleteIsFalse(String id);
+
     Optional<Login> findByEmailAndSoftDeleteIsFalse(String id);
+
     boolean existsByEmailAndSoftDeleteFalse(String email);
 
     List<Login> findAllBySoftDeleteFalse();
