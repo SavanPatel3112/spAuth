@@ -33,6 +33,7 @@ public class Login {
     Gender gender;
     String token;
     String otp;
+    Date otpSendTime;
     @JsonIgnore
     boolean login = false;
     @JsonIgnore
@@ -43,7 +44,6 @@ public class Login {
     Date loginTime;
     @JsonIgnore
     Date logoutTime;
-
 
     public void setFullName(){
         this.firstName = StringUtils.normalizeSpace(this.firstName);

@@ -127,11 +127,4 @@ public class RecipeServiceImplTest {
 
     }
 
-    @Test
-    void testGeneratePdfFile(){
-
-
-
-    }
-
 }

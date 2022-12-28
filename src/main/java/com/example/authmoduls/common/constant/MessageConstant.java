@@ -53,5 +53,5 @@ public class MessageConstant {
     public static final String NOT_VALID_REFUND_DISCOUNT = "it is not valid refund discount";
     public static final String INVALID_ZIPCODE = "please enter the valid zipCode";
     public static final String RECIPE_NOT_FOUND = "Recipe not found";
-
+    public static final String OTP_TIMEOUT = "Otp Expired";
 }

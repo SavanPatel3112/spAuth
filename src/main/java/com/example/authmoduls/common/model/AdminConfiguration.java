@@ -38,6 +38,7 @@ public class AdminConfiguration {
     String updatedBy;
     Date created;
     Date updated;
+    int otpVerify = 5 ;
     int importRecordLimit = 100;
     Set<String> extensions = getExtensionsData();
     Set<String> techAdmins = getTechAdminEmails();
@@ -90,5 +91,6 @@ public class AdminConfiguration {
         emails.add("savan.p@techroversolutions.com");
         return emails;
     }
+
 
 }

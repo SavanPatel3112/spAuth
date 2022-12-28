@@ -1,5 +1,6 @@
 package com.example.authmoduls.ar.auth.service;
 
+import com.amazonaws.services.athena.model.InvalidRequestException;
 import com.example.authmoduls.ar.auth.decorator.*;
 import com.example.authmoduls.ar.auth.model.Gender;
 import com.example.authmoduls.ar.auth.model.Login;
@@ -18,6 +19,7 @@ import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
 import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
+import org.joda.time.DateTime;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -157,7 +159,7 @@ public class LoginServiceImpl implements LoginService{
             emailModel.setSubject("RecipeBook OTP Verification ");
             utils.sendEmailNow(emailModel);*/
             login.setOtp(otp);
-            login.setLogin(true);
+            login.setOtpSendTime(new Date());
             Date date = new Date();
             login.setLoginTime(date);
             loginTokenResponse.setOtp(otp);
@@ -285,16 +287,27 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public void otpVerification(OtpVerification otp) {
         Login login = getUserEmail(otp.getEmail());
-        if (StringUtils.isEmpty(login.getEmail())){
+        AdminConfiguration adminConfiguration = new AdminConfiguration();
+        Date date = login.getOtpSendTime();
+        DateTime dateTime = new DateTime(date);
+        if (StringUtils.isEmpty(login.getEmail())) {
             throw new NotFoundException(MessageConstant.EMAIL_NOT_FOUND);
         }
-        boolean exists = loginRepository.existsByEmailAndOtpAndSoftDeleteFalse(otp.getEmail(),otp.getOtp());
-        if (!exists){
+        boolean exists = loginRepository.existsByEmailAndOtpAndSoftDeleteFalse(otp.getEmail(), otp.getOtp());
+        if (!exists) {
             throw new NotFoundException(MessageConstant.INVAILD_OTP);
         }
+        if (dateTime.plusMinutes(adminConfiguration.getOtpVerify()).isBefore(new DateTime())) {
+            throw new InvaildRequestException(MessageConstant.OTP_TIMEOUT);
+        }
+        login.setLogin(true);
+        loginRepository.save(login);
+
+
     }
 
     private Login getUserEmail(String email) {
         return loginRepository.findByEmailAndSoftDeleteIsFalse(email).orElseThrow(()-> new NotFoundException(MessageConstant.EMAIL_NOT_FOUND));
     }
 }
+
