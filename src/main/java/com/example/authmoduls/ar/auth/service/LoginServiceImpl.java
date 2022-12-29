@@ -217,8 +217,8 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void logOut(String id) {
-        Login login = getLoginModel(id);
+    public void logOut() {
+     /*   Login login = getLoginModel(id);
         login.setLogin(false);
         login.setLogoutTime(new Date());
         loginRepository.save(login);
@@ -226,6 +226,13 @@ public class LoginServiceImpl implements LoginService{
         for (ShoppingListLog listLog : shoppingListLog) {
             listLog.setSoftDelete(true);
             shoppingListLogRepository.save(listLog);
+        }*/
+        List<Login> logins = loginRepository.findAllByLoginTrue();
+        for (Login login : logins) {
+            login.setLogin(false);
+            Date date = new Date();
+            login.setLogoutTime(date);
+            loginRepository.save(login);
         }
     }
 

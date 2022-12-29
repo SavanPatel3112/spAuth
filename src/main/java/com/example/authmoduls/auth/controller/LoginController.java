@@ -142,9 +142,9 @@ public class LoginController {
     @SneakyThrows
     @Access(level = Accesss.ANONYMOUS)
     @RequestMapping(name = "logOut", value = "/logOut/{id}", method = RequestMethod.GET)
-    public DataResponse<Object> logOut(@RequestParam String id) {
+    public DataResponse<Object> logOut( ) {
         DataResponse<Object> dataResponse = new DataResponse<>();
-        loginService.logOut(id);
+        loginService.logOut();
         dataResponse.setStatus(Response.getSuccessResponse(ResponseConstant.ERROR));
         return dataResponse;
     }

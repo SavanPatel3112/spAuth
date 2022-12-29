@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -51,6 +53,9 @@ public class RecipeServiceImpl implements RecipeService {
         RecipeModel recipeModel = new RecipeModel();
         nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
         recipeModel.setAccesss(accesss);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy EEE");
+        String formatDate = dateFormat.format(new Date());
+        recipeModel.setDate(formatDate);
         recipeRepository.save(recipeModel);
         RecipeResponse recipeResponse = new RecipeResponse();
         nullAwareBeanUtilsBean.copyProperties(recipeResponse, recipeModel);

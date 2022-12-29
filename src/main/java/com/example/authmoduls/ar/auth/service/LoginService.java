@@ -33,7 +33,7 @@ public interface LoginService {
 
     String getIdFromToken(String token);
 
-    void logOut(String id);
+    void logOut();
 
     Login getLoginModel(String id);
 

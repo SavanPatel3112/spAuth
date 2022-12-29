@@ -18,4 +18,7 @@ public interface LoginRepository extends MongoRepository<Login,String>,LoginCust
     boolean existsByIdAndSoftDeleteFalse(String id);
 
     boolean existsByEmailAndOtpAndSoftDeleteFalse(String email ,String otp);
+
+    List<Login> findAllByLoginTrue();
+
 }

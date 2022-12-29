@@ -107,7 +107,7 @@ public class ApplicationStartUpEventListener {
 
     private void scheduleCronJobs(AdminConfiguration configuration) {
         try {
-            schedulerService.scheduleCronJob(FindLoginTrue.class, "0 0 11 * * ?", "check_login", null, null);
+            schedulerService.scheduleCronJob(GetLoginTrue.class, "0 15 17 ? * * *", "check_login", null, null);
          /*   List<ComplianceHistory> complianceHistories = adminRepository.findByRunningTrueAndSoftDeleteIsFalse();
             for (ComplianceHistory history : complianceHistories) {
                 adminConfigurationService.saveHistory(history);

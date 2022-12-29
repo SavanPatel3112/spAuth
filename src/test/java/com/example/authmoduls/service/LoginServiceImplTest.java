@@ -7,15 +7,12 @@ import com.example.authmoduls.ar.auth.repository.LoginRepository;
 import com.example.authmoduls.ar.auth.repository.ShoppingListLogRepository;
 import com.example.authmoduls.ar.auth.service.LoginServiceImpl;
 /*import com.example.authmoduls.auth.rabbitmq.UserPublisher;*/
-import com.example.authmoduls.ar.auth.service.RecipeService;
 import com.example.authmoduls.auth.model.Accesss;
 import com.example.authmoduls.common.decorator.*;
-import com.example.authmoduls.common.enums.PasswordEncryptionType;
 import com.example.authmoduls.common.enums.Role;
 import com.example.authmoduls.common.model.JWTUser;
 import com.example.authmoduls.common.service.AdminConfigurationService;
 import com.example.authmoduls.common.utils.JwtTokenUtil;
-import com.example.authmoduls.common.utils.PasswordUtils;
 import com.example.authmoduls.common.utils.Utils;
 import com.example.authmoduls.helper.LoginServiceTestDataGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.testcontainers.shaded.com.google.common.annotations.VisibleForTesting;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
@@ -218,7 +214,7 @@ class LoginServiceImplTest {
         when(listLogRepository.findByLoginIdAndSoftDeleteIsFalse(loginId)).thenReturn(shoppingLogList);
 
         //when
-        loginService.logOut(id);
+        loginService.logOut();
 
         //then
         /*verify(loginRepository,times(1)).findByIdAndSoftDeleteIsFalse(id);*/

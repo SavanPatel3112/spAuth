@@ -31,6 +31,7 @@ public class AdminConfiguration {
     String emailRegex;
     String regex;
     String semesterRegex;
+    String semesterRegexs;
     String spiRegex;
     String passwordRegex;
     String mobileNoRegex;
@@ -56,7 +57,8 @@ public class AdminConfiguration {
         this.extensions = getExtensionsData();
         this.emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         this.regex = "^(?=.{1,64}@)[a-z0-9_-]+(\\.[a-z0-9_-]+)*@" + "[^-][a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,})$";
-        this.semesterRegex = "^[0-8]{1}$";
+        this.semesterRegex = "^[0-8]";
+        this.semesterRegexs = "\\b[0-9]+\\b";
         this.spiRegex = "^[0-10]{2}$";
         this.passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,18}$";
         this.mobileNoRegex = "^[0-9]{10}$";
