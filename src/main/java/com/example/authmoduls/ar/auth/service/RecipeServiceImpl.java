@@ -53,7 +53,7 @@ public class RecipeServiceImpl implements RecipeService {
         RecipeModel recipeModel = new RecipeModel();
         nullAwareBeanUtilsBean.copyProperties(recipeModel, recipeAddRequest);
         recipeModel.setAccesss(accesss);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy EEE");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy|EEE");
         String formatDate = dateFormat.format(new Date());
         recipeModel.setDate(formatDate);
         recipeRepository.save(recipeModel);
