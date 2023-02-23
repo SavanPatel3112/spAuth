@@ -47,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
             nullAwareBeanUtilsBean.copyProperties(memberModel, memberAddRequest);
             memberRepository.save(memberModel);
             MemberResponse memberResponse = modelMapper.map(memberModel, MemberResponse.class);
+            log.info("memberResponse:{}",memberResponse);
             return memberResponse;
         } else {
             if (plan == null)//check user plan(role)
